@@ -45,9 +45,6 @@
 		<Unit filename="include/CNetwork.h" />
 		<Unit filename="include/CStarter.h" />
 		<Unit filename="include/rapidxml.hpp" />
-		<Unit filename="include/rapidxml_iterators.hpp" />
-		<Unit filename="include/rapidxml_print.hpp" />
-		<Unit filename="include/rapidxml_utils.hpp" />
 		<Unit filename="include/stringbuffer.h" />
 		<Unit filename="src/CBaseLogic.cpp" />
 		<Unit filename="src/CGameHandler.cpp" />
