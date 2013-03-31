@@ -9,9 +9,6 @@ using namespace std;
 CBaseLogic::CBaseLogic(int Player)
 {
     m_Player=Player;
-   // m_pGameState=0;
-
-    //ctor
 }
 
 CBaseLogic::~CBaseLogic()
@@ -22,8 +19,7 @@ CBaseLogic::~CBaseLogic()
 
 void CBaseLogic::OnRequestAction(CGameState::CMove *aMoves[3])
 {
-      printf("Request");
-      //m_pGameState->DataToString();
+    printf("MoveRequest");
     for(int i = 0; i <3; ++i)
     {
         vector<CGameState::CMove*> possibleMoves=m_pGameState->GetPossibleMoves();
@@ -33,20 +29,12 @@ void CBaseLogic::OnRequestAction(CGameState::CMove *aMoves[3])
         CGameState::CMove* tempMove = possibleMoves[(rand()%possibleMoves.size())];
         printf("\n Zug: %d, %d",i, m_pGameState->DoMove(tempMove));
          aMoves[i]=tempMove;
-        // m_pGameState->DataToString();
     }
 }
-/*
-void CBaseLogic::GameEnded()
-{
-
-
-}*/
 void CBaseLogic::OnGameStateUpdate(CGameState *pNewState)
 {
-    printf("GameState 1:%p, 2:%p, 3:%p", pNewState, pNewState, m_pGameState);
+    printf("GameStateUpdate");
     if(pNewState != 0)
         m_pGameState=pNewState;
-    printf("GameState2");
 }
 
