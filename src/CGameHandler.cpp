@@ -161,7 +161,10 @@ CGameState *CGameHandler::GetStateFromXML(xml_node<> *pNode)
     {
         int index = CGameState::SymbolToIndex(tempNode->first_attribute("symbol")->value());
         if(index > -1)
-               ++tempState->m_aCards[index];
+        {
+            ++tempState->m_aCards[index];
+            ++tempState->m_aNumCards[0];
+        }
         tempNode = tempNode->next_sibling("card");
     }
 
@@ -171,7 +174,10 @@ CGameState *CGameHandler::GetStateFromXML(xml_node<> *pNode)
     {
         int index = CGameState::SymbolToIndex(tempNode->first_attribute("symbol")->value());
         if(index > -1)
+        {
             ++tempState->m_aCards[index+6];
+            ++tempState->m_aNumCards[1];
+        }
         tempNode = tempNode->next_sibling("card");
     }
 

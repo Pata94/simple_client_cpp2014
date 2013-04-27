@@ -21,6 +21,8 @@ CGameState::CGameState()
 
     m_aPoints[0] = 0;
     m_aPoints[1] = 0;
+    m_aNumCards[0]=0;
+    m_aNumCards[1]=0;
     m_CurrentPlayer = 0;
     m_NumMoves = 0;
 }
