@@ -58,7 +58,7 @@ int CGameHandler::HandleGame()
 
     }
     else
-        m_pConnection->Send("<protocol><join gameType=\"swc_2013_cartagena\"/>\0");
+        m_pConnection->Send("<protocol><join gameType=\"swc_2014_sixpack\"/>\0");
 
 
     xml_document<> doc;
@@ -121,9 +121,9 @@ int CGameHandler::OnMsg(xml_node<> *pNode)
                 }
                 else if(strcmp(pName, "sc.framework.plugins.protocol.MoveRequest")==0)
                 {
-                    CGameState::CMove **tempMoves = (CGameState::CMove**)calloc(3, sizeof(CGameState::CMove*));
-                    m_pLogic->OnRequestAction(tempMoves);
-                    SendMoves(tempMoves);
+                    CGameState::CMove *tempMove= (CGameState::CMove *) malloc(sizeof(CGameState::CMove));
+                    m_pLogic->OnRequestAction(tempMove);
+                    SendMove(tempMove);
                 }
             }
             else if(strcmp(pName, "welcome")==0)
@@ -153,53 +153,75 @@ return 0;
 CGameState *CGameHandler::GetStateFromXML(xml_node<> *pNode)
 {
     CGameState *tempState = new CGameState();
-    tempState->m_CurrentPlayer = strcmp(pNode->first_attribute("currentPlayer")->value(),"RED")==0? 0 : 1;
+    tempState->m_CurrentPlayer = strcmp(pNode->first_attribute("current")->value(),"RED")==0? 0 : 1;
     tempState->m_Turn = atoi(pNode->first_attribute("turn")->value());
     tempState->m_aPoints[0] = atoi(pNode->first_node("red")->first_attribute("points")->value());
-    xml_node<> *tempNode = pNode->first_node("red")->first_node("cards")->first_node("card");
+    xml_node<> *tempNode = pNode->first_node("red")->first_node("stone");
+    int index = 0;
     while(tempNode != 0)
     {
-        int index = CGameState::SymbolToIndex(tempNode->first_attribute("symbol")->value());
-        if(index > -1)
+        int shape = CGameState::ShapeToIndex(tempNode->first_attribute("shape")->value());
+        int color = CGameState::ColorToIndex(tempNode->first_attribute("color")->value());
+        if(shape != -1 && color != -1)
         {
-            ++tempState->m_aCards[index];
-            ++tempState->m_aNumCards[0];
+            tempState->m_aStones[index].m_Shape = shape;
+            tempState->m_aStones[index++].m_Color = color;
+            ++tempState->m_aNumStones[0];
         }
-        tempNode = tempNode->next_sibling("card");
+        tempNode = tempNode->next_sibling("stone");
     }
 
     tempState->m_aPoints[1] = atoi(pNode->first_node("blue")->first_attribute("points")->value());
-    tempNode = pNode->first_node("blue")->first_node("cards")->first_node("card");
+    tempNode = pNode->first_node("blue")->first_node("cards")->first_node("stone");
+    index = 0;
     while(tempNode != 0)
     {
-        int index = CGameState::SymbolToIndex(tempNode->first_attribute("symbol")->value());
-        if(index > -1)
+        int shape = CGameState::ShapeToIndex(tempNode->first_attribute("shape")->value());
+        int color = CGameState::ColorToIndex(tempNode->first_attribute("color")->value());
+        if(shape != -1 && color != -1)
         {
-            ++tempState->m_aCards[index+6];
-            ++tempState->m_aNumCards[1];
+            tempState->m_aStones[index+6].m_Shape = shape;
+            tempState->m_aStones[index+6].m_Color = color;
+            ++index;
+            ++tempState->m_aNumStones[1];
         }
-        tempNode = tempNode->next_sibling("card");
+        tempNode = tempNode->next_sibling("stone");
     }
-
-    tempNode = pNode->first_node("openCards")->first_node("card");
-    int i = 0;
+    tempNode = pNode->first_node("nextStones")->first_node("stone");
+    index = 0;
     while(tempNode != 0)
     {
-        int index = CGameState::SymbolToIndex(tempNode->first_attribute("symbol")->value());
-        if(index > -1)
-            tempState->m_aOpenCards[i++]=index;
-        tempNode = tempNode->next_sibling("card");
+        int shape = CGameState::ShapeToIndex(tempNode->first_attribute("shape")->value());
+        int color = CGameState::ColorToIndex(tempNode->first_attribute("color")->value());
+         if(shape != -1 && color != -1)
+        {
+            tempState->m_aOpenStones[index].m_Shape = shape;
+            tempState->m_aOpenStones[index++].m_Color = color;
+            tempState->m_NumOpenStones++; //TODO: Set this to zero first
+        }
+        tempNode = tempNode->next_sibling("stone");
     }
 
 
-    tempNode = pNode->first_node("board")->first_node("fields")->first_node("field");
-    i = 0;
+    tempNode = pNode->first_node("board")->first_node("field");
+    index = 0;
 
     while(tempNode != 0)
     {
-        int index = -1;
-        if(tempNode->first_attribute("symbol"))
-            index  = CGameState::SymbolToIndex(tempNode->first_attribute("symbol")->value());
+        int x=atoi(tempNode->first_attribute("posX")->value());
+        int y=atoi(tempNode->first_attribute("posY")->value());
+        int shape= CGameState::SHAPE_NONE;
+        int color=  CGameState::COLOR_NONE;
+        if(tempNode->first_node("stone"))
+        {
+            shape = CGameState::ShapeToIndex(tempNode->first_node("stone")->first_attribute("shape")->value());
+            color = CGameState::ColorToIndex(tempNode->first_node("stone")->first_attribute("color")->value());
+        }
+        tempState->m_aFields[y*CGameState::FIELD_WIDTH+x].m_Shape = shape;
+        tempState->m_aFields[y*CGameState::FIELD_WIDTH+x].m_Color = color;
+
+
+         /*   index  = CGameState::SymbolToIndex(tempNode->first_attribute("symbol")->value());
         else
             index = CGameState::SymbolToIndex(tempNode->first_attribute("type")->value());
         if(index > -1)
@@ -227,7 +249,7 @@ CGameState *CGameHandler::GetStateFromXML(xml_node<> *pNode)
 
             tempState->m_aField[i].m_Symbol=index;
             ++i;
-        }
+        }*/
 
         tempNode = tempNode->next_sibling("field");
     }

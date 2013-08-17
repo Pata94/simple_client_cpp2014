@@ -9,21 +9,33 @@ class CGameState
     public:
     enum{
 
-        SYMBOL_BOTTLE = 0,
-        SYMBOL_DAGGER,
-        SYMBOL_HAT,
-        SYMBOL_KEY,
-        SYMBOL_PISTOL,
-        SYMBOL_SKULL,
-        SYMBOL_START,
-        SYMBOL_FINISH,
+        SHAPE_NONE = -1,
+        SHAPE_ACORN, // Eichel
+        SHAPE_BELL,
+        SHAPE_CLUBS,// Kreuz
+        SHAPE_DIAMOND, // Karo
+        SHAPE_HEART, // Herz
+        SHAPE_SPADES, // Pik
+
+
+        COLOR_NONE = -1,
+        COLOR_BLUE,
+        COLOR_GREEN,
+        COLOR_MAGENTA,
+        COLOR_ORANGE,
+        COLOR_VIOLET,
+        COLOR_YELLOW,
+
+        MODE_PLACE=0,
+        MODE_EXCHANGE=1,
 
         ERROR_NONE = 0,
         ERROR_UNSPECIFIC,
-        ERROR_FALSE_PLAYER,
-        ERROR_NO_SUCH_CARD,
-        ERROR_NO_PIRATE_ON_INDEX
+
+        FIELD_WIDTH=15,
+        FIELD_HEIGHT=15
     };
+
 
         CGameState();
         virtual ~CGameState();
@@ -31,40 +43,31 @@ class CGameState
         struct CMove{
             CMove()
             {
-                m_PirateIndex=0;
-                m_MoveIndex=0;
+                // 0 == place, 1 == exchange
+                m_Mode = 0;
+                m_CardID=0;
+                m_ExchangeStones=0;
+                m_FieldIndex=0;
                 m_Player=0;
             }
-            int m_PirateIndex;
-            int m_MoveIndex; //-1 = backwardMove, -2 = no move, 0-5 Karten
             int m_Player;
+            int m_FieldIndex;
+            int m_Mode;
+            int m_CardID;
+            int m_ExchangeStones;
         };
 
-        struct CField{
-            CField()
-            {
-                m_Symbol=0;
-                m_NumPirates[0]=0;
-                m_NumPirates[1]=0;
-            }
-            int m_Symbol;
-            int m_NumPirates[2];
-        } m_aField[32];
+
+        int m_aStones[12];
+        int m_aNumStones[2];
+        int m_aField[FIELD_WIDTH*FIELD_HEIGHT];
         int m_aPoints[2];
-        int m_aOpenCards[12];
-        int m_aCards[12];
-        int m_aNumCards[2];
         int m_CurrentPlayer;
         int m_Turn;
-        int m_NumMoves;
-        int GetNextOpenCard();
         int EndRound();
         char *DataToString();
         int DoMove(CMove *move);
         std::vector<CMove*> GetPossibleMoves();
-        int TryBackmove(int index);
-        int TryForwardMove(int index, int symbol);
-        static int SymbolToIndex(char* symbol);
 
     protected:
     private:
