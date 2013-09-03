@@ -56,11 +56,54 @@ class CGameState
             int m_CardID;
             int m_ExchangeStones;
         };
+        struct CStone
+        {
+            int m_Color;
+            int m_Shape;
+            int m_Identifier;
+        };
+
+        struct CField
+        {
+            CField(int FieldIndex)
+            {
+                m_AllowedColors = 63;
+                m_AllowedTypes = 63;
+                m_pStone = 0;
+                m_FieldIndex = FieldIndex;
+            }
+            bool CanPlace(CStone *pStone)
+            {
+                if(!pStone)
+                    return false;
+                if((m_AllowedColors&(1<<pStone->m_Color))!=0 && (m_AllowedShapes&(1<<pStone->m_Shape)) != 0)
+                    return true;
+                return false;
+            }
+            void Place(CStone *pStone)
+            {
+                if(m_pStone != 0 || !CanPlace(pStone) )
+                    return;
+                m_AllowedColors ^= (1<<pStone->m_Color);
+                m_AllowedShapes ^= (1<<pStone->m_Shape);
+                m_pStone = pStone;
+
+                for(int i=0; i < 15; ++i)
+                {
+                    if(i < 0 || i > FIELD_HEIGHT*FIELD_WIDTH)
+                        break;
+                }
+            }
+            int m_AllowedColors;
+            int m_AllowedShapes;
+            CStone *m_pStone;
+            int m_FieldIndex;
+        };
 
 
         int m_aStones[12];
         int m_aNumStones[2];
-        int m_aField[FIELD_WIDTH*FIELD_HEIGHT];
+        int m_aField[FIELD_WIDTH*FIELD_HEIGHT];
         int m_aPoints[2];
         int m_CurrentPlayer;
         int m_Turn;
