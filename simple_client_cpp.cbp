@@ -40,17 +40,21 @@
 			<Add directory="include" />
 		</Linker>
 		<Unit filename="include/CBaseLogic.h" />
+		<Unit filename="include/CFieldHandler.h" />
 		<Unit filename="include/CGameHandler.h" />
 		<Unit filename="include/CGameState.h" />
 		<Unit filename="include/CNetwork.h" />
 		<Unit filename="include/CStarter.h" />
+		<Unit filename="include/CStoneHandler.h" />
 		<Unit filename="include/rapidxml.hpp" />
 		<Unit filename="include/stringbuffer.h" />
 		<Unit filename="src/CBaseLogic.cpp" />
+		<Unit filename="src/CFieldHandler.cpp" />
 		<Unit filename="src/CGameHandler.cpp" />
 		<Unit filename="src/CGameState.cpp" />
 		<Unit filename="src/CNetwork.cpp" />
 		<Unit filename="src/CStarter.cpp" />
+		<Unit filename="src/CStoneHandler.cpp" />
 		<Extensions>
 			<code_completion>
 				<search_path add="include" />

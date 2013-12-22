@@ -11,10 +11,7 @@ CGameState::CGameState()
 
 
 }
-int CGameState::GetIndex(int shape, int color)
-{
-   return shape*6+color;
-}
+
 const char *CGameState::GetColorName(int color)
 {
     static const char* m_aColorNames[6] ={"BLUE", "GREEN", "MAGENTA", "ORANGE", "VIOLET", "YELLOW"};
@@ -87,10 +84,9 @@ int CGameState::DoMove(CMove *move)
     {
         if(move->m_FieldIndex < 0 || move->m_Field >= FIELD_WIDTH*FIELD_HEIGHT)
             return ERROR_UNSPECIFIC;
-        if(m_aField[m_FieldIndex]!=-1)
+        if(!PossibleStoneAt(move->m_FieldIndex, GetShape(move->m_Stone), GetColor(move->m_Stone)))
             return ERROR_UNSPECIFIC;
-
-
+        int points=PlaceStoneAt(move->m_FieldIndex, move->m_Stone);
 
     }
     else if(move->m_Mode==MODE_EXCHANGE)
@@ -100,52 +96,102 @@ int CGameState::DoMove(CMove *move)
     }
 }
 
+int PlaceStoneAt(int FieldIndex, int StoneIndex)
+{
+    int x = FieldIndex%FIELD_WIDTH;
+    int y= (FieldIndex-x)/FIELD_WIDTH;
+    int points =0;
+
+    m_aField[FieldIndex].m_Stone = StoneIndex;
+    if(m_aField[FieldIndex].m_Mode==0)
+    {
+        //check for neighbours
+        //up
+        if(y>0)
+        {
+            if(m_aField[FieldIndex-FIELD_WIDTH].m_Stone != -1)
+            {
+                UpdateMode(FieldIndex, FieldIndex-FIELD_WIDTH, MODE_SHAPE_V, MODE_COLOR_V);
+            }
+        }
+
+        //down
+
+        if(y + 1 < FIELD_HEIGHT)
+        {
+            if(m_aField[FieldIndex+FIELD_WIDTH].m_Stone != -1)
+            {
+               UpdateMode(FieldIndex, FieldIndex+FIELD_WIDTH, MODE_SHAPE_V, MODE_COLOR_V);
+            }
+        }
+
+        //right
+        if(x + 1 < FIELD_WIDTH)
+        {
+            if(m_aField[FieldIndex+1].m_Stone != -1)
+            {
+                UpdateMode(FieldIndex, FieldIndex+1, MODE_SHAPE_H, MODE_COLOR_H);
+            }
+        }
+
+        //left
+        if(x > 0)
+        {
+            if(m_aField[FieldIndex-1].m_Stone != -1)
+            {
+                UpdateMode(FieldIndex, FieldIndex-1, MODE_SHAPE_H, MODE_COLOR_H);
+            }
+        }
+    }
+    int AllowedColors;
+    if((m_aField[FieldIndex].m_Mode&MODE_SHAPE_H)!=0)
+    {
+            //update next stones to the sides
+            for(int i = 1; i < FIELD_WIDTH-x; ++i)
+            {
+                if(m_aField[FieldIndex+i].m_Stone != -1)
+                {
+                    m_aField[FieldIndex+i].m_Mode |= MODE_SHAPE_H;
+                    m_aField[FieldIndex+i].m_AllowedColors = AllowedColors;
+                    m_aField[FieldIndex+i].m_AllowedShapes=AllowedShapes;
+
+                    points += i;
+                    break;
+                }
+            }
+    }
+
+
+    //RETURN POINTS HERE
+}
+
+void CGameState::UpdateMode(int FieldIndex, int NextFieldIndex, int modeshape, int modecolor)
+{
+
+     if(GetShape(m_aField[FieldIndex].m_Stone)==GetShape(m_aField[NextFieldIndex].m_Stone))
+        {
+            m_aField[FieldIndex].m_Mode |= modeshape;
+            m_aField[NextFieldIndex].m_Mode |= modeshape;
+        }
+        else if(GetColor(m_aField[FieldIndex].m_Stone)==GetColor(m_aField[NextFieldIndex].m_Stone))
+        {
+            m_aField[FieldIndex].m_Mode |= modecolor;
+            m_aField[NextFieldIndex].m_Mode |= modecolor;
+        }
+        else
+        {
+            //ERROR
+        }
+}
+
 bool CGameState::PossibleStoneAt(int fieldindex, int shape, int color)
 {
-    int possible = -1;
-    if(fieldindex-FIELD_WIDTH >= 0)
+    if(m_aField[fieldindex].m_pStone != 0)
+        return false;
+      return (((m_aField[fieldindex].m_AllowedColors&(1<<color))!=0 && (m_aField[fieldindex].m_AllowedShapes&(1<<shape) != 0)));
 }
 std::vector<CGameState::CMove*> CGameState::GetPossibleMoves()
 {
-    std::vector<CGameState::CMove*> aMoveContainer;
-    aMoveContainer.reserve(43);
-    CMove *temp = 0;
-    int NumPirates=0;
-    for(int i=0; i < 32; ++i)
-    {
-        if(m_aField[i].m_NumPirates[m_CurrentPlayer] > 0)
-        {
-            if(i < 31)
-            {
-                for(int a = 0; a < 6; ++a)
-                {
-                    if(m_aCards[6*m_CurrentPlayer+a] > 0)
-                    {
-                        // printf("forward \n"); //Forward-Move
-
-                        temp = new CMove();
-                        temp->m_MoveIndex = a;
-                        temp->m_PirateIndex=i;
-                        temp->m_Player = m_CurrentPlayer;
-                        aMoveContainer.push_back(temp);
-                    }
-                }
-            }
-
-            if(TryBackmove(i) > 0)
-            {
-                // printf("backward \n"); //Backward-Move
-                temp = new CMove();
-                temp->m_MoveIndex = -1;
-                temp->m_PirateIndex=i;
-                temp->m_Player = m_CurrentPlayer;
-                aMoveContainer.push_back(temp);
-            }
-            NumPirates +=m_aField[i].m_NumPirates[m_CurrentPlayer];
-        }
-        else if(NumPirates>=6) //We got all Pirates
-            break;
-    }
    /*  printf("none \n"); //NO-MOVE can be done with a NULL-Move, too
     temp = new CMove();
     temp->m_MoveIndex = -2;
@@ -158,3 +204,4 @@ CGameState::~CGameState()
 {
     //dtor
 }
+
