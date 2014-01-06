@@ -4,6 +4,7 @@ made for Software-Challenge 2013 visit http://www.informatik.uni-kiel.de/softwar
 #define CGAMESTATE_H
 
 #include <vector>
+#include <CFieldHandler.h>
 class CGameState
 {
     public:
@@ -35,7 +36,6 @@ class CGameState
 
         ERROR_NONE = 0,
         ERROR_UNSPECIFIC,
-        
     };
 
 
@@ -54,7 +54,7 @@ class CGameState
             }
             int m_Player;
             int m_FieldIndex;
-            int m_Mode;
+            int m_Mode;
             int m_CardID;
             int m_Stone;
         };
@@ -77,14 +77,14 @@ class CGameState
 
         int m_aHandStones[12];
         int m_aNumHandStones[2];
-        CField m_aField[FIELD_WIDTH*FIELD_HEIGHT];
+        CField m_aField[CFieldHandler::FIELD_WIDTH*CFieldHandler::FIELD_HEIGHT];
         int m_aPoints[2];
         int m_CurrentPlayer;
         int m_Turn;
         int EndRound();
         char *DataToString();
         int DoMove(CMove *move);
-        std::vector<CMove*> GetPossibleMoves();
+        std::vector<CMove*> GetPossibleMoves();
 
 
         static inline int GetColor(int Index)
@@ -92,9 +92,9 @@ class CGameState
         static inline int GetShape(int Index)
         {   return    Idenfifier/6;     };
         static inline int GetIndex(int Color, int Shape)
-        {   return (Shape*6+Color);     };
+        {   return (Shape*6+Color);     };
 
-        bool PossibleStoneAt(int fieldindex, int shape, int color)
+        bool PossibleStoneAt(int fieldindex, int shape, int color);
       /*  inline bool PossibleStoneAt(int fieldindex, int index)
         {
             PossibleStoneAt(int fieldindex, GetShape(index), GetColor(index));

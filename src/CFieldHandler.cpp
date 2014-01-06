@@ -60,26 +60,116 @@ int CFieldHandler::PlaceStone(int index, CStoneHandler::flags Stone)
     if(newmode != 0 && newmode != mode)
         return ERROR_UNSPECIFIC;
 
-    Stone = CStoneHandler::GetFullStone();
+    Stone = CStoneHandler::GetEmptyStone(); // GetEmptyStone() needs to get implemented
     //Stone = CStoneHandler::SetFieldIndex(Stone);
-    int lastIndex = -1;
+    int lastIndexA = -1;
+    int lastIndexB = -1;
 
-    for(int i = x-1; i >= 0; --i)
+    for(int i = x-1; i >= 0; --i)
     {
 
         if(!CStoneHandler::IsEmpty(m_aField[i+y*FIELD_WIDTH]))
         {
             if(mode == MODE_COLOR)
             {
-
+                Stone = CStoneHandler::EnableShape(Stone, /*Shape*/);
+            }
+            else
+            {
+                Stone = CStoneHandler::EnableColor(Stone, /*Color*/);
             }
 
         }
         else
         {
-            lastIndex = i;
-            break;
+            lastIndexA = i;
+            break;
         }
-
     }
+
+    for(int i = x; i <FIELD_WIDTH; ++i)
+    {
+        if(!CStoneHandler::IsEmpty(m_aField[i+y*FIELD_WIDTH]))
+        {
+            if(mode == MODE_COLOR)
+            {
+                Stone = CStoneHandler::EnableShape(Stone, /*Shape*/);
+            }
+            else
+            {
+                Stone = CStoneHandler::EnableColor(Stone, /*Color*/);
+            }
+        }
+        else
+        {
+            lastIndexB = i;
+            break;
+        }
+    }
+
+    if(lastIndexA != -1)
+    {
+        m_aField[lastIndexA+y*FIELD_WIDTH] = CStoneHandler::Disable(m_aField[lastIndexA+y*FIELD_WIDTH], Stone);
+    }
+
+    if(lastIndexB != -1)
+    {
+        m_aField[lastIndexB+y*FIELD_WIDTH] = CStoneHandler::Disable(m_aField[lastIndexB+y*FIELD_WIDTH, Stone]);
+    }
+
+    lastIndexA = -1;
+    lastIndexB = -1;
+    Stone = CStoneHandler::GetEmptyStone();
+
+    for(int i = y-1; y >= 0; y--)
+    {
+         if(!CStoneHandler::IsEmpty(m_aField[x+i*FIELD_WIDTH]))
+        {
+            if(mode == MODE_COLOR)
+            {
+                Stone = CStoneHandler::EnableShape(Stone, /*Shape*/);
+            }
+            else
+            {
+                Stone = CStoneHandler::EnableColor(Stone, /*Color*/);
+            }
+        }
+        else
+        {
+            lastIndexA = i;
+            break;
+        }
+    }
+
+    for(int i = y; y < FIELD_HEIGHT; y++)
+    {
+         if(!CStoneHandler::IsEmpty(m_aField[x+i*FIELD_WIDTH]))
+        {
+            if(mode == MODE_COLOR)
+            {
+                Stone = CStoneHandler::EnableShape(Stone, /*Shape*/);
+            }
+            else
+            {
+                Stone = CStoneHandler::EnableColor(Stone, /*Color*/);
+            }
+        }
+        else
+        {
+            lastIndexB = i;
+            break;
+        }
+    }
+
+    if(lastIndexA != -1)
+    {
+        m_aField[x+lastIndexA*FIELD_WIDTH] = CStoneHandler::Disable(m_aField[x+lastIndexA*FIELD_WIDTH], Stone);
+    }
+
+    if(lastIndexB != -1)
+    {
+        m_aField[x+lastIndexB*FIELD_WIDTH] = CStoneHandler::Disable(m_aField[x+lastIndexB*FIELD_WIDTH, Stone]);
+    }
+
+    //add return
 }

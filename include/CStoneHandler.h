@@ -4,8 +4,8 @@
 
 class CStoneHandler
 {
-    typedef unsigned short flags;
     public:
+        typedef unsigned short flags;
 
         enum{
             FLAG_EMPTY = 1, //used by field
@@ -30,6 +30,7 @@ class CStoneHandler
         static bool IsStone(flags StoneFlags, flags Flags);
         static flags DisableColor(flags StoneFlags, int Color);
         static flags DisableShape(flags StoneFlags, int Shape);
+        static flags Disable(flags StoneFlags, flags Flags);
         static flags EnableColor(flags StoneFlags, int Color);
         static flags EnableShape(flags StoneFlags, int Shape);
         static bool CanPlace(flags FieldFlags, flags StoneFlags);

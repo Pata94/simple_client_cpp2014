@@ -79,7 +79,7 @@ int CGameState::DoMove(CMove *move)
         return ERROR_UNSPECIFIC;
     if(move->m_Player != m_CurrentPlayer)
         return ERROR_UNSPECIFIC;
-    
+
     if(move->m_Mode==MODE_PLACE)
     {
         if(move->m_FieldIndex < 0 || move->m_Field >= FIELD_WIDTH*FIELD_HEIGHT)

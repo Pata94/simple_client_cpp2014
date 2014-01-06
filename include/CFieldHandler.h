@@ -9,10 +9,11 @@ class CFieldHandler
         CFieldHandler();
         virtual ~CFieldHandler();
 
-        enum{
 
-            FIELD_WIDTH=15,
-            FIELD_HEIGHT=15
+
+        enum{
+            FIELD_WIDTH = 15,
+            FIELD_HEIGHT = 15,
 
             FIELDINDEX_HIDDEN=-4,
             FIELDINDEX_OPEN,
