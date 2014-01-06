@@ -1,0 +1,146 @@
+# depslib dependency file v1.0
+1364487492 source:/home/pata/Arbeitsfläche/Cartagena-SimpleClientCpp/simple_client_cpp/src/CBaseLogic.cpp
+	"CBaseLogic.h"
+	<stdio.h>
+	<vector>
+	<time.h>
+	<stdlib.h>
+
+1364305092 /home/pata/Arbeitsfläche/Cartagena-SimpleClientCpp/simple_client_cpp/include/CBaseLogic.h
+	"CGameState.h"
+
+1364485226 /home/pata/Arbeitsfläche/Cartagena-SimpleClientCpp/simple_client_cpp/include/CGameState.h
+	<vector>
+
+1364490734 source:/home/pata/Arbeitsfläche/Cartagena-SimpleClientCpp/simple_client_cpp/src/CGameHandler.cpp
+	"CGameHandler.h"
+	"rapidxml.hpp"
+	<string.h>
+	<stdio.h>
+	<vector>
+
+1364474580 /home/pata/Arbeitsfläche/Cartagena-SimpleClientCpp/simple_client_cpp/include/CGameHandler.h
+	"CNetwork.h"
+	"rapidxml.hpp"
+	"CBaseLogic.h"
+	"CGameState.h"
+
+1364417065 /home/pata/Arbeitsfläche/Cartagena-SimpleClientCpp/simple_client_cpp/include/CNetwork.h
+	<windows.h>
+	<winsock2.h>
+	<sys/socket.h>
+	<sys/un.h>
+	<netinet/in.h>
+	<arpa/inet.h>
+	<unistd.h>
+	<sys/select.h>
+	<vector>
+	"stringbuffer.h"
+
+1364418545 /home/pata/Arbeitsfläche/Cartagena-SimpleClientCpp/simple_client_cpp/include/stringbuffer.h
+	<stdio.h>
+	<stdlib.h>
+	<string.h>
+
+1242175578 /home/pata/Arbeitsfläche/Cartagena-SimpleClientCpp/simple_client_cpp/include/rapidxml.hpp
+	<cstdlib>
+	<cassert>
+	<new>
+	<exception>
+
+1364487719 source:/home/pata/Arbeitsfläche/Cartagena-SimpleClientCpp/simple_client_cpp/src/CGameState.cpp
+	"CGameState.h"
+	<string.h>
+	<stdlib.h>
+	<stdio.h>
+	<cmath>
+	"stringbuffer.h"
+
+1364495857 source:/home/pata/Arbeitsfläche/Cartagena-SimpleClientCpp/simple_client_cpp/src/CStarter.cpp
+	"CStarter.h"
+	<iostream>
+	"CStarter.h"
+	<stdio.h>
+
+1363692514 /home/pata/Arbeitsfläche/Cartagena-SimpleClientCpp/simple_client_cpp/include/CStarter.h
+	"CNetwork.h"
+	"CGameState.h"
+	"CGameHandler.h"
+
+1364472386 source:/home/pata/Arbeitsfläche/Cartagena-SimpleClientCpp/simple_client_cpp/src/CNetwork.cpp
+	"CNetwork.h"
+	<stdio.h>
+	<vector>
+
+1364741917 source:d:\windows\users\paddy\desktop\software challenge\cartagena-simpleclient c++\simple_client_cpp\src\cbaselogic.cpp
+	"CBaseLogic.h"
+	<stdio.h>
+	<vector>
+	<time.h>
+	<stdlib.h>
+
+1364735920 d:\windows\users\paddy\desktop\software challenge\cartagena-simpleclient c++\simple_client_cpp\include\cbaselogic.h
+	"CGameState.h"
+
+1364735946 d:\windows\users\paddy\desktop\software challenge\cartagena-simpleclient c++\simple_client_cpp\include\cgamestate.h
+	<vector>
+
+1364735903 source:d:\windows\users\paddy\desktop\software challenge\cartagena-simpleclient c++\simple_client_cpp\src\cgamehandler.cpp
+	"CGameHandler.h"
+	"rapidxml.hpp"
+	<string.h>
+	<stdio.h>
+	<vector>
+
+1364735907 d:\windows\users\paddy\desktop\software challenge\cartagena-simpleclient c++\simple_client_cpp\include\cgamehandler.h
+	"CNetwork.h"
+	"rapidxml.hpp"
+	"CBaseLogic.h"
+	"CGameState.h"
+
+1364735881 d:\windows\users\paddy\desktop\software challenge\cartagena-simpleclient c++\simple_client_cpp\include\cnetwork.h
+	<windows.h>
+	<winsock2.h>
+	<sys/socket.h>
+	<sys/un.h>
+	<netinet/in.h>
+	<arpa/inet.h>
+	<unistd.h>
+	<sys/select.h>
+	"stringbuffer.h"
+
+1364735939 d:\windows\users\paddy\desktop\software challenge\cartagena-simpleclient c++\simple_client_cpp\include\stringbuffer.h
+	<stdio.h>
+	<stdlib.h>
+	<string.h>
+
+1242171978 d:\windows\users\paddy\desktop\software challenge\cartagena-simpleclient c++\simple_client_cpp\include\rapidxml.hpp
+	<cstdlib>
+	<cassert>
+	<new>
+	<exception>
+
+1364735916 source:d:\windows\users\paddy\desktop\software challenge\cartagena-simpleclient c++\simple_client_cpp\src\cgamestate.cpp
+	"CGameState.h"
+	<string.h>
+	<stdlib.h>
+	<stdio.h>
+	<cmath>
+	"stringbuffer.h"
+
+1364737548 source:d:\windows\users\paddy\desktop\software challenge\cartagena-simpleclient c++\simple_client_cpp\src\cnetwork.cpp
+	"CNetwork.h"
+	<stdio.h>
+	<vector>
+
+1364738436 source:d:\windows\users\paddy\desktop\software challenge\cartagena-simpleclient c++\simple_client_cpp\src\cstarter.cpp
+	"CStarter.h"
+	<iostream>
+	"CStarter.h"
+	<stdio.h>
+
+1364735968 d:\windows\users\paddy\desktop\software challenge\cartagena-simpleclient c++\simple_client_cpp\include\cstarter.h
+	"CNetwork.h"
+	"CGameState.h"
+	"CGameHandler.h"
+
