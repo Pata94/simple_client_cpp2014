@@ -32,7 +32,9 @@ class CStoneHandler
         static flags DisableShape(flags StoneFlags, int Shape);
         static flags Disable(flags StoneFlags, flags Flags);
         static flags EnableColor(flags StoneFlags, int Color);
+        static flags EnableColor(flags StoneFlags, flags Color);
         static flags EnableShape(flags StoneFlags, int Shape);
+        static flags EnableShape(flags StoneFlags, flags Shape);
         static bool CanPlace(flags FieldFlags, flags StoneFlags);
         static flags CheckShape(flags a, flags b);
         static flags CheckColor(flags a, flags b);
