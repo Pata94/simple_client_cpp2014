@@ -41,7 +41,7 @@ flags CStoneHandler::EnableColor(flags StoneFlags, int Color)
 
 flags CStoneHandler::EnableColor(flags StoneFlags, flags Color)
 {
-    Color = (Color & (1024 + 2048 + 4096 + 8192 + 16384 + 32768)); //Should eliminate all Shapes
+    Color = (Color & (FLAG_COLOR_BLUE | FLAG_COLOR_GREEN | FLAG_COLOR_MAGENTA | FLAG_COLOR_ORANGE | FLAG_COLOR_VIOLET | FLAG_COLOR_YELLOW)); //Should eliminate all Shapes
     return (StoneFlags | Color);
 }
 
@@ -54,7 +54,7 @@ flags CStoneHandler::EnableShape(flags StoneFlags, int Shape)
 
 flags CStoneHandler::EnableShape(flags StoneFlags, flags Shape)
 {
-    Shape = (Shape & (16 + 32 + 64 +128 + 256 +512)); //Should eliminate all Colors
+    Shape = (Shape & (FLAG_SHAPE_ACORN + FLAG_SHAPE_BELL + FLAG_SHAPE_CLUBS +FLAG_SHAPE_DIAMOND + FLAG_SHAPE_HEART +FLAG_SHAPE_SPADES)); //Should eliminate all Colors
     return (StoneFlags | Shape);
 }
 
@@ -123,12 +123,6 @@ flags CStoneHandler::GetFullStone()
 {
     flags a = 0;
     return ~a;
-}
-
-flags CStoneHandler::GetEmptyStone()
-{
-    flags a = 0;
-    return a;
 }
 
 
