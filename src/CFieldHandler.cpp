@@ -171,5 +171,5 @@ int CFieldHandler::PlaceStone(int index, CStoneHandler::flags Stone)
         m_aField[x+lastIndexB*FIELD_WIDTH] = CStoneHandler::Disable(m_aField[x+lastIndexB*FIELD_WIDTH, Stone]);
     }
 
-    //add return
+    return 0;
 }
