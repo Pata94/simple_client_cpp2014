@@ -147,11 +147,11 @@ int CFieldHandler::PlaceStone(int index, CStoneHandler::flags Stone)
         {
             if(mode == MODE_COLOR)
             {
-                Stone = CStoneHandler::EnableShape(Stone, CStoneHandler::GetShape(m_aField[x+i*FIELD_WIDTH]));
+                Stone = CStoneHandler::EnableShape(Stone, /*Shape*/);
             }
             else
             {
-                Stone = CStoneHandler::EnableColor(Stone, CStoneHandler::GetColor(m_aField[x+i*FIELD_WIDTH]));
+                Stone = CStoneHandler::EnableColor(Stone, /*Color*/);
             }
         }
         else

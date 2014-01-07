@@ -39,8 +39,6 @@ class CStoneHandler
         static int GetFieldIndex(flags StoneFlags);
         static flags GetFullStone();
         static flags GetEmptyStone();
-        static int GetColor(flags StoneFlags);
-        static int GetShape(flags StoneFlags);
     protected:
     private:
 };
