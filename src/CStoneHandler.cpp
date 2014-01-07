@@ -109,6 +109,12 @@ flags CStoneHandler::GetFullStone()
     return ~a;
 }
 
+flags CStoneHandler::GetEmptyStone()
+{
+    flags a = 0;
+    return a;
+}
+
 
 flags CStoneHandler::CheckShape(flags a, flags b)
 {
@@ -119,6 +125,20 @@ flags CStoneHandler::CheckShape(flags a, flags b)
 flags CStoneHandler::CheckColor(flags a, flags b)
 {
     return a & b & (FLAG_COLOR_BLUE | FLAG_COLOR_GREEN | FLAG_COLOR_MAGENTA | FLAG_COLOR_ORANGE | FLAG_COLOR_VIOLET | FLAG_COLOR_YELLOW);
+}
+
+int CStoneHandler::GetColor(flags StoneFlags)
+{
+    StoneFlags = StoneFlags << 10; //Should delete all information about the Shapes
+    StoneFlags = StoneFlags >> 10;
+    return StoneFlags;
+}
+
+int CStoneHandler::GetShape(flags StoneFlags)
+{
+    StoneFlags = StoneFlags >> 6; //Should delete all information about Colors
+    StoneFlags = StoneFlags << 6;
+    return StoneFlags;
 }
 
 
