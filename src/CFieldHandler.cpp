@@ -72,11 +72,11 @@ int CFieldHandler::PlaceStone(int index, CStoneHandler::flags Stone)
         {
             if(mode == MODE_COLOR)
             {
-                Stone = CStoneHandler::EnableShape(Stone, /*Shape*/);
+                Stone = CStoneHandler::EnableShape(Stone, m_aField[i+y*FIELD_WIDTH]);
             }
             else
             {
-                Stone = CStoneHandler::EnableColor(Stone, /*Color*/);
+                Stone = CStoneHandler::EnableColor(Stone, m_aField[i+y*FIELD_WIDTH]);
             }
 
         }
@@ -93,11 +93,11 @@ int CFieldHandler::PlaceStone(int index, CStoneHandler::flags Stone)
         {
             if(mode == MODE_COLOR)
             {
-                Stone = CStoneHandler::EnableShape(Stone, /*Shape*/);
+                Stone = CStoneHandler::EnableShape(Stone, m_aField[i+y*FIELD_WIDTH]);
             }
             else
             {
-                Stone = CStoneHandler::EnableColor(Stone, /*Color*/);
+                Stone = CStoneHandler::EnableColor(Stone, m_aField[i+y*FIELD_WIDTH]);
             }
         }
         else
@@ -127,11 +127,11 @@ int CFieldHandler::PlaceStone(int index, CStoneHandler::flags Stone)
         {
             if(mode == MODE_COLOR)
             {
-                Stone = CStoneHandler::EnableShape(Stone, /*Shape*/);
+                Stone = CStoneHandler::EnableShape(Stone, m_aField[x+i*FIELD_WIDTH]);
             }
             else
             {
-                Stone = CStoneHandler::EnableColor(Stone, /*Color*/);
+                Stone = CStoneHandler::EnableColor(Stone, m_aField[x+i*FIELD_WIDTH]);
             }
         }
         else
@@ -147,11 +147,11 @@ int CFieldHandler::PlaceStone(int index, CStoneHandler::flags Stone)
         {
             if(mode == MODE_COLOR)
             {
-                Stone = CStoneHandler::EnableShape(Stone, /*Shape*/);
+                Stone = CStoneHandler::EnableShape(Stone, m_aField[x+i*FIELD_WIDTH]);
             }
             else
             {
-                Stone = CStoneHandler::EnableColor(Stone, /*Color*/);
+                Stone = CStoneHandler::EnableColor(Stone, m_aField[x+i*FIELD_WIDTH]);
             }
         }
         else
