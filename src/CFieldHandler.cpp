@@ -117,9 +117,39 @@ int CFieldHandler::PlaceStone(int index, CStoneHandler::flags Stone)
         m_aField[lastIndexB+y*FIELD_WIDTH] = CStoneHandler::Disable(m_aField[lastIndexB+y*FIELD_WIDTH, Stone]);
     }
 
+    int mode = 0;
+
+    if(y > 0)
+    {
+        if(!CStoneHandler::IsEmpty(m_aField[index-FIELD_WIDTH]))
+           {
+                if(CStoneHandler::CheckColor(m_aField[index-FIELD_WIDTH], m_aField[index]))
+                    mode = MODE_COLOR;
+                else if(CStoneHandler::CheckShape(m_aField[index-FIELD_WIDTH], m_aField[index]))
+                    mode = MODE_SHAPE;
+                else
+                    return ERROR_UNSPECIFIC;
+           }
+    }
+    int newmode = mode;
+    if(y < FIELD_HEIGHT-1)
+    {
+        if(!CStoneHandler::IsEmpty(m_aField[index+FIELD_WIDTH]))
+           {
+                if(CStoneHandler::CheckColor(m_aField[index+FIELD_WIDTH], m_aField[index]))
+                    mode = MODE_COLOR;
+                else if(CStoneHandler::CheckShape(m_aField[index+FIELD_WIDTH], m_aField[index]))
+                    mode = MODE_SHAPE;
+                else
+                    return ERROR_UNSPECIFIC;
+           }
+    }
+    if(newmode != 0 && newmode != mode)
+        return ERROR_UNSPECIFIC;
+
+    Stone = CStoneHandler::GetEmptyStone();
     lastIndexA = -1;
     lastIndexB = -1;
-    Stone = CStoneHandler::GetEmptyStone();
 
     for(int i = y-1; y >= 0; y--)
     {
