@@ -64,7 +64,6 @@ int CNetwork::Connect(const char* address, int port)
         #endif
     }
     printf("Verbunden mit %s:%d\n", address, port);
-    printf("Verbunden mit123");
     return 0;
 }
 

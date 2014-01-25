@@ -19,7 +19,9 @@ CGameHandler::CGameHandler(class CNetwork *pCon, const char *pReservation)
         m_pReservation[size]='\0';
     }
     else
+    {
         m_pReservation = 0;
+    }
     m_State = STATE_REQUESTING;
     m_pLogic = 0;
 }

@@ -40,6 +40,8 @@ class CStoneHandler
         static flags CheckColor(flags a, flags b);
         static int GetFieldIndex(flags StoneFlags);
         static flags GetFullStone();
+        static flags SetEmpty(flags Flags, bool Empty);
+        static bool IsEmpty(flags FieldFlags);
     protected:
     private:
 };

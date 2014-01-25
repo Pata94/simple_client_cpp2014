@@ -27,17 +27,7 @@ class CGameState
         COLOR_VIOLET,
         COLOR_YELLOW,
         NUM_COLORS,
-
-        MODE_COLOR= 1,
-        MODE_SHAPE = 2,
-
-        MODE_PLACE=0,
-        MODE_EXCHANGE=1,
-
-        ERROR_NONE = 0,
-        ERROR_UNSPECIFIC,
     };
-
 
         CGameState();
         virtual ~CGameState();
@@ -58,6 +48,8 @@ class CGameState
             int m_CardID;
             int m_Stone;
         };
+
+
         struct CStone
         {
             int m_Color;
@@ -65,6 +57,7 @@ class CGameState
             int m_Identifier;
             int m_FieldIndex;
         };
+
 
         struct CField
         {
@@ -75,6 +68,7 @@ class CGameState
             CStone *m_pStone;
         };
 
+
         int m_aHandStones[12];
         int m_aNumHandStones[2];
         CField m_aField[CFieldHandler::FIELD_WIDTH*CFieldHandler::FIELD_HEIGHT];
@@ -83,16 +77,18 @@ class CGameState
         int m_Turn;
         int EndRound();
         char *DataToString();
+        static const char* m_aColorNames[6];
+        static const char* m_aShapeNames[6];
         int DoMove(CMove *move);
         std::vector<CMove*> GetPossibleMoves();
 
 
-        static inline int GetColor(int Index)
-        {   return  Idenfifier%6;       };
+        /*static inline int GetColor(int Index)
+        {   return  Index%6;       };
         static inline int GetShape(int Index)
         {   return    Idenfifier/6;     };
         static inline int GetIndex(int Color, int Shape)
-        {   return (Shape*6+Color);     };
+        {   return (Shape*6+Color);     };*/
 
         bool PossibleStoneAt(int fieldindex, int shape, int color);
       /*  inline bool PossibleStoneAt(int fieldindex, int index)

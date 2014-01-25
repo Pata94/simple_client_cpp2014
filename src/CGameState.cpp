@@ -8,24 +8,27 @@ made for Software-Challenge 2013 visit http://www.informatik.uni-kiel.de/softwar
 #include "stringbuffer.h" //TODO delete this
 CGameState::CGameState()
 {
-
-
+    m_aColorNames[6] ={"BLUE", "GREEN", "MAGENTA", "ORANGE", "VIOLET", "YELLOW"};
+    m_aShapeNames[6] ={"ACORN", "BELL", "CLUBS", "DIAMOND", "HEART", "SPADES"};
 }
 
-const char *CGameState::GetColorName(int color)
+
+const char *CGameState::GetColorName(int color) const
 {
-    static const char* m_aColorNames[6] ={"BLUE", "GREEN", "MAGENTA", "ORANGE", "VIOLET", "YELLOW"};
-    if(color >= 0 && color < 7)
+    if(color >= 0 && color < 6)
         return m_aColorNames[color];
     return 0;
 }
-const char *CGameState::GetShapeName(int shape)
+
+
+const char *CGameState::GetShapeName(int shape) const
 {
-    static const char* m_aColorNames[6] ={"ACORN", "BELL", "CLUBS", "DIAMOND", "HEART", "SPADES"};
-    if(shape >= 0 && shape < 7)
+    if(shape >= 0 && shape < 6)
         return m_aShapeNames[shape];
     return 0;
 }
+
+
 char *CGameState::DataToString()
 {
     CStringBuffer buf(125, 512);
@@ -73,6 +76,8 @@ char *CGameState::DataToString()
     printf(buf.toString());
     return 0;
 }
+
+
 int CGameState::DoMove(CMove *move)
 {
     if(!move)
@@ -95,6 +100,7 @@ int CGameState::DoMove(CMove *move)
 
     }
 }
+
 
 int PlaceStoneAt(int FieldIndex, int StoneIndex)
 {
@@ -165,6 +171,7 @@ int PlaceStoneAt(int FieldIndex, int StoneIndex)
     //RETURN POINTS HERE
 }
 
+
 void CGameState::UpdateMode(int FieldIndex, int NextFieldIndex, int modeshape, int modecolor)
 {
 
@@ -184,12 +191,15 @@ void CGameState::UpdateMode(int FieldIndex, int NextFieldIndex, int modeshape, i
         }
 }
 
+
 bool CGameState::PossibleStoneAt(int fieldindex, int shape, int color)
 {
     if(m_aField[fieldindex].m_pStone != 0)
         return false;
-      return (((m_aField[fieldindex].m_AllowedColors&(1<<color))!=0 && (m_aField[fieldindex].m_AllowedShapes&(1<<shape) != 0)));
+      return (((m_aField[fieldindex].m_AllowedColors&(1<<color))!=0 && (m_aField[fieldindex].m_AllowedShapes&(1<<shape) != 0)));
 }
+
+
 std::vector<CGameState::CMove*> CGameState::GetPossibleMoves()
 {
    /*  printf("none \n"); //NO-MOVE can be done with a NULL-Move, too
@@ -200,8 +210,9 @@ std::vector<CGameState::CMove*> CGameState::GetPossibleMoves()
      aMoveContainer.push_back(temp);*/
      return aMoveContainer;
 }
+
+
 CGameState::~CGameState()
 {
     //dtor
 }
-

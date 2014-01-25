@@ -1,5 +1,4 @@
 #include "CFieldHandler.h"
-
 CFieldHandler::CFieldHandler()
 {
     //ctor
@@ -114,8 +113,9 @@ int CFieldHandler::PlaceStone(int index, CStoneHandler::flags Stone)
 
     if(lastIndexB != -1)
     {
-        m_aField[lastIndexB+y*FIELD_WIDTH] = CStoneHandler::Disable(m_aField[lastIndexB+y*FIELD_WIDTH, Stone]);
+        m_aField[lastIndexB+y*FIELD_WIDTH] = CStoneHandler::Disable(m_aField[lastIndexB+y*FIELD_WIDTH], Stone);
     }
+
 
     int mode = 0;
 

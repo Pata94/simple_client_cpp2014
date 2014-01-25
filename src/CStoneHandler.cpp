@@ -6,13 +6,10 @@ bool CStoneHandler::IsStone(flags StoneFlags, flags Flags)
 }
 
 flags CStoneHandler::Disable(flags StoneFlags, flags Flags)
-{ /*
-    flags a = (FLAG_COLOR_BLUE<<Color); //the color flags start at FLAG_COLOR_BLUE
-   if((StoneFlags & a))
-        return StoneFlags & ~a;
-    return StoneFlags;
-    */
-    // Code needs to be rewritten
+{
+    StoneFlags = DisableColor(flags StoneFlags, flags Flags);
+    return DisableShape(flags StoneFlags, flags Flags);
+  // Code needs to be rewritten
 }
 
 flags CStoneHandler::DisableColor(flags StoneFlags, int Color)
@@ -54,7 +51,7 @@ flags CStoneHandler::EnableShape(flags StoneFlags, int Shape)
 
 flags CStoneHandler::EnableShape(flags StoneFlags, flags Shape)
 {
-    Shape = (Shape & (FLAG_SHAPE_ACORN + FLAG_SHAPE_BELL + FLAG_SHAPE_CLUBS +FLAG_SHAPE_DIAMOND + FLAG_SHAPE_HEART +FLAG_SHAPE_SPADES)); //Should eliminate all other flags than a shape flag
+    Shape = (Shape & (FLAG_SHAPE_ACORN | FLAG_SHAPE_BELL | FLAG_SHAPE_CLUBS | FLAG_SHAPE_DIAMOND | FLAG_SHAPE_HEART | FLAG_SHAPE_SPADES)); //Should eliminate all other flags than a shape flag
     return (StoneFlags | Shape);
 }
 
@@ -136,6 +133,3 @@ flags CStoneHandler::CheckColor(flags a, flags b)
 {
     return a & b & (FLAG_COLOR_BLUE | FLAG_COLOR_GREEN | FLAG_COLOR_MAGENTA | FLAG_COLOR_ORANGE | FLAG_COLOR_VIOLET | FLAG_COLOR_YELLOW);
 }
-
-
-
