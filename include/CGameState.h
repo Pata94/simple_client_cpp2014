@@ -8,6 +8,8 @@ made for Software-Challenge 2013 visit http://www.informatik.uni-kiel.de/softwar
 class CGameState
 {
     public:
+    static const char* m_aColorNames[6];
+        static const char* m_aShapeNames[6];
     enum{
 
         SHAPE_NONE = -1,
@@ -27,60 +29,59 @@ class CGameState
         COLOR_VIOLET,
         COLOR_YELLOW,
         NUM_COLORS,
-    };
 
+        MODE_PLACE=0,
+            MODE_EXCHANGE=1,
+
+        ERROR_UNSPECIFIC = 0
+
+    };
+int m_Moves;
         CGameState();
-        virtual ~CGameState();
+        ~CGameState();
 
         struct CMove{
             CMove()
             {
                 // 0 == place, 1 == exchange
                 m_Mode = 0;
-                m_CardID=0;
-                m_Stone=0;
+                m_pStone=0;
                 m_FieldIndex=0;
                 m_Player=0;
             }
             int m_Player;
             int m_FieldIndex;
             int m_Mode;
-            int m_CardID;
-            int m_Stone;
+            CStoneHandler::CStone *m_pStone;
+        };
+
+        struct CMoveContainer{
+            ~CMoveContainer()
+            {
+                for(int i = 0; i < m_lpMoves.size(); ++i)
+                    delete m_lpMoves[i];
+            };
+            int m_MoveType; // 0 == Lay 1 == change
+            std::vector<CMove *> m_lpMoves;
         };
 
 
-        struct CStone
-        {
-            int m_Color;
-            int m_Shape;
-            int m_Identifier;
-            int m_FieldIndex;
-        };
 
+        CFieldHandler *m_pFieldHandler;
+        CStoneHandler::CStone *m_apHandStones[12];
+        //int m_NumOpenStones;
+        int m_NumBagStones;
+        CStoneHandler::CStone *m_apOpenStones[12];
 
-        struct CField
-        {
-            int m_AllowedColors;
-            int m_AllowedShapes;
-            int m_Mode;//0== none, 1==color, 2==shape
-            int m_Stone;
-            CStone *m_pStone;
-        };
-
-
-        int m_aHandStones[12];
-        int m_aNumHandStones[2];
-        CField m_aField[CFieldHandler::FIELD_WIDTH*CFieldHandler::FIELD_HEIGHT];
         int m_aPoints[2];
         int m_CurrentPlayer;
+        int m_PlayerID;
         int m_Turn;
         int EndRound();
         char *DataToString();
-        static const char* m_aColorNames[6];
-        static const char* m_aShapeNames[6];
+
         int DoMove(CMove *move);
-        std::vector<CMove*> GetPossibleMoves();
+        std::vector<CMove*> *GetPossibleMoves(int player);
 
 
         /*static inline int GetColor(int Index)
@@ -97,6 +98,9 @@ class CGameState
         };*/
 
         int PlaceStoneAt(int FieldIndex, int StoneIndex);
+
+        static int ShapeToIndex(char *pName);
+        static int ColorToIndex(char *pName);
 
     protected:
     private:

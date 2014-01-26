@@ -11,9 +11,9 @@ class CFieldHandler
 
 
 
-        enum{
-            FIELD_WIDTH = 15,
-            FIELD_HEIGHT = 15,
+        enum asd{
+            FIELD_WIDTH = 16,
+            FIELD_HEIGHT = 16,
 
             FIELDINDEX_HIDDEN=-4,
             FIELDINDEX_OPEN,
@@ -23,16 +23,18 @@ class CFieldHandler
             MODE_COLOR= 1,
             MODE_SHAPE = 2,
 
-            MODE_PLACE=0,
-            MODE_EXCHANGE=1,
+
 
             ERROR_NONE = 0,
             ERROR_UNSPECIFIC,
         };
-        bool CanPlace(int index, CStoneHandler::flags Stone);
-        int PlaceStone(int index, CStoneHandler::flags Stone);
+        int CanPlace(int index, CStoneHandler::CStone* pStone);
+        int PlaceStone(int index, CStoneHandler::CStone* pStone);
+        bool IsFree(int index);
+         CStoneHandler::CField m_aField[FIELD_WIDTH*FIELD_HEIGHT];
     protected:
-        CStoneHandler::flags m_aField[FIELD_WIDTH*FIELD_HEIGHT];
+
+        int m_Moves;
     private:
 };
 

@@ -148,6 +148,6 @@ const char *CNetwork::Receive()
         else if(strstr(aBuf, "</protocol>")!=0 || strstr(aBuf, "<protocol/>")!=0)
             break;
     }
-    printf("Stringbuffer: %s \n", m_pBuffer->toString());
+    //printf("Stringbuffer: %s \n", m_pBuffer->toString());
     return m_pBuffer->toString();
 }

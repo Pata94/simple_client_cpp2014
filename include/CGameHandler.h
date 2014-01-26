@@ -9,7 +9,7 @@ made for Software-Challenge 2013 visit http://www.informatik.uni-kiel.de/softwar
 #include "CBaseLogic.h"
 #include "CGameState.h"
 class CGameHandler
-{
+{public:
     enum{
         STATE_REQUESTING,
         STATE_JOINING,
@@ -18,17 +18,27 @@ class CGameHandler
         STATE_MOVING,
         STATE_END,
         STATE_LEAVE,
-        STATE_ERROR
+        STATE_ERROR,
+
+        POSITION_BAG = 0,
+        POSITION_OPEN,
+        POSITION_RED,
+        POSITION_BLUE,
+        POSITION_FIELD,
+
+        MODE_PLACE=0,
+            MODE_EXCHANGE=1
     };
-    public:
+
         CGameHandler(class CNetwork *pCon, const char *pReservation);
         virtual ~CGameHandler();
         int HandleGame();
         int OnMsg(rapidxml::xml_node<> *pNode);
         CGameState *GetStateFromXML(rapidxml::xml_node<> *pNode);
-        int SendMoves(CGameState::CMove **ppMoves);
+        int SendMove(CGameState::CMoveContainer *pMoves);
     protected:
     private:
+
         class CNetwork *m_pConnection;
         int m_State;
         char *m_pRoomID;

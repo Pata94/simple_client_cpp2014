@@ -9,7 +9,7 @@ class CBaseLogic
     public:
         CBaseLogic(int Player);
         virtual ~CBaseLogic();
-        void OnRequestAction(CGameState::CMove *aMoves[3]);
+        void OnRequestAction(CGameState::CMoveContainer *pMoves);
         void OnGameStateUpdate(CGameState *pNewState);
     protected:
     private:

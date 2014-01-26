@@ -5,6 +5,7 @@ made for Software-Challenge 2013 visit http://www.informatik.uni-kiel.de/softwar
 #include <vector>
 #include <time.h>
 #include <stdlib.h>
+#include "CGameHandler.h"
 using namespace std;
 CBaseLogic::CBaseLogic(int Player)
 {
@@ -17,18 +18,27 @@ CBaseLogic::~CBaseLogic()
 }
 
 
-void CBaseLogic::OnRequestAction(CGameState::CMove *aMoves[3])
+void CBaseLogic::OnRequestAction(CGameState::CMoveContainer *pMoves)
 {
     printf("MoveRequest");
-    for(int i = 0; i <3; ++i)
     {
-        vector<CGameState::CMove*> possibleMoves=m_pGameState->GetPossibleMoves();
-        if(possibleMoves.size()==0)
-            break;
+        vector<CGameState::CMove*> *possibleMoves=m_pGameState->GetPossibleMoves(m_Player);
+        if(possibleMoves->size()==0)
+        {
+            printf("No possible Moves");
+             CGameState::CMove *pMove = new CGameState::CMove();
+            pMove->m_pStone = m_pGameState->m_apHandStones[m_Player*6];
+            pMove->m_Mode = CGameHandler::MODE_EXCHANGE;
+           // pMove->m_FieldIndex = i;
+            pMoves->m_MoveType = CGameHandler::MODE_EXCHANGE;
+         pMoves->m_lpMoves.push_back(pMove);
+            return;
+        }
         srand (time(NULL));
-        CGameState::CMove* tempMove = possibleMoves[(rand()%possibleMoves.size())];
-        printf("\n Zug: %d, %d",i, m_pGameState->DoMove(tempMove));
-         aMoves[i]=tempMove;
+        CGameState::CMove* tempMove = (*possibleMoves)[(rand()%possibleMoves->size())];
+        printf("\n Zug:  %d", m_pGameState->DoMove(tempMove));
+        pMoves->m_MoveType = CGameHandler::MODE_PLACE;
+         pMoves->m_lpMoves.push_back(tempMove);
     }
 }
 void CBaseLogic::OnGameStateUpdate(CGameState *pNewState)
