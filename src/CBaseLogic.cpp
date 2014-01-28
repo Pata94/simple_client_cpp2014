@@ -20,7 +20,7 @@ CBaseLogic::~CBaseLogic()
 
 void CBaseLogic::OnRequestAction(CGameState::CMoveContainer *pMoves)
 {
-    printf("MoveRequest");
+    printf("MoveRequest %d \n", m_Player);
     {
         vector<CGameState::CMove*> *possibleMoves=m_pGameState->GetPossibleMoves(m_Player);
         if(possibleMoves->size()==0)

@@ -134,7 +134,7 @@ int CGameHandler::OnMsg(xml_node<> *pNode)
             }
             else if(strcmp(pName, "welcome")==0)
             {
-                int player = strcmp("RED", pNode->first_node("data")->first_attribute("color")->value())==0? 0: 1;
+                int player = strcmp("red", pNode->first_node("data")->first_attribute("color")->value())==0? 0: 1;
                 m_pLogic = new CBaseLogic(player);
             }
         }

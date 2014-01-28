@@ -50,11 +50,14 @@ int CFieldHandler::CanPlace(int index, CStoneHandler::CStone *pStone)
     bool gotNeighbours = false;
     for(int i = index; i < FIELD_WIDTH; ++i)
     {
+
+        if(num >= 6) //bereits 6 steine gelegt
+            return 0;
         if(i == x)
             continue;
 
-        if(i-index >= 6) //bereits 6 steine gelegt
-           return 0;
+      //  if(i-index >= 5)
+        //   return 0;
 
         if(IsFree(i+y*FIELD_WIDTH))
             break;
@@ -93,11 +96,14 @@ int CFieldHandler::CanPlace(int index, CStoneHandler::CStone *pStone)
 
     for(int i = index; i < FIELD_HEIGHT; ++i)
     {
+         if(num >= 6) //bereits 6 steine gelegt
+            return 0;
+
         if(i == y)
             continue;
 
-        if(i-index >= 6) //bereits 6 steine gelegt
-           return 0;
+       // if(i-index >= 5) //bereits 6 steine gelegt
+       //    return 0;
 
         if(IsFree(x+i*FIELD_WIDTH))
             break;
