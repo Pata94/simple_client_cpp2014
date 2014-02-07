@@ -110,7 +110,7 @@ int CGameState::DoMove(CMove *move)
     if(move->m_Player != m_CurrentPlayer)
         return ERROR_UNSPECIFIC;
 
-    if(move->m_Mode==MODE_PLACE)
+    if(move->m_Mode==MOVE_PLACE)
     {
         if(move->m_FieldIndex < 0 || move->m_FieldIndex >= 256)
             return ERROR_UNSPECIFIC;
@@ -120,39 +120,86 @@ int CGameState::DoMove(CMove *move)
         else
             return 0;
     }
-    else if(move->m_Mode==MODE_EXCHANGE)
+    else if(move->m_Mode==MOVE_EXCHANGE)
     {
-
+        //TODO
 
     }
     return 0;
 }
-std::vector<CGameState::CMove*> *CGameState::GetPossibleMoves(int player)
+CGameState::CMoveContainer* CGameState::GetPossibleMoves(int player)
 {
-    std::vector<CGameState::CMove*> *possibleMoves = new std::vector<CGameState::CMove*>();
-    possibleMoves->reserve(50);
+    bool IsFirstMove = m_pFieldHandler->UpdateFirstMove();
+  //  std::vector<CGameState::CMoveContainer*> *possibleMoves = new std::vector<CGameState::CMoveContainer*>();
+    //possibleMoves->reserve(50);
     CGameState::CMove* pMove = 0;
+    CGameState::CMoveContainer* pMoveContainer = new CGameState::CMoveContainer();
+
     int p = player == 0 ? 0 : 6;
-    for(int a = 0; a < 6; ++a)
+
+    if(IsFirstMove)
     {
-        if(m_apHandStones[a+p] != 0)
-            for(int i = 0; i < 256; ++i)
+        pMoveContainer->m_MoveType = MOVE_PLACE_FIRST;
+
+        //look for possible stones
+        for(int a = 0; a < 6; ++a)
+        {
+            if(m_apHandStones[a+p] == 0)
+                continue;
+            for(int b = 0; b < 6; ++b)
             {
-                if(m_pFieldHandler->CanPlace( i, m_apHandStones[a+p]) > 0)
+                if(b == a || m_apHandStones[p+b] == 0)
+                    continue;
+                if((CStoneHandler::CheckShape(m_apHandStones[a+p], m_apHandStones[p+b])
+                   &&  !CStoneHandler::CheckColor(m_apHandStones[a+p], m_apHandStones[p+b]))
+
+                   || (!CStoneHandler::CheckShape(m_apHandStones[a+p], m_apHandStones[p+b])
+                   &&  CStoneHandler::CheckColor(m_apHandStones[a+p], m_apHandStones[p+b])))
                 {
                     pMove = new CGameState::CMove();
                     pMove->m_pStone = m_apHandStones[a+p];
-                    pMove->m_Mode = MODE_PLACE;
-                    pMove->m_FieldIndex = i;
+                    pMove->m_Mode = MOVE_PLACE;
+                    pMove->m_FieldIndex = 0;
                     pMove->m_Player = player;
-                    printf("asdadasdasdasd: %d, %d", player, a+p);
-                    possibleMoves->push_back(pMove);
+                    pMoveContainer->m_lpMoves.push_back(pMove);
+
+                    pMove = new CGameState::CMove();
+                    pMove->m_pStone = m_apHandStones[b+p];
+                    pMove->m_Mode = MOVE_PLACE;
+                    pMove->m_FieldIndex = 1;
+                    pMove->m_Player = player;
+                    pMoveContainer->m_lpMoves.push_back(pMove);
+
+                    return pMoveContainer;
                 }
             }
+        }
+    }
+    else
+    {
+         pMoveContainer->m_MoveType = MOVE_PLACE;
+        for(int a = 0; a < 6; ++a)
+        {
+            if(m_apHandStones[a+p] != 0)
+                for(int i = 0; i < 256; ++i)
+                {
+                    if(m_pFieldHandler->CanPlace( i, m_apHandStones[a+p]) > 0)
+                    {
+                        pMove = new CGameState::CMove();
+                        pMove->m_pStone = m_apHandStones[a+p];
+                        pMove->m_Mode = MOVE_PLACE;
+                        pMove->m_FieldIndex = i;
+                        pMove->m_Player = player;
+                        printf("asdadasdasdasd: %d, %d", player, a+p);
+                        pMoveContainer->m_lpMoves.push_back(pMove);
+
+                    }
+                }
+        }
     }
     //TODO: do exchange stuff
 
-    return possibleMoves;
+    return pMoveContainer;
 }
 
 

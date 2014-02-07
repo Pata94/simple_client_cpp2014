@@ -278,7 +278,7 @@ int CGameHandler::SendMove(CGameState::CMoveContainer *pMoves)
     CStringBuffer buf(pMoves->m_lpMoves.size(), 512);
     buf.append("<room roomId=\"");
     buf.append(m_pRoomID);
-    if(pMoves->m_MoveType == MODE_PLACE)
+    if(pMoves->m_MoveType == MOVE_PLACE)
     {
         buf.append("\"><data class=\"laymove\">");
         for(int i = 0; i < pMoves->m_lpMoves.size(); ++i)
@@ -307,7 +307,7 @@ int CGameHandler::SendMove(CGameState::CMoveContainer *pMoves)
         }
 
     }
-    else if(pMoves->m_MoveType == MODE_EXCHANGE)
+    else if(pMoves->m_MoveType == MOVE_EXCHANGE)
     {
         buf.append("\"><data class=\"exchangemove\">");
          for(int i = 0; i < pMoves->m_lpMoves.size(); ++i)

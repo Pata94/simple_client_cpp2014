@@ -22,23 +22,36 @@ void CBaseLogic::OnRequestAction(CGameState::CMoveContainer *pMoves)
 {
     printf("MoveRequest %d \n", m_Player);
     {
-        vector<CGameState::CMove*> *possibleMoves=m_pGameState->GetPossibleMoves(m_Player);
-        if(possibleMoves->size()==0)
+        CGameState::CMoveContainer *possibleMoves=m_pGameState->GetPossibleMoves(m_Player);
+        if(possibleMoves->m_lpMoves.size()==0)
         {
             printf("No possible Moves");
              CGameState::CMove *pMove = new CGameState::CMove();
             pMove->m_pStone = m_pGameState->m_apHandStones[m_Player*6];
-            pMove->m_Mode = CGameHandler::MODE_EXCHANGE;
+            pMove->m_Mode = MOVE_EXCHANGE;
            // pMove->m_FieldIndex = i;
-            pMoves->m_MoveType = CGameHandler::MODE_EXCHANGE;
+            pMoves->m_MoveType = MOVE_EXCHANGE;
          pMoves->m_lpMoves.push_back(pMove);
             return;
         }
-        srand (time(NULL));
-        CGameState::CMove* tempMove = (*possibleMoves)[(rand()%possibleMoves->size())];
-        printf("\n Zug:  %d", m_pGameState->DoMove(tempMove));
-        pMoves->m_MoveType = CGameHandler::MODE_PLACE;
-         pMoves->m_lpMoves.push_back(tempMove);
+        if(possibleMoves->m_MoveType == MOVE_PLACE_FIRST)
+        {
+            for(int i = 0; i < possibleMoves->m_lpMoves.size(); ++i)
+            {
+                  pMoves->m_MoveType = MOVE_PLACE;
+                pMoves->m_lpMoves.push_back(possibleMoves->m_lpMoves[i]);
+            }
+        }
+        else
+        {
+
+
+            srand (time(NULL));
+            CGameState::CMove* tempMove = (possibleMoves->m_lpMoves)[(rand()%possibleMoves->m_lpMoves.size())];
+            printf("\n Zug:  %d", m_pGameState->DoMove(tempMove));
+            pMoves->m_MoveType = MOVE_PLACE;
+             pMoves->m_lpMoves.push_back(tempMove);
+        }
     }
 }
 void CBaseLogic::OnGameStateUpdate(CGameState *pNewState)

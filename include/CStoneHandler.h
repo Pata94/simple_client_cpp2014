@@ -58,6 +58,9 @@ class CStoneHandler
         static bool IsEmpty(flags FieldFlags);*/
         static bool CheckColor(CField *pField, CStone *pStone);
         static bool CheckShape(CField *pField, CStone *pStone);
+
+         static bool CheckColor(CStone *pStoneA, CStone *pStoneB);
+        static bool CheckShape(CStone *pStoneA, CStone *pStoneB);
     protected:
     private:
 };

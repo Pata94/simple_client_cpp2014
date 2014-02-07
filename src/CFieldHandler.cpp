@@ -9,7 +9,10 @@ CFieldHandler::CFieldHandler()
         m_aField[i].m_pStone = 0;
         m_aField[i].m_Flags = 2^16-1;
     }
-    m_Moves = 1;
+    m_Moves = 0; // Needed?
+    m_IsFirstMove = true;
+
+
 }
 
 CFieldHandler::~CFieldHandler()
@@ -25,6 +28,20 @@ bool CFieldHandler::IsFree(int index)
     return m_aField[index].m_pStone == 0;
 }
 
+bool CFieldHandler::UpdateFirstMove()
+{
+
+    m_IsFirstMove = true;
+    for(int i = 0; i < FIELD_WIDTH*FIELD_HEIGHT; ++i)
+    {
+         if(!IsFree(i))
+         {
+             m_IsFirstMove = false;
+            break;
+        }
+    }
+    return m_IsFirstMove;
+}
 int CFieldHandler::CanPlace(int index, CStoneHandler::CStone *pStone)
 {
 
@@ -127,13 +144,14 @@ int CFieldHandler::CanPlace(int index, CStoneHandler::CStone *pStone)
     }
 
 
-    if(m_Moves > 0 && gotNeighbours)
+    if(!m_IsFirstMove && gotNeighbours)
         return points;
-    else if(m_Moves == 0) // we can lay wherever we want
+    else if(m_IsFirstMove) // we can lay wherever we want
         return points;
     else
         return 0;
    }
+
 
 int CFieldHandler::PlaceStone(int index, CStoneHandler::CStone *pStone)
 {

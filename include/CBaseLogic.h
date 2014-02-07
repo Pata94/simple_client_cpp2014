@@ -4,6 +4,8 @@ made for Software-Challenge 2013 visit http://www.informatik.uni-kiel.de/softwar
 #define CBASELOGIC_H
 
 #include "CGameState.h"
+
+#include "config.h"
 class CBaseLogic
 {
     public:

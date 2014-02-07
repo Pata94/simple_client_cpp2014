@@ -10,25 +10,7 @@ made for Software-Challenge 2013 visit http://www.informatik.uni-kiel.de/softwar
 #include "CGameState.h"
 class CGameHandler
 {public:
-    enum{
-        STATE_REQUESTING,
-        STATE_JOINING,
-        STATE_JOINED,
-        STATE_WAITING,
-        STATE_MOVING,
-        STATE_END,
-        STATE_LEAVE,
-        STATE_ERROR,
 
-        POSITION_BAG = 0,
-        POSITION_OPEN,
-        POSITION_RED,
-        POSITION_BLUE,
-        POSITION_FIELD,
-
-        MODE_PLACE=0,
-            MODE_EXCHANGE=1
-    };
 
         CGameHandler(class CNetwork *pCon, const char *pReservation);
         virtual ~CGameHandler();

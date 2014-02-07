@@ -5,6 +5,7 @@ made for Software-Challenge 2013 visit http://www.informatik.uni-kiel.de/softwar
 
 #include <vector>
 #include <CFieldHandler.h>
+#include "config.h"
 class CGameState
 {
     public:
@@ -12,28 +13,6 @@ class CGameState
         static const char* m_aShapeNames[6];
     enum{
 
-        SHAPE_NONE = -1,
-        SHAPE_ACORN, // Eichel
-        SHAPE_BELL,
-        SHAPE_CLUBS,// Kreuz
-        SHAPE_DIAMOND, // Karo
-        SHAPE_HEART, // Herz
-        SHAPE_SPADES, // Pik
-        NUM_SHAPES,
-
-        COLOR_NONE = -1,
-        COLOR_BLUE,
-        COLOR_GREEN,
-        COLOR_MAGENTA,
-        COLOR_ORANGE,
-        COLOR_VIOLET,
-        COLOR_YELLOW,
-        NUM_COLORS,
-
-        MODE_PLACE=0,
-            MODE_EXCHANGE=1,
-
-        ERROR_UNSPECIFIC = 0
 
     };
 int m_Moves;
@@ -81,7 +60,7 @@ int m_Moves;
         char *DataToString();
 
         int DoMove(CMove *move);
-        std::vector<CMove*> *GetPossibleMoves(int player);
+        CMoveContainer *GetPossibleMoves(int player);
 
 
         /*static inline int GetColor(int Index)

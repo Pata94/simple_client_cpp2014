@@ -138,14 +138,28 @@ flags CStoneHandler::CheckColor(flags a, flags b)
 
 bool CStoneHandler::CheckShape(CField *pField, CStone *pStone)
 {
-    if(pField->m_pStone != 0 && pStone != 0)
+    if(pField != 0 && pField->m_pStone != 0 && pStone != 0)
         return pField->m_pStone->m_Shape == pStone->m_Shape;
     return false;
 }
 
 bool CStoneHandler::CheckColor(CField *pField, CStone *pStone)
 {
-    if(pField->m_pStone != 0 && pStone != 0)
+    if(pField != 0 && pField->m_pStone != 0 && pStone != 0)
         return pField->m_pStone->m_Color == pStone->m_Color;
+    return false;
+}
+
+bool CStoneHandler::CheckShape(CStone *pStoneA, CStone *pStoneB)
+{
+    if(pStoneA != 0 && pStoneB != 0)
+        return pStoneA->m_Shape == pStoneB->m_Shape;
+    return false;
+}
+
+bool CStoneHandler::CheckColor(CStone *pStoneA, CStone *pStoneB)
+{
+     if(pStoneA != 0 && pStoneB != 0)
+        return pStoneA->m_Color == pStoneB->m_Color;
     return false;
 }
