@@ -3,7 +3,7 @@ made for Software-Challenge 2013 visit http://www.informatik.uni-kiel.de/softwar
 #ifndef CBASELOGIC_H
 #define CBASELOGIC_H
 
-#include "CGameState.h"
+#include <CGameState.h>
 class CBaseLogic
 {
     public:
@@ -11,10 +11,18 @@ class CBaseLogic
         virtual ~CBaseLogic();
         void OnRequestAction(CGameState::CMove *aMoves[3]);
         void OnGameStateUpdate(CGameState *pNewState);
+        struct Points //besseren Namen finden
+        {
+            int points;
+            CGameState::CMove* ppmove;
+            bool operator<(Points rhs);
+        };
+        bool comparePoints(const Points &a, const Points &b);
+        int getPoints(CGameState::CMove* ppMove);
     protected:
     private:
         int m_Player;
-       class CGameState *m_pGameState;
+        class CGameState *m_pGameState;
 };
 
 #endif // CBASELOGIC_H
