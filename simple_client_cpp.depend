@@ -144,3 +144,22 @@
 	"CGameState.h"
 	"CGameHandler.h"
 
+1389107918 source:/root/git/simple_client/src/CBaseLogic.cpp
+	"CBaseLogic.h"
+	<stdio.h>
+	<vector>
+	<time.h>
+	<stdlib.h>
+
+1387957883 /root/git/simple_client/include/CBaseLogic.h
+	"CGameState.h"
+
+1390643116 /root/git/simple_client/include/CGameState.h
+	<vector>
+	<CFieldHandler.h>
+
+1390643116 /root/git/simple_client/include/CFieldHandler.h
+	"CStoneHandler.h"
+
+1390642979 /root/git/simple_client/include/CStoneHandler.h
+
