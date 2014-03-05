@@ -9,7 +9,7 @@ class CFieldHandler
         CFieldHandler();
         virtual ~CFieldHandler();
 
-
+        int getPoints(CGameState::CMove* ppMove);
 
         enum{
             FIELD_WIDTH = 15,

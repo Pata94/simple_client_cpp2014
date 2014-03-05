@@ -11,6 +11,12 @@ class CBaseLogic
         virtual ~CBaseLogic();
         void OnRequestAction(CGameState::CMove *aMoves[3]);
         void OnGameStateUpdate(CGameState *pNewState);
+        struct Points
+        {
+            int points;
+            CGameState::CMove *ppMove;
+        };
+        bool comparePoints(const CBaseLogic::Points &a, const CBaseLogic::Points &b);
     protected:
     private:
         int m_Player;
