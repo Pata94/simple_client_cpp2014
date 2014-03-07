@@ -29,7 +29,7 @@ void CBaseLogic::OnRequestAction(CGameState::CMove *aMoves[3])
     for(CGameState::CMove *pmove : possibleMoves) //Goes throug every move from possible move range-based for loop
     {
         a.points = CFieldHandler::getPoints(pmove);
-        a.ppmove = pmove;
+        a.ppMove = pmove;
         pointMoves.push_back(a);
     }
     //sort function needs to be properly implemented

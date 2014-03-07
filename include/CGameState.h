@@ -4,7 +4,7 @@ made for Software-Challenge 2013 visit http://www.informatik.uni-kiel.de/softwar
 #define CGAMESTATE_H
 
 #include <vector>
-#include <CFieldHandler.h>
+
 class CGameState
 {
     public:
@@ -71,7 +71,7 @@ class CGameState
 
         int m_aHandStones[12];
         int m_aNumHandStones[2];
-        CField m_aField[CFieldHandler::FIELD_WIDTH*CFieldHandler::FIELD_HEIGHT];
+        CField m_aField[16*16];
         int m_aPoints[2];
         int m_CurrentPlayer;
         int m_Turn;

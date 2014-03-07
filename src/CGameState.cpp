@@ -186,7 +186,7 @@ void CGameState::UpdateMode(int FieldIndex, int NextFieldIndex, int modeshape, i
             m_aField[NextFieldIndex].m_Mode |= modecolor;
         }
         else
-        {
+        {
             //ERROR
         }
 }

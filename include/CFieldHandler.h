@@ -2,6 +2,7 @@
 #define CFIELDHANDLER_H
 
 #include "CStoneHandler.h"
+#include "CGameState.h"
 
 class CFieldHandler
 {
@@ -9,7 +10,6 @@ class CFieldHandler
         CFieldHandler();
         virtual ~CFieldHandler();
 
-        int getPoints(CGameState::CMove* ppMove);
 
         enum{
             FIELD_WIDTH = 15,
