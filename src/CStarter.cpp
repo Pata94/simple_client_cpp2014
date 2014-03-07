@@ -10,7 +10,7 @@ using namespace std;
 int main(int argc, char* argv[])
 {
     CStarter temp;
-    return temp.OnExecute(argc, argv);;
+    return temp.OnExecute(argc, argv);
 }
 
 CStarter::CStarter()
@@ -36,6 +36,7 @@ CStarter::~CStarter()
 int CStarter::OnExecute(int argc, char* argv[])
 {
     m_pNetwork = new CNetwork();
+    m_pHandler = 0;
     char *pHost="127.0.0.1";
     char *pRes=0;
     int Port=13050;

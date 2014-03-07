@@ -3,13 +3,16 @@ made for Software-Challenge 2013 visit http://www.informatik.uni-kiel.de/softwar
 #ifndef CBASELOGIC_H
 #define CBASELOGIC_H
 
-#include <CGameState.h>
+
+#include "CGameState.h"
+
+#include "config.h"
 class CBaseLogic
 {
     public:
         CBaseLogic(int Player);
         virtual ~CBaseLogic();
-        void OnRequestAction(CGameState::CMove *aMoves[3]);
+        void OnRequestAction(CGameState::CMoveContainer *pMoves);
         void OnGameStateUpdate(CGameState *pNewState);
         struct Points
         {

@@ -4,6 +4,8 @@
 #include "CStoneHandler.h"
 #include "CGameState.h"
 
+#include "config.h"
+
 class CFieldHandler
 {
     public:
@@ -12,28 +14,15 @@ class CFieldHandler
 
         int getPoints(CGameState::CMove* ppMove);
 
-        enum{
-            FIELD_WIDTH = 15,
-            FIELD_HEIGHT = 15,
 
-            FIELDINDEX_HIDDEN=-4,
-            FIELDINDEX_OPEN,
-            FIELDINDEX_HAND_RED,
-            FIELDINDEX_HAND_BLUE,
-
-            MODE_COLOR= 1,
-            MODE_SHAPE = 2,
-
-            MODE_PLACE=0,
-            MODE_EXCHANGE=1,
-
-            ERROR_NONE = 0,
-            ERROR_UNSPECIFIC,
-        };
-        bool CanPlace(int index, CStoneHandler::flags Stone);
-        int PlaceStone(int index, CStoneHandler::flags Stone);
+        int CanPlace(int index, CStoneHandler::CStone* pStone);
+        int PlaceStone(int index, CStoneHandler::CStone* pStone);
+        bool UpdateFirstMove();
+        bool IsFree(int index);
+         CStoneHandler::CField m_aField[FIELD_WIDTH*FIELD_HEIGHT];
     protected:
-        CStoneHandler::flags m_aField[FIELD_WIDTH*FIELD_HEIGHT];
+        bool m_IsFirstMove;
+        int m_Moves;
     private:
 };
 

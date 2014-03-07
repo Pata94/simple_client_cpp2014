@@ -1,6 +1,7 @@
 /*(c)2013 by Patrick Rathje visit https://github.com/Pata94 and ReadMe for more information
 made for Software-Challenge 2013 visit http://www.informatik.uni-kiel.de/software-challenge/  for more information*/
 #include "CGameHandler.h"
+#include "CGameState.h"
 #include "rapidxml.hpp"
 #include <string.h>
 #include <stdio.h>
@@ -92,6 +93,7 @@ int CGameHandler::HandleGame()
                 break;
             }
 
+
             doc.parse<0>(pChr);
             xml_node<> *pNode=0;
             for(pNode = doc.first_node(); pNode!=0 && m_State != STATE_ERROR && m_State != STATE_END; pNode=pNode->next_sibling())
@@ -109,6 +111,7 @@ int CGameHandler::HandleGame()
 
 int CGameHandler::OnMsg(xml_node<> *pNode)
 {
+
     char *pName=pNode->name();
     if(strcmp(pName, "room")==0)
     {
@@ -119,18 +122,19 @@ int CGameHandler::OnMsg(xml_node<> *pNode)
             {
                 if(strcmp(pName, "memento")==0)
                 {
+
                     m_pLogic->OnGameStateUpdate(GetStateFromXML(pNode->first_node("data")->first_node("state")));
                 }
                 else if(strcmp(pName, "sc.framework.plugins.protocol.MoveRequest")==0)
                 {
-                    CGameState::CMove *tempMove= (CGameState::CMove *) malloc(sizeof(CGameState::CMove));
-                    m_pLogic->OnRequestAction(tempMove);
-                    SendMove(tempMove);
+                    CGameState::CMoveContainer pMoves;
+                    m_pLogic->OnRequestAction(&pMoves);
+                    SendMove(&pMoves);
                 }
             }
             else if(strcmp(pName, "welcome")==0)
             {
-                int player = strcmp("RED", pNode->first_node("data")->first_attribute("color")->value())==0? 0: 1;
+                int player = strcmp("red", pNode->first_node("data")->first_attribute("color")->value())==0? 0: 1;
                 m_pLogic = new CBaseLogic(player);
             }
         }
@@ -155,148 +159,177 @@ return 0;
 CGameState *CGameHandler::GetStateFromXML(xml_node<> *pNode)
 {
     CGameState *tempState = new CGameState();
-    tempState->m_CurrentPlayer = strcmp(pNode->first_attribute("current")->value(),"RED")==0? 0 : 1;
+    tempState->m_CurrentPlayer = strcasecmp(pNode->first_attribute("current")->value(),"red")==0? 0 : 1;
     tempState->m_Turn = atoi(pNode->first_attribute("turn")->value());
-    tempState->m_aPoints[0] = atoi(pNode->first_node("red")->first_attribute("points")->value());
-    xml_node<> *tempNode = pNode->first_node("red")->first_node("stone");
+    tempState->m_NumBagStones = atoi(pNode->first_attribute("stonesInBag")->value());
+    xml_node<> *tempNode = pNode->first_node("nextStones")->first_node("stone");
     int index = 0;
     while(tempNode != 0)
     {
         int shape = CGameState::ShapeToIndex(tempNode->first_attribute("shape")->value());
         int color = CGameState::ColorToIndex(tempNode->first_attribute("color")->value());
+        int identifier = atoi(tempNode->first_attribute("identifier")->value());
         if(shape != -1 && color != -1)
         {
-            tempState->m_aStones[index].m_Shape = shape;
-            tempState->m_aStones[index++].m_Color = color;
-            ++tempState->m_aNumStones[0];
+            tempState->m_apOpenStones[index] = 0;
+            tempState->m_apOpenStones[index] = new CStoneHandler::CStone();
+            tempState->m_apOpenStones[index]->m_Color = color;
+            tempState->m_apOpenStones[index]->m_Shape = shape;
+            tempState->m_apOpenStones[index]->m_Position = POSITION_OPEN;
+            tempState->m_apOpenStones[index]->m_Identifier = identifier;
+
         }
+        else
+        printf("ERROR 0");
+        ++index;
         tempNode = tempNode->next_sibling("stone");
     }
+    for(int i = index; i < 12; ++i)
+        tempState->m_apOpenStones[i] = 0; //set all other stones to null
+
+    tempState->m_aPoints[0] = atoi(pNode->first_node("red")->first_attribute("points")->value());
+    tempNode = pNode->first_node("red")->first_node("stone");
+    index = 0;
+    while(tempNode != 0)
+    {
+        int shape = CGameState::ShapeToIndex(tempNode->first_attribute("shape")->value());
+        int color = CGameState::ColorToIndex(tempNode->first_attribute("color")->value());
+        int identifier = atoi(tempNode->first_attribute("identifier")->value());
+        if(shape != -1 && color != -1)
+        {
+            tempState->m_apHandStones[index] = 0;
+            tempState->m_apHandStones[index] = new CStoneHandler::CStone();
+            tempState->m_apHandStones[index]->m_Color = color;
+            tempState->m_apHandStones[index]->m_Shape = shape;
+            tempState->m_apHandStones[index]->m_Position = POSITION_RED;
+            tempState->m_apHandStones[index]->m_Identifier = identifier;
+
+        }
+        else
+            printf("ERROR 1");
+        ++index;
+        tempNode = tempNode->next_sibling("stone");
+    }
+     for(int i = index; i < 6; ++i)
+            tempState->m_apHandStones[i] = 0;
 
     tempState->m_aPoints[1] = atoi(pNode->first_node("blue")->first_attribute("points")->value());
-    tempNode = pNode->first_node("blue")->first_node("cards")->first_node("stone");
-    index = 0;
+    tempNode = pNode->first_node("blue")->first_node("stone");
+    index = 6;
     while(tempNode != 0)
     {
         int shape = CGameState::ShapeToIndex(tempNode->first_attribute("shape")->value());
         int color = CGameState::ColorToIndex(tempNode->first_attribute("color")->value());
+        int identifier = atoi(tempNode->first_attribute("identifier")->value());
         if(shape != -1 && color != -1)
         {
-            tempState->m_aStones[index+6].m_Shape = shape;
-            tempState->m_aStones[index+6].m_Color = color;
-            ++index;
-            ++tempState->m_aNumStones[1];
+            tempState->m_apHandStones[index] = 0;
+            tempState->m_apHandStones[index] = new CStoneHandler::CStone();
+            tempState->m_apHandStones[index]->m_Color = color;
+            tempState->m_apHandStones[index]->m_Shape = shape;
+            tempState->m_apHandStones[index]->m_Position = POSITION_BLUE;
+            tempState->m_apHandStones[index]->m_Identifier = identifier;
+
         }
+        else
+            printf("ERROR 2");
+        ++index;
         tempNode = tempNode->next_sibling("stone");
     }
-    tempNode = pNode->first_node("nextStones")->first_node("stone");
-    index = 0;
-    while(tempNode != 0)
-    {
-        int shape = CGameState::ShapeToIndex(tempNode->first_attribute("shape")->value());
-        int color = CGameState::ColorToIndex(tempNode->first_attribute("color")->value());
-         if(shape != -1 && color != -1)
-        {
-            tempState->m_aOpenStones[index].m_Shape = shape;
-            tempState->m_aOpenStones[index++].m_Color = color;
-            tempState->m_NumOpenStones++; //TODO: Set this to zero first
-        }
-        tempNode = tempNode->next_sibling("stone");
-    }
+     for(int i = index; i < 12; ++i)
+            tempState->m_apHandStones[i] = 0;
 
 
     tempNode = pNode->first_node("board")->first_node("field");
-    index = 0;
 
     while(tempNode != 0)
     {
-        int x=atoi(tempNode->first_attribute("posX")->value());
-        int y=atoi(tempNode->first_attribute("posY")->value());
-        int shape= CGameState::SHAPE_NONE;
-        int color=  CGameState::COLOR_NONE;
+        int x = atoi(tempNode->first_attribute("posX")->value());
+        int y = atoi(tempNode->first_attribute("posY")->value());
         if(tempNode->first_node("stone"))
         {
-            shape = CGameState::ShapeToIndex(tempNode->first_node("stone")->first_attribute("shape")->value());
-            color = CGameState::ColorToIndex(tempNode->first_node("stone")->first_attribute("color")->value());
-        }
-        tempState->m_aFields[y*CGameState::FIELD_WIDTH+x].m_Shape = shape;
-        tempState->m_aFields[y*CGameState::FIELD_WIDTH+x].m_Color = color;
-
-
-         /*   index  = CGameState::SymbolToIndex(tempNode->first_attribute("symbol")->value());
-        else
-            index = CGameState::SymbolToIndex(tempNode->first_attribute("type")->value());
-        if(index > -1)
-        {
-            if(tempNode->first_node("pirates")->first_node("pirate"))
+            tempNode = tempNode->first_node("stone");
+            int shape = CGameState::ShapeToIndex(tempNode->first_attribute("shape")->value());
+            int color = CGameState::ColorToIndex(tempNode->first_attribute("color")->value());
+            int identifier = atoi(tempNode->first_attribute("identifier")->value());
+            if(shape != -1 && color != -1)
             {
-
-
-                tempNode = tempNode->first_node("pirates")->first_node("pirate");
-                int a = 0;
-                while(1)
-                {
-                   if(strcmp(tempNode->first_attribute("owner")->value(),"RED")==0)
-                        ++tempState->m_aField[i].m_NumPirates[0];
-                    else
-                        ++tempState->m_aField[i].m_NumPirates[1];
-                    if(tempNode->next_sibling("pirate") != 0)
-                        tempNode = tempNode->next_sibling("pirate");
-                    else
-                        break;
-                }
-                tempNode = tempNode->parent()->parent();
-            }
-
-
-            tempState->m_aField[i].m_Symbol=index;
-            ++i;
-        }*/
-
-        tempNode = tempNode->next_sibling("field");
-    }
-    tempState->DataToString();
-    return tempState;
-}
-int CGameHandler::SendMoves(CGameState::CMove *ppMoves[])
-{
-
-    CStringBuffer buf(2, 512);
-    buf.append("<room roomId=\"");
-    buf.append(m_pRoomID);
-    buf.append("\"><data class=\"moveContainer\">");
-    char *moveNames[] ={"<firstMove", "<secondMove", "<thirdMove"};
-    char *symbolNames[] ={"BOTTLE", "DAGGER", "HAT", "KEY", "PISTOL","SKULL"};
-    int curMove=0;
-    for(int i = 0; i < 3; ++i)
-    {
-        if(ppMoves[i] && ppMoves[i]->m_MoveIndex> -2)
-        {
-          //  printf("%d" ppMoves);
-            buf.append(moveNames[curMove++]);
-            buf.append(" class=\"");
-            if(ppMoves[i]->m_MoveIndex==-1)
-            {
-                buf.append("backwardMove\" fieldIndex=\"");
-                char aBuf[16];
-                sprintf(aBuf, "%d", ppMoves[i]->m_PirateIndex);
-                buf.append(aBuf);
-                buf.append("\"/>");
+                CStoneHandler::CField *pField = &tempState->m_pFieldHandler->m_aField[x+y*16]; //TODO 15 !
+                pField->m_pStone = new CStoneHandler::CStone();
+                pField->m_pStone->m_Color = color;
+                pField->m_pStone->m_Shape = shape;
+                pField->m_pStone->m_Identifier = identifier;
+              //  printf("%d", identifier);
+                pField->m_pStone->m_Position = POSITION_FIELD;
             }
             else
-            {
-                buf.append("forwardMove\" fieldIndex=\"");
-                char aBuf[16];
-                sprintf(aBuf, "%d", ppMoves[i]->m_PirateIndex);
-                buf.append(aBuf);
-                buf.append("\" symbol=\"");
-                buf.append(symbolNames[ppMoves[i]->m_MoveIndex]);
-                buf.append("\"/>");
-            }
+                printf("ERROR 3");
+            tempNode = tempNode->parent();
+        }
+        tempNode = tempNode->next_sibling("field");
+    }
+
+   // tempState->DataToString();
+    return tempState;
+}
+int CGameHandler::SendMove(CGameState::CMoveContainer *pMoves)
+{
+
+    CStringBuffer buf(pMoves->m_lpMoves.size(), 512);
+    buf.append("<room roomId=\"");
+    buf.append(m_pRoomID);
+    if(pMoves->m_MoveType == MOVE_PLACE)
+    {
+        buf.append("\"><data class=\"laymove\">");
+        for(int i = 0; i < pMoves->m_lpMoves.size(); ++i)
+        {
+            if(!pMoves->m_lpMoves[i]->m_pStone)
+                continue;
+            int x = pMoves->m_lpMoves[i]->m_FieldIndex%16;
+            int y = (pMoves->m_lpMoves[i]->m_FieldIndex-x)/16;
+            buf.append("<stoneToField>");
+             buf.append("<stone color=\"");
+             buf.append(CGameState::m_aColorNames[pMoves->m_lpMoves[i]->m_pStone->m_Color]);
+             buf.append("\" shape=\"");
+             buf.append(CGameState::m_aShapeNames[pMoves->m_lpMoves[i]->m_pStone->m_Shape]);
+             buf.append("\" identifier=\"");
+
+            char aBuf[16];
+            sprintf(aBuf, "%d", pMoves->m_lpMoves[i]->m_pStone->m_Identifier);
+            buf.append(aBuf);
+            buf.append("\"/><field posX=\"");
+            sprintf(aBuf, "%d", x);
+            buf.append(aBuf);
+            buf.append("\" posY=\"");
+            sprintf(aBuf, "%d", y);
+            buf.append(aBuf);
+            buf.append("\"/></stoneToField>");
+        }
+
+    }
+    else if(pMoves->m_MoveType == MOVE_EXCHANGE)
+    {
+        buf.append("\"><data class=\"exchangemove\">");
+         for(int i = 0; i < pMoves->m_lpMoves.size(); ++i)
+        {
+            buf.append("<select color=\"");
+            buf.append(CGameState::m_aColorNames[pMoves->m_lpMoves[i]->m_pStone->m_Color]);
+            buf.append("\" shape=\"");
+            buf.append(CGameState::m_aShapeNames[pMoves->m_lpMoves[i]->m_pStone->m_Shape]);
+            buf.append("\" identifier=\"");
+             char aBuf[16];
+            sprintf(aBuf, "%d", pMoves->m_lpMoves[i]->m_pStone->m_Identifier);
+            buf.append(aBuf);
+            buf.append("\"/>");
         }
     }
+
+
+
     buf.append("</data></room>");
-    printf("Moves: %s \n", buf.toString());
+
+
+    printf("Moves: %d, %s \n",pMoves->m_lpMoves.size(),  buf.toString());
     m_pConnection->Send(buf.toString());
-    return curMove;
+    return 0;
 }

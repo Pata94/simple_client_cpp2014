@@ -5,9 +5,9 @@
 class CStoneHandler
 {
     public:
-        typedef unsigned short flags;
+        //typedef unsigned short flags;
 
-        enum{
+        /*enum{
             FLAG_EMPTY = 1, //used by field
             FLAG_BAG = 2,
             FLAG_PLACED = 4,
@@ -25,9 +25,23 @@ class CStoneHandler
             FLAG_COLOR_ORANGE = 8192,
             FLAG_COLOR_VIOLET = 16384,
             FLAG_COLOR_YELLOW = 32768
+        }; */
+
+        struct CStone{
+            unsigned char m_Identifier;
+            unsigned char m_Color;
+            unsigned char m_Shape;
+            unsigned char m_Position;
+            unsigned int m_Index;
         };
 
-        static bool IsStone(flags StoneFlags, flags Flags);
+        struct CField{
+            unsigned char m_Index;
+            unsigned short m_Flags;
+            CStone *m_pStone;
+        };
+
+        /*static bool IsStone(flags StoneFlags, flags Flags);
         static flags DisableColor(flags StoneFlags, int Color);
         static flags DisableShape(flags StoneFlags, int Shape);
         static flags Disable(flags StoneFlags, flags Flags);
@@ -41,7 +55,12 @@ class CStoneHandler
         static int GetFieldIndex(flags StoneFlags);
         static flags GetFullStone();
         static flags SetEmpty(flags Flags, bool Empty);
-        static bool IsEmpty(flags FieldFlags);
+        static bool IsEmpty(flags FieldFlags);*/
+        static bool CheckColor(CField *pField, CStone *pStone);
+        static bool CheckShape(CField *pField, CStone *pStone);
+
+         static bool CheckColor(CStone *pStoneA, CStone *pStoneB);
+        static bool CheckShape(CStone *pStoneA, CStone *pStoneB);
     protected:
     private:
 };
