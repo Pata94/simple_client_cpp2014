@@ -45,19 +45,64 @@ bool CFieldHandler::UpdateFirstMove()
 int CFieldHandler::CanPlace(int index, CStoneHandler::CStone *pStone)
 {
 
+    /*int x = index%FIELD_WIDTH;
+    int y = (index-x)/FIELD_WIDTH;
+    int temp = 0;
+    int points = 0;
     if(!IsFree(index))
         return 0;   //field not empty
 
+    int dirx = 0;
+    int diry = 0;
+    if(x > 0)
+    {
+        if(!IsFree(index-1))
+            dirx = -1;
+    }
+
+    if(x < FIELD_WIDTH-1)
+    {
+        if(!IsFree(index+1))
+        {
+            if(dirx != 0) //dont allow chaining
+                return 0;
+            dirx = 1;
+        }
+    }
+
+    if(y > 0)
+    {
+        if(!IsFree(index-FIELD_WIDTH))
+            diry = -FIELD_WIDTH;
+    }
+
+    if(y < FIELD_HEIGHT-1)
+    {
+        if(!IsFree(index+FIELD_WIDTH))
+        {
+            if(diry != 0) //dont allow chaining
+                return 0;
+            diry = FIELD_WIDTH;
+        }
+    }
+
+
+    for(int i = index; i < (y+1)*FIELD_WIDTH; i += dirx)
+    {
+
+    }*/
+
     int x = index%FIELD_WIDTH;
     int y = (index-x)/FIELD_WIDTH;
-
-    index = 0; //TODO dont use index
-    int points = 1;
+    int temp = 0;
+    int points = 0;
+    if(!IsFree(index))
+        return 0;   //field not empty
     for(int i = x-1; i >= 0; --i)
     {
         if(IsFree(i+y*FIELD_WIDTH))
         {
-            index = i+1;
+            temp = i+1;
             break;
         }
     }
@@ -66,7 +111,7 @@ int CFieldHandler::CanPlace(int index, CStoneHandler::CStone *pStone)
     int num_shapes = 0;
     int num = 0;
     bool gotNeighbours = false;
-    for(int i = index; i < FIELD_WIDTH; ++i)
+    for(int i = temp; i < FIELD_WIDTH; ++i)
     {
 
         if(num >= 6) //bereits 6 steine gelegt
@@ -74,7 +119,7 @@ int CFieldHandler::CanPlace(int index, CStoneHandler::CStone *pStone)
         if(i == x)
             continue;
 
-      //  if(i-index >= 5)
+      //  if(i-temp >= 5)
         //   return 0;
 
         if(IsFree(i+y*FIELD_WIDTH))
@@ -87,14 +132,14 @@ int CFieldHandler::CanPlace(int index, CStoneHandler::CStone *pStone)
         if(CStoneHandler::CheckColor(&m_aField[i+y*FIELD_WIDTH], pStone))
             ++num_colors;
 
-        if(num_colors == 1 && (flags & (1<<pStone->m_Shape)))
+        if(num_colors == 0 && (flags & (1<<pStone->m_Shape)))
         {
             return 0;
         }
         else
             flags |= (1<<pStone->m_Shape);
 
-         if(num_shapes == 1 && (flags & (64<<pStone->m_Color)))
+         if(num_shapes == 0 && (flags & (64<<pStone->m_Color)))
         {
             return 0;
         }
@@ -114,13 +159,13 @@ int CFieldHandler::CanPlace(int index, CStoneHandler::CStone *pStone)
     }
 
 
-    index = 0;
+    temp = 0;
     flags = 0;
     for(int i = y-1; i >= 0; --i)
     {
         if(IsFree(x+i*FIELD_WIDTH))
         {
-            index = i+1;
+            temp = i+1;
             break;
         }
     }
@@ -129,7 +174,7 @@ int CFieldHandler::CanPlace(int index, CStoneHandler::CStone *pStone)
     num_shapes = 0;
     num = 0;
 
-    for(int i = index; i < FIELD_HEIGHT; ++i)
+    for(int i = temp; i < FIELD_HEIGHT; ++i)
     {
          if(num >= 6) //bereits 6 steine gelegt
             return 0;
@@ -137,7 +182,7 @@ int CFieldHandler::CanPlace(int index, CStoneHandler::CStone *pStone)
         if(i == y)
             continue;
 
-       // if(i-index >= 5) //bereits 6 steine gelegt
+       // if(i-temp >= 5) //bereits 6 steine gelegt
        //    return 0;
 
         if(IsFree(x+i*FIELD_WIDTH))
@@ -186,11 +231,98 @@ int CFieldHandler::CanPlace(int index, CStoneHandler::CStone *pStone)
    }
 
 
+
+int CFieldHandler::GetPoints(int index, CStoneHandler::CStone *pStone)
+{
+
+        int points = 0;
+        int blocks = 0;
+        int x = index%FIELD_WIDTH;
+        int y = index/FIELD_WIDTH;
+
+
+        for(int i = x-1; i>=0; i--)
+        {
+            if(!IsFree(i+y*FIELD_WIDTH))
+            {
+                points++;
+                blocks++;
+            }
+            else
+            {
+                break;
+            }
+        }
+
+        for(int i = x+1; i<FIELD_WIDTH; i++)
+        {
+            if(!IsFree(i+y*FIELD_WIDTH))
+            {
+                points++;
+                blocks++;
+            }
+            else
+            {
+                break;
+            }
+        }
+
+        if(blocks > 0)
+        {
+            points ++; //für den eigenen Stein
+            if(blocks = 5) //Sixpack
+            {
+                points +=6;
+            }
+        }
+        blocks = 0;
+
+        for(int i = y-1; i>=0; i--)
+        {
+            if(!IsFree(i*FIELD_WIDTH+x))
+            {
+                points++;
+                blocks++;
+            }
+            else
+            {
+                break;
+            }
+        }
+
+        for(int i = y+1; i<FIELD_HEIGHT; i++)
+        {
+            if(!IsFree(i*FIELD_WIDTH+x))
+            {
+                points++;
+                blocks++;
+            }
+            else
+            {
+                break;
+            }
+        }
+
+        if(blocks > 0)
+        {
+            points ++; //für den eigenen Stein
+            if(blocks = 5) //Sixpack
+            {
+                points +=6;
+            }
+        }
+
+        return points;
+}
+
+
 int CFieldHandler::PlaceStone(int index, CStoneHandler::CStone *pStone)
 {
 
+
     m_aField[index].m_pStone = pStone;
     ++m_Moves;
+}
   /*  if(!CanPlace(index, Stone))
         return ERROR_UNSPECIFIC;
     int x = index%FIELD_WIDTH;
@@ -371,4 +503,4 @@ int CFieldHandler::PlaceStone(int index, CStoneHandler::CStone *pStone)
     }
 
     return 0;*/
-}
+

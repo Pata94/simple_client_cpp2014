@@ -152,14 +152,14 @@ int CGameHandler::OnMsg(xml_node<> *pNode)
     else if(strcmp(pName, "left")==0)
         return STATE_END;
 
-return 0;
+    return 0;
 }
 
 
 CGameState *CGameHandler::GetStateFromXML(xml_node<> *pNode)
 {
     CGameState *tempState = new CGameState();
-    tempState->m_CurrentPlayer = strcasecmp(pNode->first_attribute("current")->value(),"red")==0? 0 : 1;
+    tempState->m_CurrentPlayer = strcmp(pNode->first_attribute("current")->value(),"red")==0? 0 : 1;
     tempState->m_Turn = atoi(pNode->first_attribute("turn")->value());
     tempState->m_NumBagStones = atoi(pNode->first_attribute("stonesInBag")->value());
     xml_node<> *tempNode = pNode->first_node("nextStones")->first_node("stone");

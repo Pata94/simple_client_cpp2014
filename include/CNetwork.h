@@ -3,7 +3,7 @@ made for Software-Challenge 2013 visit http://www.informatik.uni-kiel.de/softwar
 #ifndef CNetwork_H
 #define CNetwork_H
 
-#ifdef WIN32
+#ifdef _WIN32 || _WIN64
     #include <windows.h>
     #include <winsock2.h>
 #else

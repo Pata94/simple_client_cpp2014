@@ -1,6 +1,7 @@
 #ifndef CONFIG_H
 #define CONFIG_H
 
+#define WIN_32 1
 //SHAPES AND COLORS
 #define SHAPE_NONE  -1
 #define SHAPE_ACORN 0

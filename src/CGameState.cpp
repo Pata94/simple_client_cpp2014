@@ -10,8 +10,8 @@ made for Software-Challenge 2013 visit http://www.informatik.uni-kiel.de/softwar
 
 
 
-         const char*        CGameState::m_aColorNames[6] ={"BLUE", "GREEN", "MAGENTA", "ORANGE", "VIOLET", "YELLOW"};
-        const char*  CGameState::m_aShapeNames[6] ={"ACORN", "BELL", "CLUBS", "DIAMOND", "HEART", "SPADES"};
+const char*        CGameState::m_aColorNames[6] ={"BLUE", "GREEN", "MAGENTA", "ORANGE", "VIOLET", "YELLOW"};
+const char*  CGameState::m_aShapeNames[6] ={"ACORN", "BELL", "CLUBS", "DIAMOND", "HEART", "SPADES"};
 CGameState::CGameState()
 {
     m_pFieldHandler = new CFieldHandler();
@@ -219,22 +219,21 @@ int CGameState::getPoints(CGameState::CMove* ppMove)
 {
     if(ppMove == 0)
     {
-        printf("Nullpointer in function getPoints")
+        printf("Nullpointer in function getPoints");
         return -1;
     }
-    else if(ppMove->m_Mode == 1)
+    else if(ppMove->m_Mode == MOVE_EXCHANGE)
     {
-        return 0;
+        return 2; //TODO 1 or 2???
     }
-    else
+
+    if( m_pFieldHandler->GetPoints(ppMove->m_FieldIndex, ppMove->m_pStone) != m_pFieldHandler->CanPlace(ppMove->m_FieldIndex, ppMove->m_pStone))
     {
-        int points = 0;
-        int blocks = 0;
-        int x = ppMove->m_FieldIndex%FIELD_WIDTH;
-        int y = ppMove->m_FieldIndex/FIELD_WIDTH;
+            printf("get Points Difference, A: %d, B %d", m_pFieldHandler->GetPoints(ppMove->m_FieldIndex, ppMove->m_pStone), m_pFieldHandler->CanPlace(ppMove->m_FieldIndex, ppMove->m_pStone));
+    }
 
-
-
+    return m_pFieldHandler->CanPlace(ppMove->m_FieldIndex, ppMove->m_pStone);
+}
 
 
 
@@ -242,83 +241,6 @@ void CGameState::CopyGameState(CGameState *gameState)
 {
     if(!gameState)
     {
-
-        for(int i = x-1; i>=0; i--)
-        {
-            if(!CStoneHandler::IsEmpty(m_aField[i+y*FIELD_WIDTH]))
-            {
-                points++;
-                blocks++;
-            }
-            else
-            {
-                continue;
-            }
-        }
-
-        for(int i = x+1; i<FIELD_WIDTH; i++)
-        {
-            if(!CStoneHandler::IsEmpty(m_aField[i+y*FIELD_WIDTH]))
-            {
-                points++;
-                blocks++;
-            }
-            else
-            {
-                continue;
-            }
-        }
-
-        if(blocks > 0)
-        {
-            points ++; //für den eigenen Stein
-            if(blocks = 5) //Sixpack
-            {
-                points +=6;
-            }
-        }
-        blocks = 0;
-
-        for(int i = y-1; i>=0; i--)
-        {
-            if(!CStoneHandler::IsEmpty(m_aField[i*FIELD_WIDTH+x]))
-            {
-                points++;
-                blocks++;
-            }
-            else
-            {
-                continue;
-            }
-        }
-
-        for(int i = y+1; i<FIELD_HEIGHT; i++)
-        {
-            if(!CStoneHandler::IsEmpty(m_aField[i*FIELD_WIDTH+x]))
-            {
-                points++;
-                blocks++;
-            }
-            else
-            {
-                continue;
-            }
-        }
-
-        if(blocks > 0)
-        {
-            points ++; //für den eigenen Stein
-            if(blocks = 5) //Sixpack
-            {
-                points +=6;
-            }
-        }
-
-        return points;
-    }
-}
-
-
 
 
 

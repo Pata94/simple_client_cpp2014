@@ -14,7 +14,7 @@ class CBaseLogic
         virtual ~CBaseLogic();
         void OnRequestAction(CGameState::CMoveContainer *pMoves);
         void OnGameStateUpdate(CGameState *pNewState);
-        struct Points
+        struct CPoints
         {
             int points;
             CGameState::CMove *ppMove;
@@ -26,5 +26,5 @@ class CBaseLogic
         class CGameState *m_pGameState;
 };
 
-bool operator>(const CBaseLogic::Points &a, const CBaseLogic::Points &b) {return a.points > b.points;}
+inline bool operator>(const CBaseLogic::CPoints &a, const CBaseLogic::CPoints &b) {return a.points > b.points;};
 #endif // CBASELOGIC_H

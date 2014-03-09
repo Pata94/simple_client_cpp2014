@@ -24,8 +24,29 @@ void CBaseLogic::OnRequestAction(CGameState::CMoveContainer *pMoves)
 {
     printf("MoveRequest");
     CGameState::CMoveContainer *possibleMoves=m_pGameState->GetPossibleMoves(m_Player);
-    vector<Points> pointMoves;
-    Points a;
+
+      if(possibleMoves->m_MoveType == MOVE_PLACE_FIRST)
+        {
+            for(int i = 0; i < possibleMoves->m_lpMoves.size(); ++i)
+            {
+                  pMoves->m_MoveType = MOVE_PLACE;
+                pMoves->m_lpMoves.push_back(possibleMoves->m_lpMoves[i]);
+            }
+            return;
+        }
+     if(possibleMoves->m_lpMoves.size()==0)
+        {
+            printf("No possible Moves");
+             CGameState::CMove *pMove = new CGameState::CMove();
+            pMove->m_pStone = m_pGameState->m_apHandStones[m_Player*6];
+            pMove->m_Mode = MOVE_EXCHANGE;
+           // pMove->m_FieldIndex = i;
+            pMoves->m_MoveType = MOVE_EXCHANGE;
+         pMoves->m_lpMoves.push_back(pMove);
+            return;
+        }
+    vector<CPoints> pointMoves;
+    CPoints a;
     for(CGameState::CMove *pmove : possibleMoves->m_lpMoves) //Goes throug every move from possible move with a range-based for loop
     {
         a.points = m_pGameState->getPoints(pmove);
@@ -33,8 +54,13 @@ void CBaseLogic::OnRequestAction(CGameState::CMoveContainer *pMoves)
 
         pointMoves.push_back(a);
     }
-    std::sort(pointMoves.begin(), pointMoves.end(), std::greater<Points>());
-    m_pGameState->DoMove(pointMoves.front().ppMove);
+    std::sort(pointMoves.begin(), pointMoves.end(), std::greater<CPoints>());
+   // m_pGameState->DoMove();
+    CGameState::CMove *pTemp = new CGameState::CMove();
+    *pTemp = *(pointMoves.front().ppMove);
+    pMoves->m_lpMoves.push_back(pTemp);
+    pMoves->m_MoveType = MOVE_PLACE;
+    printf("Send Move");
     //Move muss jetzt nur noch ausgeführt werden
     //sort function needs to be properly implemented
     /*for(int i = 0; i <3; ++i)
