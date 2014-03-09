@@ -13,7 +13,6 @@ class CFieldHandler
 
 
 
-
         int CanPlace(int index, CStoneHandler::CStone* pStone);
         int PlaceStone(int index, CStoneHandler::CStone* pStone);
         bool UpdateFirstMove();

@@ -80,6 +80,7 @@ int m_Moves;
 
         static int ShapeToIndex(char *pName);
         static int ColorToIndex(char *pName);
+        int getPoints(CGameState::CMove* ppMove);
 
         void CopyGameState(CGameState *gameState);
 

@@ -2,6 +2,7 @@
 made for Software-Challenge 2013 visit http://www.informatik.uni-kiel.de/software-challenge/  for more information*/
 #include "CBaseLogic.h"
 #include <stdio.h>
+#include <algorithm>
 #include <vector>
 #include <time.h>
 #include <stdlib.h>
@@ -21,6 +22,30 @@ CBaseLogic::~CBaseLogic()
 
 void CBaseLogic::OnRequestAction(CGameState::CMoveContainer *pMoves)
 {
+    printf("MoveRequest");
+    CGameState::CMoveContainer *possibleMoves=m_pGameState->GetPossibleMoves(m_Player);
+    vector<Points> pointMoves;
+    Points a;
+    for(CGameState::CMove *pmove : possibleMoves->m_lpMoves) //Goes throug every move from possible move with a range-based for loop
+    {
+        a.points = m_pGameState->getPoints(pmove);
+        a.ppMove = pmove;
+
+        pointMoves.push_back(a);
+    }
+    std::sort(pointMoves.begin(), pointMoves.end(), std::greater<Points>());
+    m_pGameState->DoMove(pointMoves.front().ppMove);
+    //Move muss jetzt nur noch ausgeführt werden
+    //sort function needs to be properly implemented
+    /*for(int i = 0; i <3; ++i)
+    {
+        if(possibleMoves.size()==0)
+            break;
+        srand (time(NULL));
+        CGameState::CMove* tempMove = possibleMoves[(rand()%possibleMoves.size())];
+        printf("\n Zug: %d, %d",i, m_pGameState->DoMove(tempMove));
+         aMoves[i]=tempMove;
+
     printf("MoveRequest %d \n", m_Player);
     {
         CGameState::CMoveContainer *possibleMoves=m_pGameState->GetPossibleMoves(m_Player);
@@ -52,7 +77,7 @@ void CBaseLogic::OnRequestAction(CGameState::CMoveContainer *pMoves)
             pMoves->m_MoveType = MOVE_PLACE;
              pMoves->m_lpMoves.push_back(tempMove);
         }
-    }
+*/
 }
 
 /*CGameState::CMove* CBaseLogic::GetBestMove(CGameState::CMoveContainer *pMoves)
