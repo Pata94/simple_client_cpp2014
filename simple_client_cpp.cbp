@@ -46,6 +46,7 @@
 		<Unit filename="include/CNetwork.h" />
 		<Unit filename="include/CStarter.h" />
 		<Unit filename="include/CStoneHandler.h" />
+		<Unit filename="include/config.h" />
 		<Unit filename="include/rapidxml.hpp" />
 		<Unit filename="include/stringbuffer.h" />
 		<Unit filename="src/CBaseLogic.cpp" />

@@ -21,7 +21,7 @@ CFieldHandler::~CFieldHandler()
     for(int i = 0; i < FIELD_WIDTH*FIELD_HEIGHT; ++i)   //initiate the field
     {
         delete m_aField[i].m_pStone;
-    }
+        }
 }
 bool CFieldHandler::IsFree(int index)
 {
@@ -61,6 +61,7 @@ int CFieldHandler::CanPlace(int index, CStoneHandler::CStone *pStone)
             break;
         }
     }
+    unsigned short flags = 0;
     int num_colors = 0;
     int num_shapes = 0;
     int num = 0;
@@ -80,10 +81,26 @@ int CFieldHandler::CanPlace(int index, CStoneHandler::CStone *pStone)
             break;
 
         ++num;
+
         if(CStoneHandler::CheckShape(&m_aField[i+y*FIELD_WIDTH], pStone))
             ++num_shapes;
         if(CStoneHandler::CheckColor(&m_aField[i+y*FIELD_WIDTH], pStone))
             ++num_colors;
+
+        if(num_colors == 1 && (flags & (1<<pStone->m_Shape)))
+        {
+            return 0;
+        }
+        else
+            flags |= (1<<pStone->m_Shape);
+
+         if(num_shapes == 1 && (flags & (64<<pStone->m_Color)))
+        {
+            return 0;
+        }
+        else
+            flags |= (64<<pStone->m_Color);
+
     }
 
     if(num > 0)
@@ -98,6 +115,7 @@ int CFieldHandler::CanPlace(int index, CStoneHandler::CStone *pStone)
 
 
     index = 0;
+    flags = 0;
     for(int i = y-1; i >= 0; --i)
     {
         if(IsFree(x+i*FIELD_WIDTH))
@@ -126,10 +144,25 @@ int CFieldHandler::CanPlace(int index, CStoneHandler::CStone *pStone)
             break;
 
         ++num;
+
         if(CStoneHandler::CheckShape(&m_aField[x+i*FIELD_WIDTH], pStone))
             ++num_shapes;
         if(CStoneHandler::CheckColor(&m_aField[x+i*FIELD_WIDTH], pStone))
             ++num_colors;
+
+        if(num_colors == 1 && (flags & (1<<pStone->m_Shape)))
+        {
+            return 0;
+        }
+        else
+            flags |= (1<<pStone->m_Shape);
+
+         if(num_shapes == 1 && (flags & (64<<pStone->m_Color)))
+        {
+            return 0;
+        }
+        else
+            flags |= (64<<pStone->m_Color);
     }
 
      if(num > 0)

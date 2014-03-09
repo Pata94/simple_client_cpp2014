@@ -14,7 +14,6 @@ made for Software-Challenge 2013 visit http://www.informatik.uni-kiel.de/softwar
         const char*  CGameState::m_aShapeNames[6] ={"ACORN", "BELL", "CLUBS", "DIAMOND", "HEART", "SPADES"};
 CGameState::CGameState()
 {
-
     m_pFieldHandler = new CFieldHandler();
     m_Moves = 0;
 }
@@ -22,7 +21,7 @@ int CGameState::ShapeToIndex(char *pName)
 {
     for(int i = 0; i < 6; ++i)
         if(strcmp(m_aShapeNames[i], pName) == 0)
-            return i;
+                        return i;
     return -1;
 }
 int CGameState::ColorToIndex(char *pName)
@@ -35,6 +34,19 @@ int CGameState::ColorToIndex(char *pName)
 CGameState::~CGameState()
 {
     delete m_pFieldHandler;
+    for(int i = 0; i < 12; ++i)
+    {
+        if( m_apHandStones[i])
+        {
+            delete m_apHandStones[i];
+            m_apHandStones[i] = 0;
+        }
+         if( m_apOpenStones[i])
+        {
+            delete m_apOpenStones[i];
+            m_apOpenStones[i] = 0;
+        }
+    }
 
 }
 
@@ -130,7 +142,7 @@ int CGameState::DoMove(CMove *move)
 CGameState::CMoveContainer* CGameState::GetPossibleMoves(int player)
 {
     bool IsFirstMove = m_pFieldHandler->UpdateFirstMove();
-  //  std::vector<CGameState::CMoveContainer*> *possibleMoves = new std::vector<CGameState::CMoveContainer*>();
+    //std::vector<CGameState::CMoveContainer*> *possibleMoves = new std::vector<CGameState::CMoveContainer*>();
     //possibleMoves->reserve(50);
     CGameState::CMove* pMove = 0;
     CGameState::CMoveContainer* pMoveContainer = new CGameState::CMoveContainer();
@@ -172,7 +184,7 @@ CGameState::CMoveContainer* CGameState::GetPossibleMoves(int player)
 
                     return pMoveContainer;
                 }
-            }
+                            }
         }
     }
     else
@@ -200,6 +212,30 @@ CGameState::CMoveContainer* CGameState::GetPossibleMoves(int player)
     //TODO: do exchange stuff
 
     return pMoveContainer;
+}
+
+void CGameState::CopyGameState(CGameState *gameState)
+{
+    if(!gameState)
+    {
+
+      printf("Nullzeiger übergeben in CopyGameState");
+        return;
+    }
+
+    *gameState = *(CGameState *)this;
+
+
+    //gameState->m_pFieldHandler = new CFieldHandler();
+    gameState->m_pFieldHandler = (CFieldHandler*)operator new(sizeof(CFieldHandler));
+    *gameState->m_pFieldHandler = *m_pFieldHandler;
+    for(int i = 0; i < 12; ++i)
+    {
+        gameState->m_apHandStones[i] = (CStoneHandler::CStone*) operator new (sizeof(CStoneHandler::CStone));
+        *gameState->m_apHandStones[i] = *m_apHandStones[i];
+        gameState->m_apOpenStones[i] = (CStoneHandler::CStone*) operator new (sizeof(CStoneHandler::CStone));
+        *gameState->m_apOpenStones[i] = *m_apOpenStones[i];
+    }
 }
 
 

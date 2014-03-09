@@ -81,6 +81,8 @@ int m_Moves;
         static int ShapeToIndex(char *pName);
         static int ColorToIndex(char *pName);
 
+        void CopyGameState(CGameState *gameState);
+
     protected:
     private:
 };

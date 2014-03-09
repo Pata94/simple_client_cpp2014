@@ -10,6 +10,7 @@ using namespace std;
 CBaseLogic::CBaseLogic(int Player)
 {
     m_Player=Player;
+    m_pGameState = 0;
 }
 
 CBaseLogic::~CBaseLogic()
@@ -45,7 +46,6 @@ void CBaseLogic::OnRequestAction(CGameState::CMoveContainer *pMoves)
         else
         {
 
-
             srand (time(NULL));
             CGameState::CMove* tempMove = (possibleMoves->m_lpMoves)[(rand()%possibleMoves->m_lpMoves.size())];
             printf("\n Zug:  %d", m_pGameState->DoMove(tempMove));
@@ -54,10 +54,18 @@ void CBaseLogic::OnRequestAction(CGameState::CMoveContainer *pMoves)
         }
     }
 }
+
+/*CGameState::CMove* CBaseLogic::GetBestMove(CGameState::CMoveContainer *pMoves)
+{
+
+}*/
+
 void CBaseLogic::OnGameStateUpdate(CGameState *pNewState)
 {
     printf("GameStateUpdate");
-    if(pNewState != 0)
-        m_pGameState=pNewState;
+  //  if(m_pGameState == NULL)
+        m_pGameState = pNewState;
+    //if(pNewState != NULL)
+       // pNewState->CopyGameState(m_pGameState);
 }
 
