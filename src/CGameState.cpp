@@ -203,4 +203,97 @@ CGameState::CMoveContainer* CGameState::GetPossibleMoves(int player)
     return pMoveContainer;
 }
 
+int CGameState::getPoints(CGameState::CMove* ppMove)
+{
+    if(ppMove == 0)
+    {
+        printf("Nullpointer in function getPoints")
+        return -1;
+    }
+    else if(ppMove->m_Mode == 1)
+    {
+        return 0;
+    }
+    else
+    {
+        int points = 0;
+        int blocks = 0;
+        int x = ppMove->m_FieldIndex%FIELD_WIDTH;
+        int y = ppMove->m_FieldIndex/FIELD_WIDTH;
+
+        for(int i = x-1; i>=0; i--)
+        {
+            if(!CStoneHandler::IsEmpty(m_aField[i+y*FIELD_WIDTH]))
+            {
+                points++;
+                blocks++;
+            }
+            else
+            {
+                continue;
+            }
+        }
+
+        for(int i = x+1; i<FIELD_WIDTH; i++)
+        {
+            if(!CStoneHandler::IsEmpty(m_aField[i+y*FIELD_WIDTH]))
+            {
+                points++;
+                blocks++;
+            }
+            else
+            {
+                continue;
+            }
+        }
+
+        if(blocks > 0)
+        {
+            points ++; //für den eigenen Stein
+            if(blocks = 5) //Sixpack
+            {
+                points +=6;
+            }
+        }
+        blocks = 0;
+
+        for(int i = y-1; i>=0; i--)
+        {
+            if(!CStoneHandler::IsEmpty(m_aField[i*FIELD_WIDTH+x]))
+            {
+                points++;
+                blocks++;
+            }
+            else
+            {
+                continue;
+            }
+        }
+
+        for(int i = y+1; i<FIELD_HEIGHT; i++)
+        {
+            if(!CStoneHandler::IsEmpty(m_aField[i*FIELD_WIDTH+x]))
+            {
+                points++;
+                blocks++;
+            }
+            else
+            {
+                continue;
+            }
+        }
+
+        if(blocks > 0)
+        {
+            points ++; //für den eigenen Stein
+            if(blocks = 5) //Sixpack
+            {
+                points +=6;
+            }
+        }
+
+        return points;
+    }
+}
+
 

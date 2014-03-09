@@ -18,12 +18,13 @@ class CBaseLogic
         {
             int points;
             CGameState::CMove *ppMove;
+
         };
-        bool comparePoints(const CBaseLogic::Points &a, const CBaseLogic::Points &b);
     protected:
     private:
         int m_Player;
         class CGameState *m_pGameState;
 };
 
+bool operator>(const CBaseLogic::Points &a, const CBaseLogic::Points &b) {return a.points > b.points;}
 #endif // CBASELOGIC_H

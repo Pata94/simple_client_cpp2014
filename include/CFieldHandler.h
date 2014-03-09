@@ -2,7 +2,6 @@
 #define CFIELDHANDLER_H
 
 #include "CStoneHandler.h"
-#include "CGameState.h"
 
 #include "config.h"
 
@@ -12,7 +11,6 @@ class CFieldHandler
         CFieldHandler();
         virtual ~CFieldHandler();
 
-        int getPoints(CGameState::CMove* ppMove);
 
 
         int CanPlace(int index, CStoneHandler::CStone* pStone);

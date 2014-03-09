@@ -52,12 +52,6 @@ int m_Moves;
         int m_NumBagStones;
         CStoneHandler::CStone *m_apOpenStones[12];
 
-<<<<<<< HEAD
-        int m_aHandStones[12];
-        int m_aNumHandStones[2];
-        CField m_aField[16*16];
-=======
->>>>>>> 16cbfabec48a0d5f42c64dfca4b90d498c4f58af
         int m_aPoints[2];
         int m_CurrentPlayer;
         int m_PlayerID;
@@ -86,6 +80,7 @@ int m_Moves;
 
         static int ShapeToIndex(char *pName);
         static int ColorToIndex(char *pName);
+        int getPoints(CGameState::CMove* ppMove);
 
     protected:
     private:
