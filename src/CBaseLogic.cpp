@@ -33,6 +33,7 @@ void CBaseLogic::OnRequestAction(CGameState::CMoveContainer *pMoves)
         pointMoves.push_back(a);
     }
     std::sort(pointMoves.begin(), pointMoves.end(), std::greater<Points>());
+    m_pGameState->DoMove(pointMoves.front().ppMove);
     //Move muss jetzt nur noch ausgeführt werden
     //sort function needs to be properly implemented
     /*for(int i = 0; i <3; ++i)

@@ -144,7 +144,6 @@
 	"CGameState.h"
 	"CGameHandler.h"
 
-
 1391799771 source:d:\windows\users\paddy\desktop\projekte\software challenge 2013\simple client\simple_client_cpp\src\cbaselogic.cpp
 	"CBaseLogic.h"
 	<stdio.h>
@@ -163,7 +162,6 @@
 	"CStoneHandler.h"
 
 1390642979 /root/git/simple_client/include/CStoneHandler.h
-=======
 	"CGameHandler.h"
 
 1391797657 d:\windows\users\paddy\desktop\projekte\software challenge 2013\simple client\simple_client_cpp\include\cbaselogic.h
@@ -248,5 +246,17 @@
 	"CStoneHandler.h"
 
 1391799490 d:\windows\users\paddy\desktop\projekte\software challenge 2013\simple client\simple_client_cpp\include\config.h
->>>>>>> 16cbfabec48a0d5f42c64dfca4b90d498c4f58af
+
+1391799490 bfabec48a0d5f42c64dfca4b90d498c4f58af
+
+1394353754 source:/root/git/SimpleClient/simple_client_cpp2014/src/CFieldHandler.cpp
+	"CFieldHandler.h"
+
+1394353753 /root/git/SimpleClient/simple_client_cpp2014/include/CFieldHandler.h
+	"CStoneHandler.h"
+	"config.h"
+
+1394241642 /root/git/SimpleClient/simple_client_cpp2014/include/CStoneHandler.h
+
+1394353298 /root/git/SimpleClient/simple_client_cpp2014/include/config.h
 
