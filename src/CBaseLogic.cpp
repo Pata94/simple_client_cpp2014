@@ -45,24 +45,52 @@ void CBaseLogic::OnRequestAction(CGameState::CMoveContainer *pMoves)
          pMoves->m_lpMoves.push_back(pMove);
             return;
         }
-    vector<CPoints> pointMoves;
+    CGameState::CMoveContainer *possibleEnemyMoves=m_pGameState->GetPossibleMoves(!m_Player);
+    CGameState::CMoveContainer *interestingEnemyMoves;
+    CGameState::CMoveContainer *differentMoves;
     CPoints a;
-    for(CGameState::CMove *pmove : possibleMoves->m_lpMoves) //Goes throug every move from possible move with a range-based for loop
+    vector<CPoints> pointMoves;
+    if(possibleEnemyMoves->m_lpMoves.size() != 0)
     {
-        a.points = m_pGameState->getPoints(pmove);
-        a.ppMove = pmove;
+        std::sort(possibleMoves->m_lpMoves.begin(), possibleMoves->m_lpMoves.end());
+        std::sort(possibleEnemyMoves->m_lpMoves.begin(), possibleEnemyMoves->m_lpMoves.end());
+        interestingEnemyMoves->m_MoveType == MOVE_PLACE;
+        std::set_intersection(possibleMoves->m_lpMoves.begin(), possibleMoves->m_lpMoves.end(), possibleEnemyMoves->m_lpMoves.begin(), possibleEnemyMoves->m_lpMoves.end(), interestingEnemyMoves->m_lpMoves.begin());
+        for(CGameState::CMove *pmove: interestingEnemyMoves->m_lpMoves)
+        {
+            a.points = m_pGameState->getPoints(pmove);
+            a.ppMove = pmove;
+            pointMoves.push_back(a);
+        }
+        std::sort(pointMoves.begin(), pointMoves.end());
+        pointMoves[0].points = 2 * pointMoves[0].points - pointMoves[1].points;
+        differentMoves->m_MoveType = MOVE_PLACE;
+        std::set_difference(possibleMoves->m_lpMoves.begin(), possibleMoves->m_lpMoves.end(), interestingEnemyMoves->m_lpMoves.begin(), interestingEnemyMoves->m_lpMoves.end(), differentMoves->m_lpMoves.begin());
+        for(CGameState::CMove *pmove: differentMoves->m_lpMoves)
+        {
+            a.points = m_pGameState->getPoints(pmove);
+            a.ppMove = pmove;
+            pointMoves.push_back(a);
+        }
+    }
+    else
+    {
+        for(CGameState::CMove *pmove : possibleMoves->m_lpMoves) //Goes throug every move from possible move with a range-based for loop
+        {
+            a.points = m_pGameState->getPoints(pmove);
+            a.ppMove = pmove;
 
-        pointMoves.push_back(a);
+            pointMoves.push_back(a);
+        }
     }
     std::sort(pointMoves.begin(), pointMoves.end(), std::greater<CPoints>());
-   // m_pGameState->DoMove();
+    // m_pGameState->DoMove();
     CGameState::CMove *pTemp = new CGameState::CMove();
     *pTemp = *(pointMoves.front().ppMove);
     pMoves->m_lpMoves.push_back(pTemp);
     pMoves->m_MoveType = MOVE_PLACE;
     printf("Send Move");
     //Move muss jetzt nur noch ausgeführt werden
-    //sort function needs to be properly implemented
     /*for(int i = 0; i <3; ++i)
     {
         if(possibleMoves.size()==0)
