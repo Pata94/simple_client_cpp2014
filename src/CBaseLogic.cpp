@@ -55,7 +55,7 @@ void CBaseLogic::OnRequestAction(CGameState::CMoveContainer *pMoves)
         std::sort(possibleMoves->m_lpMoves.begin(), possibleMoves->m_lpMoves.end());
         std::sort(possibleEnemyMoves->m_lpMoves.begin(), possibleEnemyMoves->m_lpMoves.end());
         interestingEnemyMoves->m_MoveType == MOVE_PLACE;
-        std::set_intersection(possibleMoves->m_lpMoves.begin(), possibleMoves->m_lpMoves.end(), possibleEnemyMoves->m_lpMoves.begin(), possibleEnemyMoves->m_lpMoves.end(), interestingEnemyMoves->m_lpMoves.begin());
+        std::set_intersection(possibleMoves->m_lpMoves.begin(), possibleMoves->m_lpMoves.end(), possibleEnemyMoves->m_lpMoves.begin(), possibleEnemyMoves->m_lpMoves.end(), back_inserter(interestingEnemyMoves->m_lpMoves));
         for(CGameState::CMove *pmove: interestingEnemyMoves->m_lpMoves)
         {
             a.points = m_pGameState->getPoints(pmove);
@@ -65,7 +65,7 @@ void CBaseLogic::OnRequestAction(CGameState::CMoveContainer *pMoves)
         std::sort(pointMoves.begin(), pointMoves.end());
         pointMoves[0].points = 2 * pointMoves[0].points - pointMoves[1].points;
         differentMoves->m_MoveType = MOVE_PLACE;
-        std::set_difference(possibleMoves->m_lpMoves.begin(), possibleMoves->m_lpMoves.end(), interestingEnemyMoves->m_lpMoves.begin(), interestingEnemyMoves->m_lpMoves.end(), differentMoves->m_lpMoves.begin());
+        std::set_difference(possibleMoves->m_lpMoves.begin(), possibleMoves->m_lpMoves.end(), interestingEnemyMoves->m_lpMoves.begin(), interestingEnemyMoves->m_lpMoves.end(), back_inserter(differentMoves->m_lpMoves));
         for(CGameState::CMove *pmove: differentMoves->m_lpMoves)
         {
             a.points = m_pGameState->getPoints(pmove);

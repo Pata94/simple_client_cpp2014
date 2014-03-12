@@ -87,4 +87,6 @@ int m_Moves;
     protected:
     private:
 };
+
+inline bool operator<(const CGameState::CMove &a, const CGameState::CMove &b) {return a.m_FieldIndex > b.m_FieldIndex;};
 #endif // CGAMESTATE_H
