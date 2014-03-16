@@ -30,7 +30,7 @@
 #define MODE_SHAPE 2
 //ERRORS
 #define ERROR_NONE 0
-#define ERROR_UNSPECIFIC 1
+#define ERROR_UNSPECIFIC -1
 
 
 //main

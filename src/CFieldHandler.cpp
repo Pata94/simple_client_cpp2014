@@ -9,8 +9,10 @@ CFieldHandler::CFieldHandler()
         m_aField[i].m_pStone = 0;
         m_aField[i].m_Flags = 2^16-1;
     }
-    m_Moves = 0; // Needed?
+    m_Moves = 0; // Needed? YEAH
     m_IsFirstMove = true;
+    m_aRestrictions[0] = -1;
+    m_aRestrictions[1] = -1;
 
 
 }
@@ -91,7 +93,8 @@ int CFieldHandler::CanPlace(int index, CStoneHandler::CStone *pStone)
     {
 
     }*/
-
+    if(CheckRestrictions(index) == false)
+        return 0;
     int x = index%FIELD_WIDTH;
     int y = (index-x)/FIELD_WIDTH;
     int temp = 0;
@@ -315,12 +318,68 @@ int CFieldHandler::GetPoints(int index, CStoneHandler::CStone *pStone)
         return points;
 }
 
+bool CFieldHandler::CheckRestrictions(int FieldIndex)
+{
+    if(m_Moves >= 5)
+        return false;
+    if(m_aRestrictions[0] != -1)
+    {
+        int x1 = m_aRestrictions[0]%FIELD_WIDTH;
+        int y1 = (m_aRestrictions[0]-x1)/FIELD_WIDTH;
+        int x2 = FieldIndex%FIELD_WIDTH;
+        int y2 = (FieldIndex-x2)/FIELD_WIDTH;
+        int diffX = x2-x1;
+        int diffY = y2-y1;
+
+
+          if(diffX != 0 && diffY != 0)
+                return false;
+
+        if(m_aRestrictions[1] != -1)
+        {
+            int x3 = m_aRestrictions[1]%FIELD_WIDTH;
+            int y3 = (m_aRestrictions[1]-x3)/FIELD_WIDTH;
+            if(diffX == 0 && (x3-x1) != 0)
+            {
+                return false;
+            }
+            else if(diffY == 0 && (y3-y1) != 0)
+            {
+                return false;
+            }
+
+        }
+
+        {
+
+            int dir = 1;
+
+            if(diffY != 0)
+                dir = diffY > 0 ? FIELD_WIDTH : -FIELD_WIDTH;
+            else if(diffX != 0)
+                dir = diffX > 0 ? 1 : -1;
+
+            for(int i = m_aRestrictions[0]; i < FIELD_WIDTH*FIELD_WIDTH; i += dir)
+            {
+                    if(i == FieldIndex)
+                        break;
+                    if(IsFree(i))
+                        return false;
+            }
+        }
+    }
+    return true;
+}
 
 int CFieldHandler::PlaceStone(int index, CStoneHandler::CStone *pStone)
 {
 
 
     m_aField[index].m_pStone = pStone;
+    if(m_Moves < 2)
+    {
+        m_aRestrictions[m_Moves] = index;
+    }
     ++m_Moves;
 }
   /*  if(!CanPlace(index, Stone))

@@ -11,8 +11,8 @@ class CFieldHandler
         CFieldHandler();
         virtual ~CFieldHandler();
 
-
-
+        bool CheckRestrictions(int FieldIndex);
+        int m_aRestrictions[2];
         int CanPlace(int index, CStoneHandler::CStone* pStone);
         int PlaceStone(int index, CStoneHandler::CStone* pStone);
         bool UpdateFirstMove();

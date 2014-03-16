@@ -11,11 +11,8 @@ class CGameState
     public:
     static const char* m_aColorNames[6];
         static const char* m_aShapeNames[6];
-    enum{
 
-
-    };
-int m_Moves;
+        int m_Moves;
         CGameState();
         ~CGameState();
 
@@ -28,8 +25,17 @@ int m_Moves;
                 m_FieldIndex=0;
                 m_Player=0;
             }
+            ~CMove()
+            {
+                if(m_pStone)
+                    delete m_pStone;
+            }
             int m_Player;
-            int m_FieldIndex;
+            union{
+                int m_FieldIndex;
+                int m_CardIndex;
+            };
+
             int m_Mode;
             CStoneHandler::CStone *m_pStone;
         };
@@ -38,8 +44,10 @@ int m_Moves;
             ~CMoveContainer()
             {
                 for(int i = 0; i < m_lpMoves.size(); ++i)
-                    delete m_lpMoves[i];
+                    if(m_lpMoves[i])
+                        delete m_lpMoves[i];
             };
+            //int m_Player;
             int m_MoveType; // 0 == Lay 1 == change
             std::vector<CMove *> m_lpMoves;
         };
@@ -58,8 +66,9 @@ int m_Moves;
         int m_Turn;
         int EndRound();
         char *DataToString();
-
-        int DoMove(CMove *move);
+        int DoPlaceMove(CMove *move);
+        int DoExchangeMove(int Player, int CardIndex);
+        int DoMove(CMoveContainer *moveC);
         CMoveContainer *GetPossibleMoves(int player);
 
 
