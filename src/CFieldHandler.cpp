@@ -25,6 +25,13 @@ CFieldHandler::~CFieldHandler()
         delete m_aField[i].m_pStone;
         }
 }
+
+void CFieldHandler::NewRound()
+{
+    m_Moves = 0; // Needed? YEAH
+    m_aRestrictions[0] = -1;
+    m_aRestrictions[1] = -1;
+}
 bool CFieldHandler::IsFree(int index)
 {
     return m_aField[index].m_pStone == 0;
@@ -93,10 +100,16 @@ int CFieldHandler::CanPlace(int index, CStoneHandler::CStone *pStone)
     {
 
     }*/
-    if(CheckRestrictions(index) == false)
-        return 0;
+   // if(CheckRestrictions(index) == false)
+    //    return 0;
     int x = index%FIELD_WIDTH;
     int y = (index-x)/FIELD_WIDTH;
+
+    if(x == 0 && y ==3 && pStone->m_Color == COLOR_GREEN && pStone->m_Shape == SHAPE_BELL)
+    {
+
+        int abc = 0;
+    }
     int temp = 0;
     int points = 0;
     if(!IsFree(index))
@@ -135,19 +148,19 @@ int CFieldHandler::CanPlace(int index, CStoneHandler::CStone *pStone)
         if(CStoneHandler::CheckColor(&m_aField[i+y*FIELD_WIDTH], pStone))
             ++num_colors;
 
-        if(num_colors == 0 && (flags & (1<<pStone->m_Shape)))
+        if(num_shapes == 0 && (flags & (1<<m_aField[i+y*FIELD_WIDTH].m_pStone->m_Shape)))
         {
             return 0;
         }
         else
-            flags |= (1<<pStone->m_Shape);
+            flags |= (1<<m_aField[i+y*FIELD_WIDTH].m_pStone->m_Shape);
 
-         if(num_shapes == 0 && (flags & (64<<pStone->m_Color)))
+         if(num_colors == 0 && (flags & (64<<m_aField[i+y*FIELD_WIDTH].m_pStone->m_Color)))
         {
             return 0;
         }
         else
-            flags |= (64<<pStone->m_Color);
+            flags |= (64<<m_aField[i+y*FIELD_WIDTH].m_pStone->m_Color);
 
     }
 
@@ -198,19 +211,19 @@ int CFieldHandler::CanPlace(int index, CStoneHandler::CStone *pStone)
         if(CStoneHandler::CheckColor(&m_aField[x+i*FIELD_WIDTH], pStone))
             ++num_colors;
 
-        if(num_colors == 1 && (flags & (1<<pStone->m_Shape)))
+        if(num_shapes == 0 && (flags & (1<<m_aField[x+i*FIELD_WIDTH].m_pStone->m_Shape)))
         {
             return 0;
         }
         else
-            flags |= (1<<pStone->m_Shape);
+            flags |= (1<<m_aField[x+i*FIELD_WIDTH].m_pStone->m_Shape);
 
-         if(num_shapes == 1 && (flags & (64<<pStone->m_Color)))
+         if(num_colors == 0 && (flags & (64<<m_aField[x+i*FIELD_WIDTH].m_pStone->m_Color)))
         {
             return 0;
         }
         else
-            flags |= (64<<pStone->m_Color);
+            flags |= (64<<m_aField[x+i*FIELD_WIDTH].m_pStone->m_Color);
     }
 
      if(num > 0)

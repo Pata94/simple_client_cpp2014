@@ -12,14 +12,18 @@ class CBaseLogic
     public:
         CBaseLogic(int Player);
         virtual ~CBaseLogic();
-        void OnRequestAction(CGameState::CMoveContainer *pMoves);
+        void OnRequestAction(CGameState::CMoveContainer **pMoves);
         void OnGameStateUpdate(CGameState *pNewState);
+        CGameState::CMoveContainer *m_pBestMoveC;
+        int m_BestPoints;
         struct CPoints
         {
             int points;
             CGameState::CMove *ppMove;
 
         };
+        void TestFunc(CGameState *pState, CGameState::CMoveContainer* pMoveC);
+       int TestGameState(CGameState *pState, CGameState::CMoveContainer* pMoveC);
     protected:
     private:
         int m_Player;

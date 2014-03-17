@@ -146,5 +146,6 @@ int CStarter::OnExecute(int argc, char* argv[])
         return ret;
     }
     m_pHandler = new CGameHandler(m_pNetwork, pRes);
+
     return m_pHandler->HandleGame();
 }

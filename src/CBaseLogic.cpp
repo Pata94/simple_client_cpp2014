@@ -12,6 +12,7 @@ CBaseLogic::CBaseLogic(int Player)
 {
     m_Player=Player;
     m_pGameState = 0;
+    m_pBestMoveC = 0;
 }
 
 CBaseLogic::~CBaseLogic()
@@ -21,51 +22,58 @@ CBaseLogic::~CBaseLogic()
 
 
 
-void CBaseLogic::OnRequestAction(CGameState::CMoveContainer *pMoves)
+void CBaseLogic::OnRequestAction(CGameState::CMoveContainer **ppMoves)
 {
 
 
 
-    printf("MoveRequest");
+    printf("MoveRequest  ");
     CGameState::CMoveContainer *possibleMoves=m_pGameState->GetPossibleMoves(m_Player);
 
       if(possibleMoves->m_MoveType == MOVE_PLACE_FIRST)
         {
+            *ppMoves = new CGameState::CMoveContainer();
+             if(!ppMoves)
+             printf("Bad-Alloc at __LINE__, __FUNCTION__, __FILE__");
             for(int i = 0; i < possibleMoves->m_lpMoves.size(); ++i)
             {
-                  pMoves->m_MoveType = MOVE_PLACE;
-                pMoves->m_lpMoves.push_back(possibleMoves->m_lpMoves[i]);
+                  (*ppMoves)->m_MoveType = MOVE_PLACE;
+                (*ppMoves)->m_lpMoves.push_back(possibleMoves->m_lpMoves[i]);
             }
             return;
         }
      if(possibleMoves->m_lpMoves.size()==0)
         {
+            *ppMoves = new CGameState::CMoveContainer();
             printf("No possible Moves");
              CGameState::CMove *pMove = new CGameState::CMove();
+
             pMove->m_pStone = (CStoneHandler::CStone*) operator new (sizeof(CStoneHandler::CStone));
+
             *pMove->m_pStone = *m_pGameState->m_apHandStones[m_Player*6];
             pMove->m_Mode = MOVE_EXCHANGE;
            // pMove->m_FieldIndex = i;
-            pMoves->m_MoveType = MOVE_EXCHANGE;
-         pMoves->m_lpMoves.push_back(pMove);
+            (*ppMoves)->m_MoveType = MOVE_EXCHANGE;
+            (*ppMoves)->m_lpMoves.push_back(pMove);
             return;
         }
-    vector<CPoints> pointMoves;
-    CPoints a;
-    for(CGameState::CMove *pmove : possibleMoves->m_lpMoves) //Goes throug every move from possible move with a range-based for loop
-    {
-        a.points = m_pGameState->getPoints(pmove);
-        a.ppMove = pmove;
 
-        pointMoves.push_back(a);
-    }
-    std::sort(pointMoves.begin(), pointMoves.end(), std::greater<CPoints>());
-   // m_pGameState->DoMove();
-    CGameState::CMove *pTemp = new CGameState::CMove();
-    *pTemp = *(pointMoves.front().ppMove);
-    pMoves->m_lpMoves.push_back(pTemp);
-    pMoves->m_MoveType = MOVE_PLACE;
-    printf("Send Move");
+    m_BestPoints = 0;
+    CGameState::CMoveContainer *pTemp = new CGameState::CMoveContainer();
+    pTemp->m_MoveType = MOVE_PLACE;
+
+    TestFunc(m_pGameState->CopyGameState(), pTemp);
+   /* CGameState::CMove *pTemp = new CGameState::CMove();
+    *pTemp = *(pointMoves.front().ppMove);*/
+    *ppMoves = m_pBestMoveC;
+    m_pBestMoveC = 0;
+  // pMoves->m_MoveType = MOVE_PLACE;
+  /* pMoves->m_lpMoves.clear();
+   for(int i = 0; i < m_pBestMoveC->m_lpMoves.size(); ++i)
+   {
+       pMoves->m_lpMoves.push_back(m_pBestMoveC->m_lpMoves[i]->Copy());
+   }*/
+
     //Move muss jetzt nur noch ausgeführt werden
     //sort function needs to be properly implemented
     /*for(int i = 0; i <3; ++i)
@@ -115,7 +123,53 @@ void CBaseLogic::OnRequestAction(CGameState::CMoveContainer *pMoves)
 {
 
 }*/
+int CBaseLogic::TestGameState(CGameState *pState, CGameState::CMoveContainer* pMoveC)
+{
+    return pMoveC->GetPoints();
+}
 
+void CBaseLogic::TestFunc(CGameState *pState, CGameState::CMoveContainer* pMoveC)
+{
+
+      CGameState::CMoveContainer *possibleMoves=pState->GetPossibleMoves(m_Player);
+
+        if(pMoveC->m_lpMoves.size()>0)
+        {
+            if(pMoveC->m_lpMoves.size()>1)
+            {
+                int asd=pMoveC->m_lpMoves.size();
+            }
+            int points = TestGameState(pState, pMoveC);
+            if(m_BestPoints < points)
+            {
+                if(m_pBestMoveC)
+                    delete m_pBestMoveC;
+                m_pBestMoveC = pMoveC->Copy();
+                m_BestPoints = points;
+            }
+        }
+
+        for(int i = 0; i < possibleMoves->m_lpMoves.size(); ++i)
+        {
+            CGameState::CMove* pTemp = possibleMoves->m_lpMoves[i]->Copy();
+            CGameState* pTempState = pState->CopyGameState();
+             CGameState::CMoveContainer *ABD = new CGameState::CMoveContainer();
+
+             ABD->m_MoveType = MOVE_PLACE;
+             ABD->m_lpMoves.push_back(pTemp);
+            pTempState->DoMove(ABD);
+            ABD->m_lpMoves.clear();
+            delete ABD;
+
+            CGameState::CMoveContainer *pTempContainer = pMoveC->Copy();
+
+            pTempContainer->m_lpMoves.push_back(pTemp);
+
+            TestFunc(pTempState, pTempContainer);
+
+        }
+
+}
 void CBaseLogic::OnGameStateUpdate(CGameState *pNewState)
 {
     printf("GameStateUpdate");

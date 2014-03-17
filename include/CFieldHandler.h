@@ -19,6 +19,7 @@ class CFieldHandler
         bool IsFree(int index);
          CStoneHandler::CField m_aField[FIELD_WIDTH*FIELD_HEIGHT];
         int GetPoints(int index, CStoneHandler::CStone *pStone);
+        void NewRound();
     protected:
         bool m_IsFirstMove;
         int m_Moves;

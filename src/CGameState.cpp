@@ -124,6 +124,8 @@ int CGameState::DoPlaceMove(CMove *move)
         if(m_Moves < 5 && points != 0)
         {
             CStoneHandler::CStone *pStone = (CStoneHandler::CStone*)operator new(sizeof(CStoneHandler::CStone));
+             if(!pStone)
+             printf("Bad-Alloc at __LINE__, __FUNCTION__, __FILE__");
             *pStone = *move->m_pStone;
             m_pFieldHandler->PlaceStone(move->m_FieldIndex, pStone); //dont use the stone from the move it should be cleared by the move de-constructor
             //delete this stone from the hand
@@ -133,7 +135,8 @@ int CGameState::DoPlaceMove(CMove *move)
             {
                 if(m_apHandStones[index] != NULL && move->m_pStone->m_Identifier == m_apHandStones[index]->m_Identifier)
                 {
-                    delete m_apHandStones[index];
+                    if(m_apHandStones[index] != move->m_pStone)
+                        delete m_apHandStones[index];
                     m_apHandStones[index] = 0;
                     break;
                 }
@@ -179,7 +182,7 @@ int CGameState::DoExchangeMove(int Player, int CardIndex)
 }
 int CGameState::DoMove(CMoveContainer *moveC)
 {
-    if(!moveC)
+    if(!moveC || m_Moves == -1 || m_Moves == 5)
         return ERROR_UNSPECIFIC;
     //if(moveC->m_Player != m_CurrentPlayer)
    //    return ERROR_UNSPECIFIC;
@@ -190,7 +193,10 @@ int CGameState::DoMove(CMoveContainer *moveC)
         for(int i = 0; i< moveC->m_lpMoves.size(); ++i) // every move is a move for itself
         {
             points  += DoPlaceMove(moveC->m_lpMoves[i]);
+            m_Moves++;
         }
+        m_CurrentPoints += points;
+
 
     }
     else if(moveC->m_MoveType==MOVE_EXCHANGE) // all moves together
@@ -200,18 +206,33 @@ int CGameState::DoMove(CMoveContainer *moveC)
         {
             DoExchangeMove(moveC->m_lpMoves[i]->m_Player, moveC->m_lpMoves[i]->m_CardIndex);
         }
-
+        m_CurrentPoints += 2;
     }
+    m_Moves = -1;
     return 0;
+}
+int CGameState::EndRound()
+{
+    m_Moves = 0;
+    m_aPoints[m_CurrentPlayer] += m_CurrentPoints;
+    m_CurrentPlayer = m_CurrentPlayer == 1 ? 0: 1;
+    m_CurrentPoints = 0;
+    m_pFieldHandler->NewRound();
 }
 CGameState::CMoveContainer* CGameState::GetPossibleMoves(int player)
 {
+
     bool IsFirstMove = m_pFieldHandler->UpdateFirstMove();
     //std::vector<CGameState::CMoveContainer*> *possibleMoves = new std::vector<CGameState::CMoveContainer*>();
     //possibleMoves->reserve(50);
-    CGameState::CMove* pMove = 0;
-    CGameState::CMoveContainer* pMoveContainer = new CGameState::CMoveContainer();
-
+    CMove* pMove = 0;
+    CMoveContainer* pMoveContainer = new CMoveContainer();
+    if(m_Moves == -1 || m_Moves == 5)
+    {
+        //no more moves possible
+         pMoveContainer->m_MoveType = MOVE_PLACE;
+         return pMoveContainer;
+    }
     int p = player == 0 ? 0 : 6;
 
     if(IsFirstMove)
@@ -262,15 +283,24 @@ CGameState::CMoveContainer* CGameState::GetPossibleMoves(int player)
             if(m_apHandStones[a+p] != 0)
                 for(int i = 0; i < 256; ++i)
                 {
-                    if(m_pFieldHandler->CanPlace( i, m_apHandStones[a+p]) > 0)
+                    int points = m_pFieldHandler->CanPlace( i, m_apHandStones[a+p]);
+                    if(points > 0)
                     {
                         pMove = new CGameState::CMove();
+                        if(!pMove)
+             printf("Bad-Alloc at __LINE__, __FUNCTION__, __FILE__");
                          pMove->m_pStone = (CStoneHandler::CStone*) operator new (sizeof(CStoneHandler::CStone)); //do not use the original pointer
+                                  if(! pMove->m_pStone)
+             printf("Bad-Alloc at __LINE__, __FUNCTION__, __FILE__");
                         *pMove->m_pStone = *m_apHandStones[a+p]; //do not use the original pointer
                         pMove->m_Mode = MOVE_PLACE;
                         pMove->m_FieldIndex = i;
                         pMove->m_Player = player;
-                        printf("asdadasdasdasd: %d, %d", player, a+p);
+                        pMove->m_Points = points;
+                         int x = i%FIELD_WIDTH;
+                        int y = (i-x)/FIELD_WIDTH;
+                        printf("Move %i, index: %i x: %i, y: %i, Color: %s, shape: %s \n", pMoveContainer->m_lpMoves.size(), i,x,y, CGameState::m_aColorNames[pMove->m_pStone->m_Color], CGameState::m_aShapeNames[pMove->m_pStone->m_Shape]) ;
+
                         pMoveContainer->m_lpMoves.push_back(pMove);
 
                     }
@@ -282,42 +312,42 @@ CGameState::CMoveContainer* CGameState::GetPossibleMoves(int player)
     return pMoveContainer;
 }
 
-int CGameState::getPoints(CGameState::CMove* ppMove)
+int CGameState::getPoints(CGameState::CMove* pMove)
 {
-    if(ppMove == 0)
+    if(pMove == 0)
     {
         printf("Nullpointer in function getPoints");
         return -1;
     }
-    else if(ppMove->m_Mode == MOVE_EXCHANGE)
+    else if(pMove->m_Mode == MOVE_EXCHANGE)
     {
         return 2;
     }
 
-    if( m_pFieldHandler->GetPoints(ppMove->m_FieldIndex, ppMove->m_pStone) != m_pFieldHandler->CanPlace(ppMove->m_FieldIndex, ppMove->m_pStone))
+    if( m_pFieldHandler->GetPoints(pMove->m_FieldIndex, pMove->m_pStone) != m_pFieldHandler->CanPlace(pMove->m_FieldIndex, pMove->m_pStone))
     {
-            printf("get Points Difference, A: %d, B %d", m_pFieldHandler->GetPoints(ppMove->m_FieldIndex, ppMove->m_pStone), m_pFieldHandler->CanPlace(ppMove->m_FieldIndex, ppMove->m_pStone));
+            printf("get Points Difference, A: %d, B %d", m_pFieldHandler->GetPoints(pMove->m_FieldIndex, pMove->m_pStone), m_pFieldHandler->CanPlace(pMove->m_FieldIndex, pMove->m_pStone));
     }
 
-    return m_pFieldHandler->CanPlace(ppMove->m_FieldIndex, ppMove->m_pStone);
+    return m_pFieldHandler->CanPlace(pMove->m_FieldIndex, pMove->m_pStone);
 }
 
 
 
-void CGameState::CopyGameState(CGameState *gameState)
+CGameState * CGameState::CopyGameState()
 {
-    if(!gameState)
-    {
-      printf("Nullzeiger übergeben in CopyGameState versuche speicher zu bekommen");
+    //if(!gameState)
 
-        gameState = (CGameState*)operator new(sizeof(CGameState));
+     // printf("Nullzeiger übergeben in CopyGameState versuche speicher zu bekommen");
+
+       CGameState *gameState = (CGameState*)operator new(sizeof(CGameState));
         if(!gameState)
         {
               printf("fehler 1");
-                return;
+                return 0;
         }
 
-    }
+
 
     *gameState = *(CGameState *)this;
 
@@ -344,6 +374,7 @@ void CGameState::CopyGameState(CGameState *gameState)
             gameState->m_apOpenStones[i] = 0;
 
     }
+    return gameState;
 }
 
 

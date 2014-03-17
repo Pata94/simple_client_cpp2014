@@ -1,89 +1,89 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
 <CodeBlocks_layout_file>
-	<ActiveTarget name="Release" />
-	<File name="include\CGameState.h" open="1" top="0" tabpos="4" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
-		<Cursor>
-			<Cursor1 position="994" topLine="8" />
-		</Cursor>
-	</File>
-	<File name="include\CNetwork.h" open="1" top="0" tabpos="9" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
-		<Cursor>
-			<Cursor1 position="481" topLine="1" />
-		</Cursor>
-	</File>
-	<File name="include\CStarter.h" open="1" top="0" tabpos="1" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
-		<Cursor>
-			<Cursor1 position="249" topLine="0" />
-		</Cursor>
-	</File>
-	<File name="include\CStoneHandler.h" open="1" top="0" tabpos="16" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
-		<Cursor>
-			<Cursor1 position="1224" topLine="12" />
-		</Cursor>
-	</File>
-	<File name="include\config.h" open="1" top="0" tabpos="14" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
-		<Cursor>
-			<Cursor1 position="329" topLine="0" />
-		</Cursor>
-	</File>
-	<File name="include\rapidxml.hpp" open="1" top="0" tabpos="12" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
-		<Cursor>
-			<Cursor1 position="118171" topLine="2530" />
-		</Cursor>
-	</File>
-	<File name="include\stringbuffer.h" open="1" top="0" tabpos="15" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
-		<Cursor>
-			<Cursor1 position="1819" topLine="75" />
-		</Cursor>
-	</File>
-	<File name="src\CBaseLogic.cpp" open="1" top="0" tabpos="6" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
-		<Cursor>
-			<Cursor1 position="714" topLine="6" />
-		</Cursor>
-	</File>
-	<File name="src\CFieldHandler.cpp" open="1" top="0" tabpos="3" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
-		<Cursor>
-			<Cursor1 position="3025" topLine="124" />
-		</Cursor>
-	</File>
+	<ActiveTarget name="Debug" />
 	<File name="src\CGameHandler.cpp" open="1" top="0" tabpos="5" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
 		<Cursor>
-			<Cursor1 position="3546" topLine="113" />
+			<Cursor1 position="17471" topLine="136" />
 		</Cursor>
 	</File>
-	<File name="src\CGameState.cpp" open="1" top="1" tabpos="10" split="0" active="1" splitpos="0" zoom_1="1" zoom_2="0">
+	<File name="src\CGameState.cpp" open="1" top="0" tabpos="10" split="0" active="1" splitpos="0" zoom_1="1" zoom_2="0">
 		<Cursor>
-			<Cursor1 position="6278" topLine="189" />
+			<Cursor1 position="12422" topLine="342" />
 		</Cursor>
 	</File>
 	<File name="src\CNetwork.cpp" open="1" top="0" tabpos="13" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
 		<Cursor>
-			<Cursor1 position="3123" topLine="10" />
+			<Cursor1 position="778" topLine="113" />
 		</Cursor>
 	</File>
 	<File name="src\CStarter.cpp" open="1" top="0" tabpos="11" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
 		<Cursor>
-			<Cursor1 position="3964" topLine="0" />
+			<Cursor1 position="3565" topLine="110" />
 		</Cursor>
 	</File>
 	<File name="src\CStoneHandler.cpp" open="1" top="0" tabpos="17" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
 		<Cursor>
-			<Cursor1 position="621" topLine="2" />
+			<Cursor1 position="3891" topLine="125" />
 		</Cursor>
 	</File>
 	<File name="include\CBaseLogic.h" open="1" top="0" tabpos="7" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
 		<Cursor>
-			<Cursor1 position="626" topLine="0" />
+			<Cursor1 position="474" topLine="0" />
 		</Cursor>
 	</File>
 	<File name="include\CFieldHandler.h" open="1" top="0" tabpos="2" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
 		<Cursor>
-			<Cursor1 position="486" topLine="0" />
+			<Cursor1 position="643" topLine="0" />
 		</Cursor>
 	</File>
 	<File name="include\CGameHandler.h" open="1" top="0" tabpos="8" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
 		<Cursor>
 			<Cursor1 position="419" topLine="0" />
+		</Cursor>
+	</File>
+	<File name="include\CGameState.h" open="1" top="0" tabpos="4" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="1099" topLine="104" />
+		</Cursor>
+	</File>
+	<File name="include\CNetwork.h" open="1" top="0" tabpos="9" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="253" topLine="1" />
+		</Cursor>
+	</File>
+	<File name="include\CStarter.h" open="1" top="0" tabpos="1" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="597" topLine="0" />
+		</Cursor>
+	</File>
+	<File name="include\CStoneHandler.h" open="1" top="0" tabpos="16" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="1005" topLine="15" />
+		</Cursor>
+	</File>
+	<File name="include\config.h" open="1" top="0" tabpos="14" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="970" topLine="25" />
+		</Cursor>
+	</File>
+	<File name="include\rapidxml.hpp" open="1" top="0" tabpos="12" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="489" topLine="6" />
+		</Cursor>
+	</File>
+	<File name="include\stringbuffer.h" open="1" top="0" tabpos="15" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="592" topLine="3" />
+		</Cursor>
+	</File>
+	<File name="src\CBaseLogic.cpp" open="1" top="1" tabpos="6" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="630" topLine="23" />
+		</Cursor>
+	</File>
+	<File name="src\CFieldHandler.cpp" open="1" top="0" tabpos="3" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="8322" topLine="340" />
 		</Cursor>
 	</File>
 </CodeBlocks_layout_file>

@@ -6,6 +6,7 @@ made for Software-Challenge 2013 visit http://www.informatik.uni-kiel.de/softwar
 #include <vector>
 #include <CFieldHandler.h>
 #include "config.h"
+#include <stdio.h>
 class CGameState
 {
     public:
@@ -35,7 +36,24 @@ class CGameState
                 int m_FieldIndex;
                 int m_CardIndex;
             };
-
+            int m_Points;
+            CMove* Copy()
+            {
+                CMove* pMove = (CMove*) operator new (sizeof(CMove));
+                  if(!pMove)
+                    printf("Bad-Alloc at __LINE__, __FUNCTION__, __FILE__");
+                *pMove = *this;
+                if(m_pStone != 0)
+                {
+                     pMove->m_pStone = (CStoneHandler::CStone*) operator new (sizeof(CStoneHandler::CStone));
+                     if(! pMove->m_pStone)
+                    printf("Bad-Alloc at __LINE__, __FUNCTION__, __FILE__");
+                    *pMove->m_pStone = *m_pStone;
+                }
+                else
+                    pMove->m_pStone = 0;
+                return pMove;
+            }
             int m_Mode;
             CStoneHandler::CStone *m_pStone;
         };
@@ -47,7 +65,33 @@ class CGameState
                     if(m_lpMoves[i])
                         delete m_lpMoves[i];
             };
-            //int m_Player;
+            CMoveContainer * Copy()
+            {
+                CMoveContainer * pMoveC = (CMoveContainer*) operator new (sizeof(CMoveContainer));
+                if(!pMoveC)
+                    printf("Bad-Alloc at __LINE__, __FUNCTION__, __FILE__");
+
+                *pMoveC = *this;
+                 pMoveC->m_lpMoves = m_lpMoves; //TODO maybe needed?
+                for(int i = 0; i < m_lpMoves.size(); ++i)
+                {
+                    if(m_lpMoves[i] != 0)
+                    pMoveC->m_lpMoves[i] = m_lpMoves[i]->Copy();
+                }
+                return pMoveC;
+            }
+
+            int GetPoints()
+            {
+                int points = 0;
+                 for(int i = 0; i < m_lpMoves.size(); ++i)
+                {
+                    if(m_lpMoves[i] != 0)
+                        points += m_lpMoves[i]->m_Points;
+                }
+                return points;
+            }
+                        //int m_Player;
             int m_MoveType; // 0 == Lay 1 == change
             std::vector<CMove *> m_lpMoves;
         };
@@ -61,8 +105,9 @@ class CGameState
         CStoneHandler::CStone *m_apOpenStones[12];
 
         int m_aPoints[2];
+        int m_CurrentPoints;
         int m_CurrentPlayer;
-        int m_PlayerID;
+       // int m_PlayerID;
         int m_Turn;
         int EndRound();
         char *DataToString();
@@ -89,9 +134,9 @@ class CGameState
 
         static int ShapeToIndex(char *pName);
         static int ColorToIndex(char *pName);
-        int getPoints(CGameState::CMove* ppMove);
+        int getPoints(CGameState::CMove* pMove);
 
-        void CopyGameState(CGameState *gameState);
+        CGameState* CopyGameState();
 
     protected:
     private:
