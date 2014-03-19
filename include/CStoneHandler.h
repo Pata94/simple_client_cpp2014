@@ -33,12 +33,27 @@ class CStoneHandler
             unsigned char m_Shape;
             unsigned char m_Position;
             unsigned int m_Index;
+            CStone *Clone()
+            {
+                CStone *pStone = new CStone;
+                *pStone = *this;
+                return pStone;
+            }
         };
 
         struct CField{
             unsigned char m_Index;
             unsigned short m_Flags;
             CStone *m_pStone;
+
+            CField* Clone()
+            {
+                CField *pField = new CField;
+                *pField = *this;
+                if(m_pStone != 0)
+                    pField->m_pStone = m_pStone->Clone();
+                return pField;
+            }
         };
 
         /*static bool IsStone(flags StoneFlags, flags Flags);

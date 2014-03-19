@@ -93,7 +93,7 @@ int CGameHandler::HandleGame()
             m_pConnection->m_pBuffer->toString();
 
             if(pChr)
-            delete[] pChr;
+                delete[] pChr;
             int size=m_pConnection->m_pBuffer->GetSize()+1;
             pChr = new char[size];
             strcpy(pChr, m_pConnection->m_pBuffer->toString());
@@ -148,7 +148,9 @@ int CGameHandler::OnMsg(xml_node<> *pNode)
                 else if(strcmp(pName, "sc.framework.plugins.protocol.MoveRequest")==0)
                 {
                     CGameState::CMoveContainer *pMoves = 0;
+                    printf("A1");
                     m_pLogic->OnRequestAction(&pMoves);
+                    printf("A2");
                     SendMove(pMoves);
                     delete pMoves;
                 }

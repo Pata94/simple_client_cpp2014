@@ -16,6 +16,9 @@ CGameState::CGameState()
 {
     m_pFieldHandler = new CFieldHandler();
     m_Moves = 0;
+     m_RoundEnd = false;
+     m_aPoints[0] = 0;
+     m_aPoints[1] = 0;
 }
 int CGameState::ShapeToIndex(char *pName)
 {
@@ -33,7 +36,11 @@ int CGameState::ColorToIndex(char *pName)
 }
 CGameState::~CGameState()
 {
-    delete m_pFieldHandler;
+    if(m_pFieldHandler != 0){
+        delete m_pFieldHandler;
+        m_pFieldHandler = 0;}
+    else
+        printf("NULLPOINETER GAMESTATE FIELDH");
     for(int i = 0; i < 12; ++i)
     {
         if( m_apHandStones[i])
@@ -123,11 +130,7 @@ int CGameState::DoPlaceMove(CMove *move)
         int points= m_pFieldHandler->CanPlace( move->m_FieldIndex, move->m_pStone);
         if(m_Moves < 5 && points != 0)
         {
-            CStoneHandler::CStone *pStone = (CStoneHandler::CStone*)operator new(sizeof(CStoneHandler::CStone));
-             if(!pStone)
-             printf("Bad-Alloc at __LINE__, __FUNCTION__, __FILE__");
-            *pStone = *move->m_pStone;
-            m_pFieldHandler->PlaceStone(move->m_FieldIndex, pStone); //dont use the stone from the move it should be cleared by the move de-constructor
+            m_pFieldHandler->PlaceStone(move->m_FieldIndex, move->m_pStone->Clone()); //dont use the stone from the move it should be cleared by the move de-constructor
             //delete this stone from the hand
             int player = move->m_Player;
             int index;
@@ -142,18 +145,15 @@ int CGameState::DoPlaceMove(CMove *move)
                 }
             }
 
-            if(m_apHandStones[index] == NULL)
+           /* if(m_apHandStones[index] == 0)
             {
                 m_apHandStones[index] = m_apOpenStones[0];
                 for(int i = 0; i < 11; ++i)
                 {
                     m_apOpenStones[i] = m_apOpenStones[i+1];
                 }
-                m_apOpenStones[11] = 0;
+                m_apOpenStones[11] = 0;*/
                      return points;
-            }
-            else
-                return 0;
 
 
         }
@@ -170,19 +170,43 @@ int CGameState::DoExchangeMove(int Player, int CardIndex)
    if(!m_apHandStones[Player*6+CardIndex])
         return ERROR_UNSPECIFIC;
     delete m_apHandStones[Player*6+CardIndex];
-
-    m_apHandStones[Player*6+CardIndex] = m_apOpenStones[0];
-    for(int i = 0; i < 11; ++i)
-    {
-        m_apOpenStones[i] = m_apOpenStones[i+1];
-    }
-    m_apOpenStones[11] = 0;
+    m_apHandStones[Player*6+CardIndex] = 0;
     return ERROR_NONE;
 
 }
+
+int CGameState::PopOpenCards(int Player, int num)
+{
+
+    int a = num;
+    int last = 0;
+    while(a > 0 && last != a)
+    {
+        for(int i = 0; i < 6; ++i)
+        {
+            if(m_apHandStones[Player*6+i] == 0)
+            {
+                m_apHandStones[Player*6+i] = m_apOpenStones[(num-a)];
+                --a;
+            }
+        }
+        last = a;
+    }
+
+    for(int i = 0; i < (num-a); ++i)
+    {
+        m_apOpenStones[i] = m_apOpenStones[i+(num-a)];
+    }
+    for(int i = 11; i > 11-(num-a); --i)
+    {
+        m_apOpenStones[i] = 0;
+    }
+
+   return (num-a);
+}
 int CGameState::DoMove(CMoveContainer *moveC)
 {
-    if(!moveC || m_Moves == -1 || m_Moves == 5)
+    if(!moveC || m_Moves == -1 || m_Moves == 5 || m_RoundEnd)
         return ERROR_UNSPECIFIC;
     //if(moveC->m_Player != m_CurrentPlayer)
    //    return ERROR_UNSPECIFIC;
@@ -190,13 +214,15 @@ int CGameState::DoMove(CMoveContainer *moveC)
     if(moveC->m_MoveType==MOVE_PLACE)
     {
         int points = 0;
-        for(int i = 0; i< moveC->m_lpMoves.size(); ++i) // every move is a move for itself
+        for(int i = 0; i< moveC->m_lpMoves.size() && m_Moves < 5; ++i) // every move is a move for itself
         {
             points  += DoPlaceMove(moveC->m_lpMoves[i]);
             m_Moves++;
         }
         m_CurrentPoints += points;
 
+        if(m_Moves ==  5)
+            m_RoundEnd = true;
 
     }
     else if(moveC->m_MoveType==MOVE_EXCHANGE) // all moves together
@@ -206,14 +232,17 @@ int CGameState::DoMove(CMoveContainer *moveC)
         {
             DoExchangeMove(moveC->m_lpMoves[i]->m_Player, moveC->m_lpMoves[i]->m_CardIndex);
         }
+        m_Moves = moveC->m_lpMoves.size();
         m_CurrentPoints += 2;
+         m_RoundEnd = true;
     }
-    m_Moves = -1;
     return 0;
 }
 int CGameState::EndRound()
 {
+    PopOpenCards(m_CurrentPlayer, m_Moves);
     m_Moves = 0;
+    m_RoundEnd = false;
     m_aPoints[m_CurrentPlayer] += m_CurrentPoints;
     m_CurrentPlayer = m_CurrentPlayer == 1 ? 0: 1;
     m_CurrentPoints = 0;
@@ -225,9 +254,11 @@ CGameState::CMoveContainer* CGameState::GetPossibleMoves(int player)
     bool IsFirstMove = m_pFieldHandler->UpdateFirstMove();
     //std::vector<CGameState::CMoveContainer*> *possibleMoves = new std::vector<CGameState::CMoveContainer*>();
     //possibleMoves->reserve(50);
+
     CMove* pMove = 0;
-    CMoveContainer* pMoveContainer = new CMoveContainer();
-    if(m_Moves == -1 || m_Moves == 5)
+    CGameState::CMoveContainer* pMoveContainer = new CGameState::CMoveContainer(); //TODO CRASH WHYY??????
+    fflush(stdout);
+    if(m_Moves == -1 || m_Moves == 5 || m_RoundEnd)
     {
         //no more moves possible
          pMoveContainer->m_MoveType = MOVE_PLACE;
@@ -237,6 +268,7 @@ CGameState::CMoveContainer* CGameState::GetPossibleMoves(int player)
 
     if(IsFirstMove)
     {
+
         pMoveContainer->m_MoveType = MOVE_PLACE_FIRST;
 
         //look for possible stones
@@ -255,7 +287,7 @@ CGameState::CMoveContainer* CGameState::GetPossibleMoves(int player)
                    &&  CStoneHandler::CheckColor(m_apHandStones[a+p], m_apHandStones[p+b])))
                 {
                     pMove = new CGameState::CMove();
-                    pMove->m_pStone = (CStoneHandler::CStone*) operator new (sizeof(CStoneHandler::CStone)); //do not use the original pointer
+                    pMove->m_pStone = new CStoneHandler::CStone; //do not use the original pointer
                     *pMove->m_pStone = *m_apHandStones[a+p]; //do not use the original pointer
                     pMove->m_Mode = MOVE_PLACE;
                     pMove->m_FieldIndex = 0;
@@ -263,7 +295,7 @@ CGameState::CMoveContainer* CGameState::GetPossibleMoves(int player)
                     pMoveContainer->m_lpMoves.push_back(pMove);
 
                     pMove = new CGameState::CMove();
-                    pMove->m_pStone = (CStoneHandler::CStone*) operator new (sizeof(CStoneHandler::CStone)); //do not use the original pointer
+                    pMove->m_pStone = new CStoneHandler::CStone; //do not use the original pointer
                     *pMove->m_pStone = *m_apHandStones[b+p]; //do not use the original pointer
                     pMove->m_Mode = MOVE_PLACE;
                     pMove->m_FieldIndex = 1;
@@ -277,7 +309,7 @@ CGameState::CMoveContainer* CGameState::GetPossibleMoves(int player)
     }
     else
     {
-        pMoveContainer->m_MoveType = MOVE_PLACE;
+       pMoveContainer->m_MoveType = MOVE_PLACE;
         for(int a = 0; a < 6; ++a)
         {
             if(m_apHandStones[a+p] != 0)
@@ -287,11 +319,9 @@ CGameState::CMoveContainer* CGameState::GetPossibleMoves(int player)
                     if(points > 0)
                     {
                         pMove = new CGameState::CMove();
-                        if(!pMove)
-             printf("Bad-Alloc at __LINE__, __FUNCTION__, __FILE__");
-                         pMove->m_pStone = (CStoneHandler::CStone*) operator new (sizeof(CStoneHandler::CStone)); //do not use the original pointer
-                                  if(! pMove->m_pStone)
-             printf("Bad-Alloc at __LINE__, __FUNCTION__, __FILE__");
+
+                         pMove->m_pStone = new CStoneHandler::CStone; //do not use the original pointer
+
                         *pMove->m_pStone = *m_apHandStones[a+p]; //do not use the original pointer
                         pMove->m_Mode = MOVE_PLACE;
                         pMove->m_FieldIndex = i;
@@ -299,13 +329,14 @@ CGameState::CMoveContainer* CGameState::GetPossibleMoves(int player)
                         pMove->m_Points = points;
                          int x = i%FIELD_WIDTH;
                         int y = (i-x)/FIELD_WIDTH;
-                        printf("Move %i, index: %i x: %i, y: %i, Color: %s, shape: %s \n", pMoveContainer->m_lpMoves.size(), i,x,y, CGameState::m_aColorNames[pMove->m_pStone->m_Color], CGameState::m_aShapeNames[pMove->m_pStone->m_Shape]) ;
+                       // printf("Move %i, index: %i x: %i, y: %i, Color: %s, shape: %s \n", pMoveContainer->m_lpMoves.size(), i,x,y, CGameState::m_aColorNames[pMove->m_pStone->m_Color], CGameState::m_aShapeNames[pMove->m_pStone->m_Shape]) ;
 
                         pMoveContainer->m_lpMoves.push_back(pMove);
 
                     }
                 }
         }
+
     }
     //TODO: do exchange stuff
 
@@ -334,32 +365,31 @@ int CGameState::getPoints(CGameState::CMove* pMove)
 
 
 
-CGameState * CGameState::CopyGameState()
+CGameState * CGameState::Clone()
 {
     //if(!gameState)
 
      // printf("Nullzeiger übergeben in CopyGameState versuche speicher zu bekommen");
 
-       CGameState *gameState = (CGameState*)operator new(sizeof(CGameState));
+       CGameState *gameState = new CGameState();
         if(!gameState)
         {
               printf("fehler 1");
                 return 0;
         }
 
-
-
+    delete gameState->m_pFieldHandler; //do not waste memory here
+    gameState->m_pFieldHandler = 0;
     *gameState = *(CGameState *)this;
 
+    gameState->m_pFieldHandler = m_pFieldHandler->Clone();
+   // gameState->m_pFieldHandler = static_cast<CFieldHandler*>operator new(sizeof(CFieldHandler));
 
-    //gameState->m_pFieldHandler = new CFieldHandler();
-    gameState->m_pFieldHandler = (CFieldHandler*)operator new(sizeof(CFieldHandler));
-    *gameState->m_pFieldHandler = *m_pFieldHandler;
     for(int i = 0; i < 12; ++i)
     {
         if(m_apHandStones[i] != 0)
         {
-            gameState->m_apHandStones[i] = (CStoneHandler::CStone*) operator new (sizeof(CStoneHandler::CStone));
+            gameState->m_apHandStones[i] = new CStoneHandler::CStone;
             *gameState->m_apHandStones[i] = *m_apHandStones[i];
         }
         else
@@ -367,7 +397,7 @@ CGameState * CGameState::CopyGameState()
 
         if(m_apOpenStones[i] != 0)
         {
-              gameState->m_apOpenStones[i] = (CStoneHandler::CStone*) operator new (sizeof(CStoneHandler::CStone));
+              gameState->m_apOpenStones[i] = new CStoneHandler::CStone;
             *gameState->m_apOpenStones[i] = *m_apOpenStones[i];
         }
         else

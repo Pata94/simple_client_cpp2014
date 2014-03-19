@@ -1,4 +1,5 @@
 #include "CFieldHandler.h"
+#include <stdio.h>
 CFieldHandler::CFieldHandler()
 {
     //ctor
@@ -22,8 +23,10 @@ CFieldHandler::~CFieldHandler()
     //dtor
     for(int i = 0; i < FIELD_WIDTH*FIELD_HEIGHT; ++i)   //initiate the field
     {
-        delete m_aField[i].m_pStone;
-        }
+        if(m_aField[i].m_pStone != 0)
+            delete m_aField[i].m_pStone;
+
+    }
 }
 
 void CFieldHandler::NewRound()
@@ -100,8 +103,8 @@ int CFieldHandler::CanPlace(int index, CStoneHandler::CStone *pStone)
     {
 
     }*/
-   // if(CheckRestrictions(index) == false)
-    //    return 0;
+    if(CheckRestrictions(index) == false)
+       return 0;
     int x = index%FIELD_WIDTH;
     int y = (index-x)/FIELD_WIDTH;
 
@@ -386,7 +389,11 @@ bool CFieldHandler::CheckRestrictions(int FieldIndex)
 
 int CFieldHandler::PlaceStone(int index, CStoneHandler::CStone *pStone)
 {
-
+    if(pStone == 0)
+    {
+        printf("NULL-POINTER FH-STONE");
+        return 0;
+    }
 
     m_aField[index].m_pStone = pStone;
     if(m_Moves < 2)
@@ -576,3 +583,18 @@ int CFieldHandler::PlaceStone(int index, CStoneHandler::CStone *pStone)
 
     return 0;*/
 
+CFieldHandler* CFieldHandler::Clone()
+{
+
+    CFieldHandler* pHandler = new CFieldHandler;
+    *pHandler = *this;
+    for(int i = 0; i < FIELD_WIDTH*FIELD_HEIGHT; ++i)   //initiate the field
+    {
+       // CStoneHandler::flags stone;
+      //  m_aField[i].m_Index = i;
+        if(m_aField[i].m_pStone != 0)
+            pHandler->m_aField[i].m_pStone = m_aField[i].m_pStone->Clone();
+       // m_aField[i].m_Flags = 2^16-1;
+    }
+    return pHandler;
+}

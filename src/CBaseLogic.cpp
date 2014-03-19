@@ -33,13 +33,12 @@ void CBaseLogic::OnRequestAction(CGameState::CMoveContainer **ppMoves)
       if(possibleMoves->m_MoveType == MOVE_PLACE_FIRST)
         {
             *ppMoves = new CGameState::CMoveContainer();
-             if(!ppMoves)
-             printf("Bad-Alloc at __LINE__, __FUNCTION__, __FILE__");
             for(int i = 0; i < possibleMoves->m_lpMoves.size(); ++i)
             {
                   (*ppMoves)->m_MoveType = MOVE_PLACE;
-                (*ppMoves)->m_lpMoves.push_back(possibleMoves->m_lpMoves[i]);
+                (*ppMoves)->m_lpMoves.push_back(possibleMoves->m_lpMoves[i]->Clone());
             }
+             delete possibleMoves;
             return;
         }
      if(possibleMoves->m_lpMoves.size()==0)
@@ -48,25 +47,29 @@ void CBaseLogic::OnRequestAction(CGameState::CMoveContainer **ppMoves)
             printf("No possible Moves");
              CGameState::CMove *pMove = new CGameState::CMove();
 
-            pMove->m_pStone = (CStoneHandler::CStone*) operator new (sizeof(CStoneHandler::CStone));
+            pMove->m_pStone = new CStoneHandler::CStone;
 
             *pMove->m_pStone = *m_pGameState->m_apHandStones[m_Player*6];
             pMove->m_Mode = MOVE_EXCHANGE;
            // pMove->m_FieldIndex = i;
             (*ppMoves)->m_MoveType = MOVE_EXCHANGE;
             (*ppMoves)->m_lpMoves.push_back(pMove);
+             delete possibleMoves;
             return;
         }
 
     m_BestPoints = 0;
     CGameState::CMoveContainer *pTemp = new CGameState::CMoveContainer();
     pTemp->m_MoveType = MOVE_PLACE;
-
-    TestFunc(m_pGameState->CopyGameState(), pTemp);
+    CGameState *pTempState = m_pGameState->Clone();
+    TestFunc(pTempState, pTemp);
    /* CGameState::CMove *pTemp = new CGameState::CMove();
     *pTemp = *(pointMoves.front().ppMove);*/
     *ppMoves = m_pBestMoveC;
     m_pBestMoveC = 0;
+    delete pTemp;
+    delete pTempState;
+    delete possibleMoves;
   // pMoves->m_MoveType = MOVE_PLACE;
   /* pMoves->m_lpMoves.clear();
    for(int i = 0; i < m_pBestMoveC->m_lpMoves.size(); ++i)
@@ -133,6 +136,7 @@ void CBaseLogic::TestFunc(CGameState *pState, CGameState::CMoveContainer* pMoveC
 
       CGameState::CMoveContainer *possibleMoves=pState->GetPossibleMoves(m_Player);
 
+ fflush(stdout);
         if(pMoveC->m_lpMoves.size()>0)
         {
             if(pMoveC->m_lpMoves.size()>1)
@@ -144,15 +148,16 @@ void CBaseLogic::TestFunc(CGameState *pState, CGameState::CMoveContainer* pMoveC
             {
                 if(m_pBestMoveC)
                     delete m_pBestMoveC;
-                m_pBestMoveC = pMoveC->Copy();
+                m_pBestMoveC = pMoveC->Clone();
                 m_BestPoints = points;
             }
         }
 
+ fflush(stdout);
         for(int i = 0; i < possibleMoves->m_lpMoves.size(); ++i)
         {
-            CGameState::CMove* pTemp = possibleMoves->m_lpMoves[i]->Copy();
-            CGameState* pTempState = pState->CopyGameState();
+            CGameState::CMove* pTemp = possibleMoves->m_lpMoves[i]->Clone();
+            CGameState* pTempState = pState->Clone();
              CGameState::CMoveContainer *ABD = new CGameState::CMoveContainer();
 
              ABD->m_MoveType = MOVE_PLACE;
@@ -161,21 +166,30 @@ void CBaseLogic::TestFunc(CGameState *pState, CGameState::CMoveContainer* pMoveC
             ABD->m_lpMoves.clear();
             delete ABD;
 
-            CGameState::CMoveContainer *pTempContainer = pMoveC->Copy();
+            CGameState::CMoveContainer *pTempContainer = pMoveC->Clone();
 
             pTempContainer->m_lpMoves.push_back(pTemp);
-
             TestFunc(pTempState, pTempContainer);
+            delete pTempState;
+            delete pTempContainer;
 
         }
+
+
+    delete possibleMoves;
 
 }
 void CBaseLogic::OnGameStateUpdate(CGameState *pNewState)
 {
     printf("GameStateUpdate");
-  //  if(m_pGameState == NULL)
+    if(m_pGameState == NULL)
         m_pGameState = pNewState;
-    //if(pNewState != NULL)
+    else
+    {
+        delete m_pGameState;
+        m_pGameState = pNewState;
+    }
+   // if(pNewState != NULL)
        // pNewState->CopyGameState(m_pGameState);
 }
 
