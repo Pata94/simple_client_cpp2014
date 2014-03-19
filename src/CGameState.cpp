@@ -128,7 +128,7 @@ int CGameState::DoPlaceMove(CMove *move)
     if(move->m_FieldIndex < 0 || move->m_FieldIndex >= 256)
             return ERROR_UNSPECIFIC;
         int points= m_pFieldHandler->CanPlace( move->m_FieldIndex, move->m_pStone);
-        if(m_Moves < 5 && points != 0)
+        if(m_Moves < 6 && points != 0)
         {
             m_pFieldHandler->PlaceStone(move->m_FieldIndex, move->m_pStone->Clone()); //dont use the stone from the move it should be cleared by the move de-constructor
             //delete this stone from the hand
@@ -206,7 +206,7 @@ int CGameState::PopOpenCards(int Player, int num)
 }
 int CGameState::DoMove(CMoveContainer *moveC)
 {
-    if(!moveC || m_Moves == -1 || m_Moves == 5 || m_RoundEnd)
+    if(!moveC || m_Moves == -1 || m_Moves == 6 || m_RoundEnd)
         return ERROR_UNSPECIFIC;
     //if(moveC->m_Player != m_CurrentPlayer)
    //    return ERROR_UNSPECIFIC;
@@ -221,7 +221,7 @@ int CGameState::DoMove(CMoveContainer *moveC)
         }
         m_CurrentPoints += points;
 
-        if(m_Moves ==  5)
+        if(m_Moves ==  6)
             m_RoundEnd = true;
 
     }
@@ -258,7 +258,7 @@ CGameState::CMoveContainer* CGameState::GetPossibleMoves(int player)
     CMove* pMove = 0;
     CGameState::CMoveContainer* pMoveContainer = new CGameState::CMoveContainer(); //TODO CRASH WHYY??????
     fflush(stdout);
-    if(m_Moves == -1 || m_Moves == 5 || m_RoundEnd)
+    if(m_Moves == -1 || m_Moves == 6 || m_RoundEnd)
     {
         //no more moves possible
          pMoveContainer->m_MoveType = MOVE_PLACE;

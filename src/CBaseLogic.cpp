@@ -20,7 +20,7 @@ CBaseLogic::~CBaseLogic()
     //dtor
 }
 
-
+static int num = 0;
 
 void CBaseLogic::OnRequestAction(CGameState::CMoveContainer **ppMoves)
 {
@@ -59,6 +59,7 @@ void CBaseLogic::OnRequestAction(CGameState::CMoveContainer **ppMoves)
         }
 
     m_BestPoints = 0;
+    num = 0;
     CGameState::CMoveContainer *pTemp = new CGameState::CMoveContainer();
     pTemp->m_MoveType = MOVE_PLACE;
     CGameState *pTempState = m_pGameState->Clone();
@@ -70,6 +71,8 @@ void CBaseLogic::OnRequestAction(CGameState::CMoveContainer **ppMoves)
     delete pTemp;
     delete pTempState;
     delete possibleMoves;
+
+    printf("NUM: %i", num);
   // pMoves->m_MoveType = MOVE_PLACE;
   /* pMoves->m_lpMoves.clear();
    for(int i = 0; i < m_pBestMoveC->m_lpMoves.size(); ++i)
@@ -128,6 +131,7 @@ void CBaseLogic::OnRequestAction(CGameState::CMoveContainer **ppMoves)
 }*/
 int CBaseLogic::TestGameState(CGameState *pState, CGameState::CMoveContainer* pMoveC)
 {
+    num++;
     return pMoveC->GetPoints();
 }
 
@@ -135,14 +139,8 @@ void CBaseLogic::TestFunc(CGameState *pState, CGameState::CMoveContainer* pMoveC
 {
 
       CGameState::CMoveContainer *possibleMoves=pState->GetPossibleMoves(m_Player);
-
- fflush(stdout);
         if(pMoveC->m_lpMoves.size()>0)
         {
-            if(pMoveC->m_lpMoves.size()>1)
-            {
-                int asd=pMoveC->m_lpMoves.size();
-            }
             int points = TestGameState(pState, pMoveC);
             if(m_BestPoints < points)
             {
@@ -152,8 +150,6 @@ void CBaseLogic::TestFunc(CGameState *pState, CGameState::CMoveContainer* pMoveC
                 m_BestPoints = points;
             }
         }
-
- fflush(stdout);
         for(int i = 0; i < possibleMoves->m_lpMoves.size(); ++i)
         {
             CGameState::CMove* pTemp = possibleMoves->m_lpMoves[i]->Clone();

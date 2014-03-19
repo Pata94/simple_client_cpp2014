@@ -336,7 +336,7 @@ int CFieldHandler::GetPoints(int index, CStoneHandler::CStone *pStone)
 
 bool CFieldHandler::CheckRestrictions(int FieldIndex)
 {
-    if(m_Moves >= 5)
+    if(m_Moves > 6)
         return false;
     if(m_aRestrictions[0] != -1)
     {
