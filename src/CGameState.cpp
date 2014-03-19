@@ -287,16 +287,14 @@ CGameState::CMoveContainer* CGameState::GetPossibleMoves(int player)
                    &&  CStoneHandler::CheckColor(m_apHandStones[a+p], m_apHandStones[p+b])))
                 {
                     pMove = new CGameState::CMove();
-                    pMove->m_pStone = new CStoneHandler::CStone; //do not use the original pointer
-                    *pMove->m_pStone = *m_apHandStones[a+p]; //do not use the original pointer
+                    pMove->m_pStone = m_apHandStones[a+p]->Clone(); //do not use the original pointer
                     pMove->m_Mode = MOVE_PLACE;
                     pMove->m_FieldIndex = 0;
                     pMove->m_Player = player;
                     pMoveContainer->m_lpMoves.push_back(pMove);
 
                     pMove = new CGameState::CMove();
-                    pMove->m_pStone = new CStoneHandler::CStone; //do not use the original pointer
-                    *pMove->m_pStone = *m_apHandStones[b+p]; //do not use the original pointer
+                    pMove->m_pStone = m_apHandStones[b+p]->Clone(); //do not use the original pointer
                     pMove->m_Mode = MOVE_PLACE;
                     pMove->m_FieldIndex = 1;
                     pMove->m_Player = player;
@@ -320,9 +318,7 @@ CGameState::CMoveContainer* CGameState::GetPossibleMoves(int player)
                     {
                         pMove = new CGameState::CMove();
 
-                         pMove->m_pStone = new CStoneHandler::CStone; //do not use the original pointer
-
-                        *pMove->m_pStone = *m_apHandStones[a+p]; //do not use the original pointer
+                         pMove->m_pStone =m_apHandStones[a+p]->Clone(); //do not use the original pointer
                         pMove->m_Mode = MOVE_PLACE;
                         pMove->m_FieldIndex = i;
                         pMove->m_Player = player;
@@ -389,16 +385,14 @@ CGameState * CGameState::Clone()
     {
         if(m_apHandStones[i] != 0)
         {
-            gameState->m_apHandStones[i] = new CStoneHandler::CStone;
-            *gameState->m_apHandStones[i] = *m_apHandStones[i];
+            gameState->m_apHandStones[i] = m_apHandStones[i]->Clone();
         }
         else
             gameState->m_apHandStones[i] = 0;
 
         if(m_apOpenStones[i] != 0)
         {
-              gameState->m_apOpenStones[i] = new CStoneHandler::CStone;
-            *gameState->m_apOpenStones[i] = *m_apOpenStones[i];
+              gameState->m_apOpenStones[i] = m_apOpenStones[i]->Clone();
         }
         else
             gameState->m_apOpenStones[i] = 0;

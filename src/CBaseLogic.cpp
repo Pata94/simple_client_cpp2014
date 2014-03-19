@@ -45,15 +45,18 @@ void CBaseLogic::OnRequestAction(CGameState::CMoveContainer **ppMoves)
         {
             *ppMoves = new CGameState::CMoveContainer();
             printf("No possible Moves");
-             CGameState::CMove *pMove = new CGameState::CMove();
 
-            pMove->m_pStone = new CStoneHandler::CStone;
-
-            *pMove->m_pStone = *m_pGameState->m_apHandStones[m_Player*6];
-            pMove->m_Mode = MOVE_EXCHANGE;
            // pMove->m_FieldIndex = i;
             (*ppMoves)->m_MoveType = MOVE_EXCHANGE;
-            (*ppMoves)->m_lpMoves.push_back(pMove);
+            for(int i = 0; i < 6; ++i)
+            {
+                CGameState::CMove *pMove = new CGameState::CMove();
+                pMove->m_pStone = m_pGameState->m_apHandStones[m_Player*6+i]->Clone();
+                pMove->m_Mode = MOVE_EXCHANGE;
+                pMove->m_CardIndex = m_Player*6+i;
+                (*ppMoves)->m_lpMoves.push_back(pMove);
+            }
+
              delete possibleMoves;
             return;
         }
