@@ -15,6 +15,8 @@ class CBaseLogic
         void OnRequestAction(CGameState::CMoveContainer **pMoves);
         void OnGameStateUpdate(CGameState *pNewState);
         CGameState::CMoveContainer *m_pBestMoveC;
+        int GetCardValue(CGameState *pState, CStoneHandler::CStone *pStone);
+        int GetHandCardValues(CGameState *pState, int player);
         int m_BestPoints;
         struct CPoints
         {
