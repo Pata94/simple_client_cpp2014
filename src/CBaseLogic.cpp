@@ -115,12 +115,16 @@ void CBaseLogic::OnRequestAction(CGameState::CMoveContainer **ppMoves)
     m_pOldBestMoveC[0]  = m_pBestMoveC[0];
     m_pOldBestMoveC[1]  = m_pBestMoveC[1];
     m_pOldBestMoveC[2]  = m_pBestMoveC[2];
+    m_pBestMoveC[0] = 0;
+    m_pBestMoveC[1] = 0;
+    m_pBestMoveC[2] = 0;
 
     delete pTempState;
     delete pTemp;
     pTemp = new CGameState::CMoveContainer();
+    pTemp->m_MoveType = MOVE_PLACE;
     pTempState = m_pGameState->Clone();
-    pTempState->DoMove(m_pBestMoveC[0]);
+    pTempState->DoMove(m_pOldBestMoveC[0]);
     if(pTempState->GetPossibleMoves(!m_Player) != 0)
     {
         TestFunc(pTempState, pTemp);
@@ -129,8 +133,9 @@ void CBaseLogic::OnRequestAction(CGameState::CMoveContainer **ppMoves)
     delete pTempState;
     delete pTemp;
     pTemp = new CGameState::CMoveContainer();
+    pTemp->m_MoveType = MOVE_PLACE;
     pTempState = m_pGameState->Clone();
-    pTempState->DoMove(m_pBestMoveC[1]);
+    pTempState->DoMove(m_pOldBestMoveC[1]);
     if(pTempState->GetPossibleMoves(!m_Player) != 0)
     {
         TestFunc(pTempState, pTemp);
@@ -139,8 +144,9 @@ void CBaseLogic::OnRequestAction(CGameState::CMoveContainer **ppMoves)
     delete pTempState;
     delete pTemp;
     pTemp = new CGameState::CMoveContainer();
+    pTemp->m_MoveType = MOVE_PLACE;
     pTempState = m_pGameState->Clone();
-    pTempState->DoMove(m_pBestMoveC[2]);
+    pTempState->DoMove(m_pOldBestMoveC[2]);
     if(pTempState->GetPossibleMoves(!m_Player) != 0)
     {
         TestFunc(pTempState, pTemp);
@@ -150,11 +156,13 @@ void CBaseLogic::OnRequestAction(CGameState::CMoveContainer **ppMoves)
     m_pBestMoveC[0] = m_pOldBestMoveC[0];
     if(m_OldBestPoints[1] > m_BestPoints[0])
     {
+        delete m_pBestMoveC[0];
         m_BestPoints[0] = m_OldBestPoints[1];
         m_pBestMoveC[0] = m_pOldBestMoveC[1];
     }
     if(m_OldBestPoints[2] > m_BestPoints[0])
     {
+        delete m_pBestMoveC[0];
         m_BestPoints[0] = m_OldBestPoints[2];
         m_pBestMoveC[0] = m_pOldBestMoveC[2];
     }
@@ -164,6 +172,7 @@ void CBaseLogic::OnRequestAction(CGameState::CMoveContainer **ppMoves)
     m_pBestMoveC[0] = 0;
     delete m_pBestMoveC[1];
     delete m_pBestMoveC[2];
+    delete[] m_pOldBestMoveC;
     delete pTemp;
     delete pTempState;
     delete possibleMoves;
@@ -252,35 +261,30 @@ void CBaseLogic::TestFunc(CGameState *pState, CGameState::CMoveContainer* pMoveC
             int points = TestGameState(pState, pMoveC);
             if(m_BestPoints[0] < points)
             {
-                if(m_pBestMoveC[2])
+                if(m_pBestMoveC[1])
                 {
-                    delete m_pBestMoveC[2];
+                    if(m_pBestMoveC[2])
+                        delete m_pBestMoveC[2];
                     m_pBestMoveC[2] = m_pBestMoveC[1];
                     m_BestPoints[2] = m_BestPoints[1];
                 }
-                if(m_pBestMoveC[1])
+                if(m_pBestMoveC[0])
                 {
-                    delete m_pBestMoveC[1];
                     m_pBestMoveC[1] = m_pBestMoveC[0];
                     m_BestPoints[1] = m_BestPoints[0];
                 }
-                if(m_pBestMoveC[0])
-                    delete m_pBestMoveC[0];
-
                 m_pBestMoveC[0] = pMoveC->Clone();
                 m_BestPoints[0] = points;
             }
             else if(m_BestPoints[1] < points)
             {
-                if(m_pBestMoveC[2])
+                if(m_pBestMoveC[1])
                 {
-                    delete m_pBestMoveC[2];
+                    if(m_pBestMoveC[2])
+                        delete m_pBestMoveC[2];
                     m_pBestMoveC[2] = m_pBestMoveC[1];
                     m_BestPoints[2] = m_BestPoints[1];
                 }
-                if(m_pBestMoveC[1])
-                    delete m_pBestMoveC[1];
-
                 m_pBestMoveC[1] = pMoveC->Clone();
                 m_BestPoints[1] = points;
             }
