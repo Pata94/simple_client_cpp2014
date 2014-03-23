@@ -66,18 +66,7 @@ void CBaseLogic::OnRequestAction(CGameState::CMoveContainer **ppMoves)
     printf("MoveRequest  ");
     CGameState::CMoveContainer *possibleMoves=m_pGameState->GetPossibleMoves(m_Player);
 
-      if(possibleMoves->m_MoveType == MOVE_PLACE_FIRST)
-        {
-            *ppMoves = new CGameState::CMoveContainer();
-            for(int i = 0; i < possibleMoves->m_lpMoves.size(); ++i)
-            {
-                  (*ppMoves)->m_MoveType = MOVE_PLACE;
-                (*ppMoves)->m_lpMoves.push_back(possibleMoves->m_lpMoves[i]->Clone());
-            }
-             delete possibleMoves;
-            return;
-        }
-     if(possibleMoves->m_lpMoves.size()==0)
+    if(possibleMoves->m_lpMoves.size()==0)
         {
             *ppMoves = new CGameState::CMoveContainer();
             printf("No possible Moves");
@@ -96,6 +85,18 @@ void CBaseLogic::OnRequestAction(CGameState::CMoveContainer **ppMoves)
              delete possibleMoves;
             return;
         }
+      if(possibleMoves->m_MoveType == MOVE_PLACE_FIRST)
+        {
+            *ppMoves = new CGameState::CMoveContainer();
+            for(int i = 0; i < possibleMoves->m_lpMoves.size(); ++i)
+            {
+                  (*ppMoves)->m_MoveType = MOVE_PLACE;
+                (*ppMoves)->m_lpMoves.push_back(possibleMoves->m_lpMoves[i]->Clone());
+            }
+             delete possibleMoves;
+            return;
+        }
+
 
     m_BestPoints[0] = -9999999;
     m_BestPoints[1] = -9999999;
@@ -226,7 +227,7 @@ int CBaseLogic::TestGameState(CGameState *pState, CGameState::CMoveContainer* pM
 
     int points = pMoveC->GetPoints()*7;
    // points -= GetHandCardValues(pState, m_Player == 0 ? 1 : 0);
-   CGameState *pTemp = pState->Clone();
+  /* CGameState *pTemp = pState->Clone();
    pTemp->EndRound();
 
     for(int i = 0; i < 6; ++i)
@@ -234,7 +235,7 @@ int CBaseLogic::TestGameState(CGameState *pState, CGameState::CMoveContainer* pM
         if(pTemp->m_apOpenStones[i] != 0)
             points -= GetCardValue(pTemp, pTemp->m_apOpenStones[i])/(i+1);
     }
-    points += GetHandCardValues(pTemp, pState->m_CurrentPlayer)*0.5;
+    points += GetHandCardValues(pTemp, pState->m_CurrentPlayer)*0.5;*/
     num++;
     return points;
 }
@@ -306,7 +307,6 @@ void CBaseLogic::TestFunc(CGameState *pState, CGameState::CMoveContainer* pMoveC
             TestFunc(pTempState, pTempContainer);
             delete pTempState;
             delete pTempContainer;
-
         }
 
 
