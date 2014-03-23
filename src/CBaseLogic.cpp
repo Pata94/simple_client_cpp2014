@@ -13,7 +13,12 @@ CBaseLogic::CBaseLogic(int Player)
 {
     m_Player=Player;
     m_pGameState = 0;
-    m_pBestMoveC = {0;0;0};
+    m_pBestMoveC[0] = 0;
+    m_pBestMoveC[1] = 0;
+    m_pBestMoveC[2] = 0;
+    m_pOldBestMoveC[0] = 0;
+    m_pOldBestMoveC[1] = 0;
+    m_pOldBestMoveC[2] = 0;
 }
 
 CBaseLogic::~CBaseLogic()
@@ -92,7 +97,9 @@ void CBaseLogic::OnRequestAction(CGameState::CMoveContainer **ppMoves)
             return;
         }
 
-    m_BestPoints = {-9999999;-9999999;-9999999};
+    m_BestPoints[0] = -9999999;
+    m_BestPoints[1] = -9999999;
+    m_BestPoints[2] = -9999999;
     num = 0;
     CGameState::CMoveContainer *pTemp = new CGameState::CMoveContainer();
     pTemp->m_MoveType = MOVE_PLACE;
@@ -101,20 +108,58 @@ void CBaseLogic::OnRequestAction(CGameState::CMoveContainer **ppMoves)
     m_OldBestPoints[0] = m_BestPoints[0];
     m_OldBestPoints[1] = m_BestPoints[1];
     m_OldBestPoints[2] = m_BestPoints[2];
-    m_OldBestMoveC[0]  = m_BestMoveC[0];
-    m_OldBestMoveC[1]  = m_BestMoveC[1];
-    m_OldBestMoveC[2]  = m_BestMoveC[2];
+    m_pOldBestMoveC[0]  = m_pBestMoveC[0];
+    m_pOldBestMoveC[1]  = m_pBestMoveC[1];
+    m_pOldBestMoveC[2]  = m_pBestMoveC[2];
 
+    delete pTempState;
+    delete pTemp;
+    pTemp = new CGameState::CMoveContainer();
     pTempState = m_pGameState->Clone();
-    pTempState->DoMove(m_BestMoveC[0]);
+    pTempState->DoMove(m_pBestMoveC[0]);
     if(pTempState->GetPossibleMoves(!m_Player) != 0)
     {
-        m_OldBestPoints =
+        TestFunc(pTempState, pTemp);
+        m_OldBestPoints[0] -= m_BestPoints[0];
+    }
+    delete pTempState;
+    delete pTemp;
+    pTemp = new CGameState::CMoveContainer();
+    pTempState = m_pGameState->Clone();
+    pTempState->DoMove(m_pBestMoveC[1]);
+    if(pTempState->GetPossibleMoves(!m_Player) != 0)
+    {
+        TestFunc(pTempState, pTemp);
+        m_OldBestPoints[1] -= m_BestPoints[0];
+    }
+    delete pTempState;
+    delete pTemp;
+    pTemp = new CGameState::CMoveContainer();
+    pTempState = m_pGameState->Clone();
+    pTempState->DoMove(m_pBestMoveC[2]);
+    if(pTempState->GetPossibleMoves(!m_Player) != 0)
+    {
+        TestFunc(pTempState, pTemp);
+        m_OldBestPoints[2] -= m_BestPoints[0];
+    }
+    m_BestPoints[0] = m_OldBestPoints[0];
+    m_pBestMoveC[0] = m_pOldBestMoveC[0];
+    if(m_OldBestPoints[1] > m_BestPoints[0])
+    {
+        m_BestPoints[0] = m_OldBestPoints[1];
+        m_pBestMoveC[0] = m_pOldBestMoveC[1];
+    }
+    if(m_OldBestPoints[2] > m_BestPoints[0])
+    {
+        m_BestPoints[0] = m_OldBestPoints[2];
+        m_pBestMoveC[0] = m_pOldBestMoveC[2];
     }
    /* CGameState::CMove *pTemp = new CGameState::CMove();
     *pTemp = *(pointMoves.front().ppMove);*/
-    *ppMoves = m_pBestMoveC;
-    m_pBestMoveC = 0;
+    *ppMoves = m_pBestMoveC[0];
+    m_pBestMoveC[0] = 0;
+    delete m_pBestMoveC[1];
+    delete m_pBestMoveC[2];
     delete pTemp;
     delete pTempState;
     delete possibleMoves;

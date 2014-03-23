@@ -265,3 +265,98 @@
 
 1394353298 /root/git/SimpleClient/simple_client_cpp2014/include/config.h
 
+1395597448 source:/home/crunchbang/simple_client_cpp2014/src/CBaseLogic.cpp
+	"CBaseLogic.h"
+	<stdio.h>
+	<algorithm>
+	<vector>
+	<time.h>
+	<stdlib.h>
+	"CGameHandler.h"
+	"CGameState.h"
+
+1395595160 /home/crunchbang/simple_client_cpp2014/include/CBaseLogic.h
+	"CGameState.h"
+	"config.h"
+
+1395579965 /home/crunchbang/simple_client_cpp2014/include/CGameState.h
+	<vector>
+	<CFieldHandler.h>
+	"config.h"
+	<stdio.h>
+
+1395579965 /home/crunchbang/simple_client_cpp2014/include/CFieldHandler.h
+	"CStoneHandler.h"
+	"config.h"
+
+1395579965 /home/crunchbang/simple_client_cpp2014/include/CStoneHandler.h
+
+1395579965 /home/crunchbang/simple_client_cpp2014/include/config.h
+
+1395579965 /home/crunchbang/simple_client_cpp2014/include/CGameHandler.h
+	"CNetwork.h"
+	"rapidxml.hpp"
+	"CBaseLogic.h"
+	"CGameState.h"
+
+1395579965 /home/crunchbang/simple_client_cpp2014/include/CNetwork.h
+	<windows.h>
+	<winsock2.h>
+	<sys/socket.h>
+	<sys/un.h>
+	<netinet/in.h>
+	<arpa/inet.h>
+	<unistd.h>
+	<sys/select.h>
+	"stringbuffer.h"
+
+1395579965 /home/crunchbang/simple_client_cpp2014/include/stringbuffer.h
+	<stdio.h>
+	<stdlib.h>
+	<string.h>
+
+1395579965 /home/crunchbang/simple_client_cpp2014/include/rapidxml.hpp
+	<cstdlib>
+	<cassert>
+	<new>
+	<exception>
+
+1395579965 source:/home/crunchbang/simple_client_cpp2014/src/CFieldHandler.cpp
+	"CFieldHandler.h"
+	<stdio.h>
+
+1395579965 source:/home/crunchbang/simple_client_cpp2014/src/CGameHandler.cpp
+	"CGameHandler.h"
+	"CGameState.h"
+	"rapidxml.hpp"
+	<string.h>
+	<stdio.h>
+	<vector>
+
+1395579965 source:/home/crunchbang/simple_client_cpp2014/src/CGameState.cpp
+	"CGameState.h"
+	<string.h>
+	<stdlib.h>
+	<stdio.h>
+	<cmath>
+	"stringbuffer.h"
+
+1395579965 source:/home/crunchbang/simple_client_cpp2014/src/CNetwork.cpp
+	"CNetwork.h"
+	<stdio.h>
+	<vector>
+
+1395579965 source:/home/crunchbang/simple_client_cpp2014/src/CStarter.cpp
+	"CStarter.h"
+	<iostream>
+	"CStarter.h"
+	<stdio.h>
+
+1395579965 /home/crunchbang/simple_client_cpp2014/include/CStarter.h
+	"CNetwork.h"
+	"CGameState.h"
+	"CGameHandler.h"
+
+1395579965 source:/home/crunchbang/simple_client_cpp2014/src/CStoneHandler.cpp
+	"CStoneHandler.h"
+
