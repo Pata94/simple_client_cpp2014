@@ -60,6 +60,9 @@
 #define POSITION_BLUE 3
 #define POSITION_FIELD 4
 
+#define FIELD_COUNTED_X 1
+#define FIELD_COUNTED_Y 2
+
 
 
 #endif

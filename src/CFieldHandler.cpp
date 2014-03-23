@@ -8,7 +8,7 @@ CFieldHandler::CFieldHandler()
        // CStoneHandler::flags stone;
         m_aField[i].m_Index = i;
         m_aField[i].m_pStone = 0;
-        m_aField[i].m_Flags = 2^16-1;
+        m_aField[i].m_Flags = 0;
     }
     m_Moves = 0; // Needed? YEAH
     m_IsFirstMove = true;
@@ -34,6 +34,10 @@ void CFieldHandler::NewRound()
     m_Moves = 0; // Needed? YEAH
     m_aRestrictions[0] = -1;
     m_aRestrictions[1] = -1;
+     for(int i = 0; i < FIELD_WIDTH*FIELD_HEIGHT; ++i)   //initiate the field
+    {
+        m_aField[i].m_Flags = 0;
+    }
 }
 bool CFieldHandler::IsFree(int index)
 {
@@ -107,12 +111,6 @@ int CFieldHandler::CanPlace(int index, CStoneHandler::CStone *pStone)
        return 0;
     int x = index%FIELD_WIDTH;
     int y = (index-x)/FIELD_WIDTH;
-
-    if(x == 0 && y ==3 && pStone->m_Color == COLOR_GREEN && pStone->m_Shape == SHAPE_BELL)
-    {
-
-        int abc = 0;
-    }
     int temp = 0;
     int points = 0;
     if(!IsFree(index))
@@ -145,6 +143,8 @@ int CFieldHandler::CanPlace(int index, CStoneHandler::CStone *pStone)
             break;
 
         ++num;
+         if(!(m_aField[i+y*FIELD_WIDTH].m_Flags & FIELD_COUNTED_X))
+            points++;
 
         if(CStoneHandler::CheckShape(&m_aField[i+y*FIELD_WIDTH], pStone))
             ++num_shapes;
@@ -172,7 +172,7 @@ int CFieldHandler::CanPlace(int index, CStoneHandler::CStone *pStone)
          if(!((num_shapes == 0 && num_colors == num) || (num_shapes == num && num_colors == 0)))
             return 0;
         gotNeighbours = true;
-        points += num;
+          points += 1;
         if(num == 5)
             points += 6;
     }
@@ -208,6 +208,8 @@ int CFieldHandler::CanPlace(int index, CStoneHandler::CStone *pStone)
             break;
 
         ++num;
+        if(!(m_aField[x+i*FIELD_WIDTH].m_Flags & FIELD_COUNTED_Y))
+            points++;
 
         if(CStoneHandler::CheckShape(&m_aField[x+i*FIELD_WIDTH], pStone))
             ++num_shapes;
@@ -235,7 +237,7 @@ int CFieldHandler::CanPlace(int index, CStoneHandler::CStone *pStone)
             return 0;
         gotNeighbours = true;
 
-         points += num;
+         points ++;
         if(num == 5)
             points += 6;
     }
@@ -401,6 +403,64 @@ int CFieldHandler::PlaceStone(int index, CStoneHandler::CStone *pStone)
         m_aRestrictions[m_Moves] = index;
     }
     ++m_Moves;
+
+    int x = index%FIELD_WIDTH;
+    int y = (index-x)/FIELD_WIDTH;
+    int temp = 0;
+
+        for(int i = x-1; i>=0; i--)
+        {
+            if(IsFree(i+y*FIELD_WIDTH))
+            {
+               temp = i +1;
+               break;
+            }
+        }
+
+        int num = 0;
+        for(int i = temp; i < FIELD_WIDTH; i++)
+        {
+            if(!IsFree(i+y*FIELD_WIDTH))
+            {
+                if(i != x)
+                {
+                      m_aField[i+y*FIELD_WIDTH].m_Flags |= FIELD_COUNTED_X;
+                    num++;
+                }
+
+            }
+            else
+                break;
+        }
+
+        if(num > 0)
+             m_aField[index].m_Flags |= FIELD_COUNTED_X;
+        temp = 0;
+        num = 0;
+        for(int i = y-1; i>=0; i--)
+        {
+            if(IsFree(x+i*FIELD_WIDTH))
+            {
+               temp = i +1;
+               break;
+            }
+        }
+
+        for(int i = temp; i < FIELD_HEIGHT; i++)
+        {
+            if(!IsFree(x+i*FIELD_WIDTH))
+            {
+                if(i != y)
+                {
+                    m_aField[x+i*FIELD_WIDTH].m_Flags |= FIELD_COUNTED_Y;
+                     num++;
+                }
+            }
+            else
+                break;
+        }
+        if(num > 0)
+             m_aField[index].m_Flags |= FIELD_COUNTED_Y;
 }
   /*  if(!CanPlace(index, Stone))
         return ERROR_UNSPECIFIC;

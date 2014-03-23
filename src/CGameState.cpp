@@ -272,7 +272,135 @@ CGameState::CMoveContainer* CGameState::GetPossibleMoves(int player)
         pMoveContainer->m_MoveType = MOVE_PLACE_FIRST;
 
         //look for possible stones
-        for(int a = 0; a < 6; ++a)
+
+        int bestColor = 0;
+        int numcolor = 0;
+        for(int i = 0; i < 6; ++i)
+        {
+            int numc = 0;
+            for(int a = 0; a < 6; ++a)
+            {
+                 if(m_apHandStones[a+p] == 0)
+                    continue;
+                 if(m_apHandStones[a+p]->m_Color == i)
+                 {
+                     bool only = true;
+                     for(int b = 0; b < 6; ++b)
+                     {
+                        if(b != a && m_apHandStones[a+p]->m_Color == m_apHandStones[b+p]->m_Color && m_apHandStones[a+p]->m_Shape == m_apHandStones[b+p]->m_Shape)
+                        {
+                            only = false;
+                            break;
+                        }
+                    }
+                     if(only)
+                         numc++;
+                 }
+
+            }
+            if(numc > numcolor)
+            {
+                bestColor = i;
+                numcolor = numc;
+            }
+
+
+
+        }
+        int bestShape = 0;
+        int numShape = 0;
+        for(int i = 0; i < 6; ++i)
+        {
+            int nums = 0;
+            for(int a = 0; a < 6; ++a)
+            {
+                 if(m_apHandStones[a+p] == 0)
+                    continue;
+                if(m_apHandStones[a+p]->m_Shape == i)
+                 {
+                     bool only = true;
+                     for(int b = 0; b < 6; ++b)
+                     {
+                        if(b != a && m_apHandStones[a+p]->m_Color == m_apHandStones[b+p]->m_Color && m_apHandStones[a+p]->m_Shape == m_apHandStones[b+p]->m_Shape)
+                        {
+                            only = false;
+                            break;
+                        }
+                    }
+                     if(only)
+                         nums++;
+                 }
+            }
+            if(nums > numcolor)
+            {
+                numShape = nums;
+                bestShape = i;
+            }
+
+        }
+        int index = 121;
+        if((numShape > 1 || numcolor > 1))
+        {
+            if(numShape > numcolor)
+            {
+                for(int a = 0; a < 6; ++a)
+                {
+                     if(m_apHandStones[a+p] == 0)
+                        continue;
+                     if(m_apHandStones[a+p]->m_Shape != bestShape)
+                        continue;
+                    bool only = true;
+
+                    for(int b = 0; b < pMoveContainer->m_lpMoves.size(); ++b)
+                    {
+                        if( m_apHandStones[a+p]->m_Color == pMoveContainer->m_lpMoves[b]->m_pStone->m_Color && m_apHandStones[a+p]->m_Shape == pMoveContainer->m_lpMoves[b]->m_pStone->m_Shape)
+                        {
+                            only = false;
+                            break;
+                        }
+                    }
+                    if(!only)
+                        continue;
+                        pMove = new CGameState::CMove();
+                        pMove->m_pStone = m_apHandStones[a+p]->Clone(); //do not use the original pointer
+                        pMove->m_Mode = MOVE_PLACE;
+                        pMove->m_FieldIndex = index++;
+                        pMove->m_Player = player;
+                        pMoveContainer->m_lpMoves.push_back(pMove);
+                }
+
+            }
+            else
+            {
+                for(int a = 0; a < 6; ++a)
+                {
+                     if(m_apHandStones[a+p] == 0)
+                        continue;
+                     if(m_apHandStones[a+p]->m_Color != bestColor)
+                        continue;
+
+                         bool only = true;
+
+                        for(int b = 0; b < pMoveContainer->m_lpMoves.size(); ++b)
+                        {
+                            if( m_apHandStones[a+p]->m_Color == pMoveContainer->m_lpMoves[b]->m_pStone->m_Color && m_apHandStones[a+p]->m_Shape == pMoveContainer->m_lpMoves[b]->m_pStone->m_Shape)
+                            {
+                                only = false;
+                                break;
+                            }
+                        }
+                        if(!only)
+                            continue;
+                        pMove = new CGameState::CMove();
+                        pMove->m_pStone = m_apHandStones[a+p]->Clone(); //do not use the original pointer
+                        pMove->m_Mode = MOVE_PLACE;
+                        pMove->m_FieldIndex = index++;
+                        pMove->m_Player = player;
+                        pMoveContainer->m_lpMoves.push_back(pMove);
+                }
+            }
+        }
+        /*for(int a = 0; a < 6; ++a)
         {
             if(m_apHandStones[a+p] == 0)
                 continue;
@@ -289,7 +417,7 @@ CGameState::CMoveContainer* CGameState::GetPossibleMoves(int player)
                     pMove = new CGameState::CMove();
                     pMove->m_pStone = m_apHandStones[a+p]->Clone(); //do not use the original pointer
                     pMove->m_Mode = MOVE_PLACE;
-                    pMove->m_FieldIndex = 0;
+                    pMove->m_FieldIndex = index++;
                     pMove->m_Player = player;
                     pMoveContainer->m_lpMoves.push_back(pMove);
 
@@ -303,7 +431,7 @@ CGameState::CMoveContainer* CGameState::GetPossibleMoves(int player)
                     return pMoveContainer;
                 }
                             }
-        }
+        }*/
     }
     else
     {
