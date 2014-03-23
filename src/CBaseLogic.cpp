@@ -13,7 +13,12 @@ CBaseLogic::CBaseLogic(int Player)
 {
     m_Player=Player;
     m_pGameState = 0;
-    m_pBestMoveC = 0;
+    m_pBestMoveC[0] = 0;
+    m_pBestMoveC[1] = 0;
+    m_pBestMoveC[2] = 0;
+    m_pOldBestMoveC[0] = 0;
+    m_pOldBestMoveC[1] = 0;
+    m_pOldBestMoveC[2] = 0;
 }
 
 CBaseLogic::~CBaseLogic()
@@ -96,16 +101,69 @@ void CBaseLogic::OnRequestAction(CGameState::CMoveContainer **ppMoves)
         }
 
 
-    m_BestPoints = -9999999;
+    m_BestPoints[0] = -9999999;
+    m_BestPoints[1] = -9999999;
+    m_BestPoints[2] = -9999999;
     num = 0;
     CGameState::CMoveContainer *pTemp = new CGameState::CMoveContainer();
     pTemp->m_MoveType = MOVE_PLACE;
     CGameState *pTempState = m_pGameState->Clone();
     TestFunc(pTempState, pTemp);
+    m_OldBestPoints[0] = m_BestPoints[0];
+    m_OldBestPoints[1] = m_BestPoints[1];
+    m_OldBestPoints[2] = m_BestPoints[2];
+    m_pOldBestMoveC[0]  = m_pBestMoveC[0];
+    m_pOldBestMoveC[1]  = m_pBestMoveC[1];
+    m_pOldBestMoveC[2]  = m_pBestMoveC[2];
+
+    delete pTempState;
+    delete pTemp;
+    pTemp = new CGameState::CMoveContainer();
+    pTempState = m_pGameState->Clone();
+    pTempState->DoMove(m_pBestMoveC[0]);
+    if(pTempState->GetPossibleMoves(!m_Player) != 0)
+    {
+        TestFunc(pTempState, pTemp);
+        m_OldBestPoints[0] -= m_BestPoints[0];
+    }
+    delete pTempState;
+    delete pTemp;
+    pTemp = new CGameState::CMoveContainer();
+    pTempState = m_pGameState->Clone();
+    pTempState->DoMove(m_pBestMoveC[1]);
+    if(pTempState->GetPossibleMoves(!m_Player) != 0)
+    {
+        TestFunc(pTempState, pTemp);
+        m_OldBestPoints[1] -= m_BestPoints[0];
+    }
+    delete pTempState;
+    delete pTemp;
+    pTemp = new CGameState::CMoveContainer();
+    pTempState = m_pGameState->Clone();
+    pTempState->DoMove(m_pBestMoveC[2]);
+    if(pTempState->GetPossibleMoves(!m_Player) != 0)
+    {
+        TestFunc(pTempState, pTemp);
+        m_OldBestPoints[2] -= m_BestPoints[0];
+    }
+    m_BestPoints[0] = m_OldBestPoints[0];
+    m_pBestMoveC[0] = m_pOldBestMoveC[0];
+    if(m_OldBestPoints[1] > m_BestPoints[0])
+    {
+        m_BestPoints[0] = m_OldBestPoints[1];
+        m_pBestMoveC[0] = m_pOldBestMoveC[1];
+    }
+    if(m_OldBestPoints[2] > m_BestPoints[0])
+    {
+        m_BestPoints[0] = m_OldBestPoints[2];
+        m_pBestMoveC[0] = m_pOldBestMoveC[2];
+    }
    /* CGameState::CMove *pTemp = new CGameState::CMove();
     *pTemp = *(pointMoves.front().ppMove);*/
-    *ppMoves = m_pBestMoveC;
-    m_pBestMoveC = 0;
+    *ppMoves = m_pBestMoveC[0];
+    m_pBestMoveC[0] = 0;
+    delete m_pBestMoveC[1];
+    delete m_pBestMoveC[2];
     delete pTemp;
     delete pTempState;
     delete possibleMoves;
@@ -192,12 +250,47 @@ void CBaseLogic::TestFunc(CGameState *pState, CGameState::CMoveContainer* pMoveC
         if(pMoveC->m_lpMoves.size()>0)
         {
             int points = TestGameState(pState, pMoveC);
-            if(m_BestPoints < points)
+            if(m_BestPoints[0] < points)
             {
-                if(m_pBestMoveC)
-                    delete m_pBestMoveC;
-                m_pBestMoveC = pMoveC->Clone();
-                m_BestPoints = points;
+                if(m_pBestMoveC[2])
+                {
+                    delete m_pBestMoveC[2];
+                    m_pBestMoveC[2] = m_pBestMoveC[1];
+                    m_BestPoints[2] = m_BestPoints[1];
+                }
+                if(m_pBestMoveC[1])
+                {
+                    delete m_pBestMoveC[1];
+                    m_pBestMoveC[1] = m_pBestMoveC[0];
+                    m_BestPoints[1] = m_BestPoints[0];
+                }
+                if(m_pBestMoveC[0])
+                    delete m_pBestMoveC[0];
+
+                m_pBestMoveC[0] = pMoveC->Clone();
+                m_BestPoints[0] = points;
+            }
+            else if(m_BestPoints[1] < points)
+            {
+                if(m_pBestMoveC[2])
+                {
+                    delete m_pBestMoveC[2];
+                    m_pBestMoveC[2] = m_pBestMoveC[1];
+                    m_BestPoints[2] = m_BestPoints[1];
+                }
+                if(m_pBestMoveC[1])
+                    delete m_pBestMoveC[1];
+
+                m_pBestMoveC[1] = pMoveC->Clone();
+                m_BestPoints[1] = points;
+            }
+            else if(m_BestPoints[2] < points)
+            {
+                if(m_pBestMoveC[2])
+                    delete m_pBestMoveC[2];
+
+                m_pBestMoveC[2] = pMoveC->Clone();
+                m_BestPoints[2] = points;
             }
         }
         for(int i = 0; i < possibleMoves->m_lpMoves.size(); ++i)
