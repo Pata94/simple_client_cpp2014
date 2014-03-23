@@ -265,3 +265,98 @@
 
 1394353298 /root/git/SimpleClient/simple_client_cpp2014/include/config.h
 
+1395603712 source:c:\users\packard\documents\github\simple_client_cpp2014\src\cbaselogic.cpp
+	"CBaseLogic.h"
+	<stdio.h>
+	<algorithm>
+	<vector>
+	<time.h>
+	<stdlib.h>
+	"CGameHandler.h"
+	"CGameState.h"
+
+1395569118 c:\users\packard\documents\github\simple_client_cpp2014\include\cbaselogic.h
+	"CGameState.h"
+	"config.h"
+
+1395566846 c:\users\packard\documents\github\simple_client_cpp2014\include\cgamestate.h
+	<vector>
+	<CFieldHandler.h>
+	"config.h"
+	<stdio.h>
+
+1395566846 c:\users\packard\documents\github\simple_client_cpp2014\include\cfieldhandler.h
+	"CStoneHandler.h"
+	"config.h"
+
+1395566846 c:\users\packard\documents\github\simple_client_cpp2014\include\cstonehandler.h
+
+1395566846 c:\users\packard\documents\github\simple_client_cpp2014\include\config.h
+
+1395566846 c:\users\packard\documents\github\simple_client_cpp2014\include\cgamehandler.h
+	"CNetwork.h"
+	"rapidxml.hpp"
+	"CBaseLogic.h"
+	"CGameState.h"
+
+1395566846 c:\users\packard\documents\github\simple_client_cpp2014\include\cnetwork.h
+	<windows.h>
+	<winsock2.h>
+	<sys/socket.h>
+	<sys/un.h>
+	<netinet/in.h>
+	<arpa/inet.h>
+	<unistd.h>
+	<sys/select.h>
+	"stringbuffer.h"
+
+1395566846 c:\users\packard\documents\github\simple_client_cpp2014\include\stringbuffer.h
+	<stdio.h>
+	<stdlib.h>
+	<string.h>
+
+1395566846 c:\users\packard\documents\github\simple_client_cpp2014\include\rapidxml.hpp
+	<cstdlib>
+	<cassert>
+	<new>
+	<exception>
+
+1395566846 source:c:\users\packard\documents\github\simple_client_cpp2014\src\cfieldhandler.cpp
+	"CFieldHandler.h"
+	<stdio.h>
+
+1395566846 source:c:\users\packard\documents\github\simple_client_cpp2014\src\cgamehandler.cpp
+	"CGameHandler.h"
+	"CGameState.h"
+	"rapidxml.hpp"
+	<string.h>
+	<stdio.h>
+	<vector>
+
+1395566846 source:c:\users\packard\documents\github\simple_client_cpp2014\src\cgamestate.cpp
+	"CGameState.h"
+	<string.h>
+	<stdlib.h>
+	<stdio.h>
+	<cmath>
+	"stringbuffer.h"
+
+1395566846 source:c:\users\packard\documents\github\simple_client_cpp2014\src\cnetwork.cpp
+	"CNetwork.h"
+	<stdio.h>
+	<vector>
+
+1395566846 source:c:\users\packard\documents\github\simple_client_cpp2014\src\cstarter.cpp
+	"CStarter.h"
+	<iostream>
+	"CStarter.h"
+	<stdio.h>
+
+1395566846 c:\users\packard\documents\github\simple_client_cpp2014\include\cstarter.h
+	"CNetwork.h"
+	"CGameState.h"
+	"CGameHandler.h"
+
+1395566846 source:c:\users\packard\documents\github\simple_client_cpp2014\src\cstonehandler.cpp
+	"CStoneHandler.h"
+
