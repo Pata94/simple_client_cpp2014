@@ -14,12 +14,12 @@ class CBaseLogic
         virtual ~CBaseLogic();
         void OnRequestAction(CGameState::CMoveContainer **pMoves);
         void OnGameStateUpdate(CGameState *pNewState);
-        CGameState::CMoveContainer *m_pBestMoveC[3];
-        CGameState::CMoveContainer *m_pOldBestMoveC[3];
+        CGameState::CMoveContainer *m_pBestMoveC[10];
+        CGameState::CMoveContainer *m_pOldBestMoveC[10];
         int GetCardValue(CGameState *pState, CStoneHandler::CStone *pStone);
         int GetHandCardValues(CGameState *pState, int player);
-        int m_BestPoints[3];
-        int m_OldBestPoints[3];
+        int m_BestPoints[10];
+        int m_OldBestPoints[10];
         struct CPoints
         {
             int points;
