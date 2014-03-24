@@ -182,11 +182,12 @@ int CGameState::PopOpenCards(int Player, int num)
     int last = 0;
     while(a > 0 && last != a)
     {
-        for(int i = 0; i < 6; ++i)
+        for(int i = 0; i < 6 && a > 0; ++i)
         {
             if(m_apHandStones[Player*6+i] == 0)
             {
                 m_apHandStones[Player*6+i] = m_apOpenStones[(num-a)];
+                m_apOpenStones[(num-a)] = 0;
                 --a;
             }
         }
@@ -244,7 +245,7 @@ int CGameState::EndRound()
     m_Moves = 0;
     m_RoundEnd = false;
     m_aPoints[m_CurrentPlayer] += m_CurrentPoints;
-    m_CurrentPlayer = m_CurrentPlayer == 1 ? 0: 1;
+    m_CurrentPlayer = (m_CurrentPlayer == 1 ? 0: 1);
     m_CurrentPoints = 0;
     m_pFieldHandler->NewRound();
 }
@@ -264,7 +265,7 @@ CGameState::CMoveContainer* CGameState::GetPossibleMoves(int player)
          pMoveContainer->m_MoveType = MOVE_PLACE;
          return pMoveContainer;
     }
-    int p = player == 0 ? 0 : 6;
+    int p = m_CurrentPlayer == 0 ? 0 : 6;
 
     if(IsFirstMove)
     {

@@ -127,10 +127,11 @@ void CBaseLogic::OnRequestAction(CGameState::CMoveContainer **ppMoves)
         if(pTempState->GetPossibleMoves(pTempState->m_CurrentPlayer) != 0)
         {
             TestFunc(pTempState, pTemp);
-            m_OldBestPoints[i] -= m_BestPoints[0]/2;
+            m_OldBestPoints[i] -= m_BestPoints[0]*0.5f;
         }
         delete pTempState;
         delete pTemp;
+
     }
     m_BestPoints[0] = m_OldBestPoints[0];
     m_pBestMoveC[0] = m_pOldBestMoveC[0];
@@ -146,8 +147,8 @@ void CBaseLogic::OnRequestAction(CGameState::CMoveContainer **ppMoves)
     }
    /* CGameState::CMove *pTemp = new CGameState::CMove();
     *pTemp = *(pointMoves.front().ppMove);*/
-    *ppMoves = m_pBestMoveC[0];
-    m_pBestMoveC[0] = 0;
+    *ppMoves = m_pBestMoveC[0]->Clone();
+  //  m_pBestMoveC[0] = 0;
     delete[] m_pBestMoveC;
     delete[] m_pOldBestMoveC;
     delete possibleMoves;
@@ -212,7 +213,7 @@ void CBaseLogic::OnRequestAction(CGameState::CMoveContainer **ppMoves)
 int CBaseLogic::TestGameState(CGameState *pState, CGameState::CMoveContainer* pMoveC)
 {
 
-    int points = pMoveC->GetPoints()*7;
+    int points = pMoveC->GetPoints();
    // points -= GetHandCardValues(pState, m_Player == 0 ? 1 : 0);
   /* CGameState *pTemp = pState->Clone();
    pTemp->EndRound();
@@ -230,7 +231,7 @@ int CBaseLogic::TestGameState(CGameState *pState, CGameState::CMoveContainer* pM
 void CBaseLogic::TestFunc(CGameState *pState, CGameState::CMoveContainer* pMoveC)
 {
 
-      CGameState::CMoveContainer *possibleMoves=pState->GetPossibleMoves(m_Player);
+      CGameState::CMoveContainer *possibleMoves=pState->GetPossibleMoves(pState->m_CurrentPlayer);
         if(pMoveC->m_lpMoves.size()>0)
         {
             int points = TestGameState(pState, pMoveC);
@@ -246,6 +247,7 @@ void CBaseLogic::TestFunc(CGameState *pState, CGameState::CMoveContainer* pMoveC
                     }
                     m_pBestMoveC[i] = pMoveC->Clone();
                     m_BestPoints[i] = points;
+                    break;
                 }
             }
         }
