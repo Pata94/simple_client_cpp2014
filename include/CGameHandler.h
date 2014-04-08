@@ -17,7 +17,7 @@ class CGameHandler
         int HandleGame();
         int OnMsg(rapidxml::xml_node<> *pNode);
         CGameState *GetStateFromXML(rapidxml::xml_node<> *pNode);
-        int SendMove(CGameState::CMoveContainer *pMoves);
+        int SendMove(CMoveHandler::CMoveContainer *pMoves);
     protected:
     private:
 

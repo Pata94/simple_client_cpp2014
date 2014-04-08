@@ -12,22 +12,29 @@ class CBaseLogic
     public:
         CBaseLogic(int Player);
         virtual ~CBaseLogic();
-        void OnRequestAction(CGameState::CMoveContainer **pMoves);
+        void OnRequestAction(CMoveHandler::CMoveContainer **pMoves);
         void OnGameStateUpdate(CGameState *pNewState);
-        CGameState::CMoveContainer *m_pBestMoveC[10];
-        CGameState::CMoveContainer *m_pOldBestMoveC[10];
+        CMoveHandler::CMoveContainer *m_pBestMoveC;//[10];
+        CMoveHandler::CMoveContainer *m_pOldBestMoveC[10];
         int GetCardValue(CGameState *pState, CStoneHandler::CStone *pStone);
-        int GetHandCardValues(CGameState *pState, int player);
-        int m_BestPoints[10];
+        float GetHandCardValues(CGameState *pState, int player);
+          int m_BestPoints;//[10];
         int m_OldBestPoints[10];
         struct CPoints
         {
             int points;
-            CGameState::CMove *ppMove;
+            CMoveHandler::CMove *ppMove;
 
         };
-        void TestFunc(CGameState *pState, CGameState::CMoveContainer* pMoveC);
-       int TestGameState(CGameState *pState, CGameState::CMoveContainer* pMoveC);
+        void TestFunc(CGameState *pState, CMoveHandler::CMoveContainer* pMoveC);
+       int TestGameState(CGameState *pState, CMoveHandler::CMoveContainer* pMoveC);
+
+
+       int GetStoneValues(CGameState *pState);
+        float GetStoneProbability(CGameState *pState, CStoneHandler::CStone *pStone);
+        float m_aValues[NUM_COLORS*NUM_SHAPES];
+        float GetStoneValue(CStoneHandler::CStone *pStone);
+        float RekursiveFunktion(CFieldHandler *pField, float currentProbability, float (&aProbabilities)[NUM_COLORS*NUM_SHAPES], float step);
     protected:
     private:
         int m_Player;

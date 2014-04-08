@@ -121,7 +121,7 @@ char *CGameState::DataToString()
     return 0;
 }
 */
-int CGameState::DoPlaceMove(CMove *move)
+int CGameState::DoPlaceMove(CMoveHandler::CMove *move)
 {
     if(!move)
         return 0;
@@ -205,7 +205,7 @@ int CGameState::PopOpenCards(int Player, int num)
 
    return (num-a);
 }
-int CGameState::DoMove(CMoveContainer *moveC)
+int CGameState::DoMove(CMoveHandler::CMoveContainer *moveC)
 {
     if(!moveC || m_Moves == -1 || m_Moves == 6 || m_RoundEnd)
         return ERROR_UNSPECIFIC;
@@ -249,15 +249,15 @@ int CGameState::EndRound()
     m_CurrentPoints = 0;
     m_pFieldHandler->NewRound();
 }
-CGameState::CMoveContainer* CGameState::GetPossibleMoves(int player)
+CMoveHandler::CMoveContainer* CGameState::GetPossibleMoves(int player)
 {
 
     bool IsFirstMove = m_pFieldHandler->UpdateFirstMove();
-    //std::vector<CGameState::CMoveContainer*> *possibleMoves = new std::vector<CGameState::CMoveContainer*>();
+    //std::vector<CMoveHandler::CMoveContainer*> *possibleMoves = new std::vector<CMoveHandler::CMoveContainer*>();
     //possibleMoves->reserve(50);
 
-    CMove* pMove = 0;
-    CGameState::CMoveContainer* pMoveContainer = new CGameState::CMoveContainer(); //TODO CRASH WHYY??????
+    CMoveHandler::CMove* pMove = 0;
+    CMoveHandler::CMoveContainer* pMoveContainer = new CMoveHandler::CMoveContainer(); //TODO CRASH WHYY??????
     fflush(stdout);
     if(m_Moves == -1 || m_Moves == 6 || m_RoundEnd)
     {
@@ -362,7 +362,7 @@ CGameState::CMoveContainer* CGameState::GetPossibleMoves(int player)
                     }
                     if(!only)
                         continue;
-                        pMove = new CGameState::CMove();
+                        pMove = new CMoveHandler::CMove();
                         pMove->m_pStone = m_apHandStones[a+p]->Clone(); //do not use the original pointer
                         pMove->m_Mode = MOVE_PLACE;
                         pMove->m_FieldIndex = index++;
@@ -392,7 +392,7 @@ CGameState::CMoveContainer* CGameState::GetPossibleMoves(int player)
                         }
                         if(!only)
                             continue;
-                        pMove = new CGameState::CMove();
+                        pMove = new CMoveHandler::CMove();
                         pMove->m_pStone = m_apHandStones[a+p]->Clone(); //do not use the original pointer
                         pMove->m_Mode = MOVE_PLACE;
                         pMove->m_FieldIndex = index++;
@@ -415,14 +415,14 @@ CGameState::CMoveContainer* CGameState::GetPossibleMoves(int player)
                    || (!CStoneHandler::CheckShape(m_apHandStones[a+p], m_apHandStones[p+b])
                    &&  CStoneHandler::CheckColor(m_apHandStones[a+p], m_apHandStones[p+b])))
                 {
-                    pMove = new CGameState::CMove();
+                    pMove = new CMoveHandler::CMove();
                     pMove->m_pStone = m_apHandStones[a+p]->Clone(); //do not use the original pointer
                     pMove->m_Mode = MOVE_PLACE;
                     pMove->m_FieldIndex = index++;
                     pMove->m_Player = player;
                     pMoveContainer->m_lpMoves.push_back(pMove);
 
-                    pMove = new CGameState::CMove();
+                    pMove = new CMoveHandler::CMove();
                     pMove->m_pStone = m_apHandStones[b+p]->Clone(); //do not use the original pointer
                     pMove->m_Mode = MOVE_PLACE;
                     pMove->m_FieldIndex = 1;
@@ -445,7 +445,7 @@ CGameState::CMoveContainer* CGameState::GetPossibleMoves(int player)
                     int points = m_pFieldHandler->CanPlace( i, m_apHandStones[a+p]);
                     if(points > 0)
                     {
-                        pMove = new CGameState::CMove();
+                        pMove = new CMoveHandler::CMove();
 
                          pMove->m_pStone =m_apHandStones[a+p]->Clone(); //do not use the original pointer
                         pMove->m_Mode = MOVE_PLACE;
@@ -468,7 +468,7 @@ CGameState::CMoveContainer* CGameState::GetPossibleMoves(int player)
     return pMoveContainer;
 }
 
-int CGameState::getPoints(CGameState::CMove* pMove)
+int CGameState::getPoints(CMoveHandler::CMove* pMove)
 {
     if(pMove == 0)
     {

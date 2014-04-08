@@ -39,6 +39,14 @@ class CStoneHandler
                 *pStone = *this;
                 return pStone;
             }
+           bool operator<(CStone &a)
+            {
+                if(this->m_Color < a.m_Color)
+                    return true;
+                if(this->m_Shape < a.m_Shape)
+                    return true;
+                return this->m_Identifier < a.m_Identifier;
+            }
         };
 
         struct CField{

@@ -44,6 +44,7 @@
 		<Unit filename="include/CFieldHandler.h" />
 		<Unit filename="include/CGameHandler.h" />
 		<Unit filename="include/CGameState.h" />
+		<Unit filename="include/CMoveHandler.h" />
 		<Unit filename="include/CNetwork.h" />
 		<Unit filename="include/CStarter.h" />
 		<Unit filename="include/CStoneHandler.h" />

@@ -65,11 +65,11 @@ int CGameHandler::HandleGame()
             xml_node<> *pNode2=doc2.first_node();
 
     CGameState *pTestState = GetStateFromXML(pNode2);//->first_node("state"));
-    CGameState::CMoveContainer *possibleMoves =  pTestState->GetPossibleMoves(pTestState->m_CurrentPlayer);
+    CMoveHandler::CMoveContainer *possibleMoves =  pTestState->GetPossibleMoves(pTestState->m_CurrentPlayer);
 
     m_pLogic = new CBaseLogic(pTestState->m_CurrentPlayer);
     m_pLogic->OnGameStateUpdate(pTestState);
-    CGameState::CMoveContainer *pMoves = 0;
+    CMoveHandler::CMoveContainer *pMoves = 0;
     m_pLogic->OnRequestAction(&pMoves);
     for(int i = 0; i < pMoves->m_lpMoves.size();i++)
     {   int x = pMoves->m_lpMoves[i]->m_FieldIndex%FIELD_WIDTH;
@@ -154,7 +154,7 @@ int CGameHandler::OnMsg(xml_node<> *pNode)
                 }
                 else if(strcmp(pName, "sc.framework.plugins.protocol.MoveRequest")==0)
                 {
-                    CGameState::CMoveContainer *pMoves = 0;
+                    CMoveHandler::CMoveContainer *pMoves = 0;
                     printf("A1");
                     m_pLogic->OnRequestAction(&pMoves);
                     printf("A2");
@@ -302,9 +302,9 @@ CGameState *CGameHandler::GetStateFromXML(xml_node<> *pNode)
    // tempState->DataToString();
     return tempState;
 }
-int CGameHandler::SendMove(CGameState::CMoveContainer *pMoves)
+int CGameHandler::SendMove(CMoveHandler::CMoveContainer *pMoves)
 {
-    std::vector<CGameState::CMove *> *p = &pMoves->m_lpMoves;
+    std::vector<CMoveHandler::CMove *> *p = &pMoves->m_lpMoves;
     CStringBuffer buf(pMoves->m_lpMoves.size()+1, 512);
     buf.append("<room roomId=\"");
     buf.append(m_pRoomID);

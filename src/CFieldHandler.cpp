@@ -1,5 +1,6 @@
 #include "CFieldHandler.h"
 #include <stdio.h>
+#include <algorithm>
 CFieldHandler::CFieldHandler()
 {
     //ctor
@@ -61,6 +62,7 @@ bool CFieldHandler::UpdateFirstMove()
 int CFieldHandler::CanPlace(int index, CStoneHandler::CStone *pStone)
 {
 
+
     /*int x = index%FIELD_WIDTH;
     int y = (index-x)/FIELD_WIDTH;
     int temp = 0;
@@ -107,14 +109,14 @@ int CFieldHandler::CanPlace(int index, CStoneHandler::CStone *pStone)
     {
 
     }*/
+      if(!IsFree(index))
+        return 0;   //field not empty
     if(CheckRestrictions(index) == false)
        return 0;
     int x = index%FIELD_WIDTH;
     int y = (index-x)/FIELD_WIDTH;
     int temp = 0;
     int points = 0;
-    if(!IsFree(index))
-        return 0;   //field not empty
     for(int i = x-1; i >= 0; --i)
     {
         if(IsFree(i+y*FIELD_WIDTH))
@@ -389,7 +391,7 @@ bool CFieldHandler::CheckRestrictions(int FieldIndex)
     return true;
 }
 
-int CFieldHandler::PlaceStone(int index, CStoneHandler::CStone *pStone)
+int CFieldHandler::PlaceStone(int index, CStoneHandler::CStone *pStone, bool update)
 {
     if(pStone == 0)
     {
@@ -413,6 +415,8 @@ int CFieldHandler::PlaceStone(int index, CStoneHandler::CStone *pStone)
             if(IsFree(i+y*FIELD_WIDTH))
             {
                temp = i +1;
+               if(update)
+               UpdatePossibleMoves(i+y*FIELD_WIDTH);
                break;
             }
         }
@@ -430,7 +434,11 @@ int CFieldHandler::PlaceStone(int index, CStoneHandler::CStone *pStone)
 
             }
             else
+            { if(update)
+                UpdatePossibleMoves(i+y*FIELD_WIDTH);
+
                 break;
+            }
         }
 
         if(num > 0)
@@ -442,6 +450,8 @@ int CFieldHandler::PlaceStone(int index, CStoneHandler::CStone *pStone)
             if(IsFree(x+i*FIELD_WIDTH))
             {
                temp = i +1;
+                if(update)
+               UpdatePossibleMoves(x+i*FIELD_WIDTH);
                break;
             }
         }
@@ -457,10 +467,16 @@ int CFieldHandler::PlaceStone(int index, CStoneHandler::CStone *pStone)
                 }
             }
             else
+            {
+ if(update)
+                UpdatePossibleMoves(x+i*FIELD_WIDTH);
                 break;
+            }
         }
         if(num > 0)
              m_aField[index].m_Flags |= FIELD_COUNTED_Y;
+ if(update)
+            UpdatePossibleMoves();
 }
   /*  if(!CanPlace(index, Stone))
         return ERROR_UNSPECIFIC;
@@ -656,5 +672,111 @@ CFieldHandler* CFieldHandler::Clone()
             pHandler->m_aField[i].m_pStone = m_aField[i].m_pStone->Clone();
        // m_aField[i].m_Flags = 2^16-1;
     }
+
+    pHandler->m_PossibleStones = m_PossibleStones;
+    // pMoveC->m_lpMoves = m_lpMoves; //TODO maybe needed?
+                for(int i = 0; i < m_PossibleStones.m_lpMoves.size(); ++i)
+                {
+                    if( m_PossibleStones.m_lpMoves[i] != 0)
+                        pHandler->m_PossibleStones.m_lpMoves[i] = m_PossibleStones.m_lpMoves[i]->Clone();
+                }
     return pHandler;
+}
+
+void CFieldHandler::InitPossibleMoves()
+{
+    m_PossibleStones.m_lpMoves.reserve(128);
+    for(int a = 0; a < FIELD_WIDTH*FIELD_HEIGHT; ++a)
+    {
+        for(int b = 0; b < NUM_COLORS*NUM_SHAPES; ++b)
+        {
+            CStoneHandler::CStone *pStone = new CStoneHandler::CStone();
+            pStone->m_Color = b%NUM_COLORS;
+            pStone->m_Shape = (b-pStone->m_Color)/NUM_COLORS;
+            int points = CanPlace(a, pStone);
+            if(points > 0)
+            {
+                 CMoveHandler::CMove *pTemp = new CMoveHandler::CMove();
+                 pTemp->m_FieldIndex = a;
+                 pTemp->m_pStone = pStone;
+                  pTemp->m_Points = points;
+                 m_PossibleStones.m_lpMoves.push_back(pTemp);
+            }
+            else
+                delete pStone;
+        }
+    }
+}
+
+void CFieldHandler::UpdatePossibleMoves(int Index)
+{
+      for(int b = 0; b < NUM_COLORS*NUM_SHAPES; ++b)
+        {
+            CStoneHandler::CStone *pStone = new CStoneHandler::CStone();
+            pStone->m_Color = b%NUM_COLORS;
+            pStone->m_Shape = (b-pStone->m_Color)/NUM_COLORS;
+            int points = CanPlace(Index, pStone);
+
+            if(points > 0)
+            {
+                 CMoveHandler::CMove *pTemp = new CMoveHandler::CMove();
+                 pTemp->m_FieldIndex = Index;
+
+
+                 if(!pStone)
+                    printf("WTF");
+                 pTemp->m_pStone = pStone;
+                 pTemp->m_Points = points;
+                 m_PossibleStones.m_lpMoves.push_back(pTemp);
+            }
+            else
+                delete pStone;
+        }
+}
+void CFieldHandler::UpdatePossibleMoves()
+{
+
+  //  std::sort(m_PossibleStones.m_lpMoves.begin(), m_PossibleStones.m_lpMoves.end());
+
+
+    for(int i = 1; i < m_PossibleStones.m_lpMoves.size();)
+    {
+        printf("%d, %d", m_PossibleStones.m_lpMoves.size(), i);
+        CMoveHandler::CMove pTemp =*m_PossibleStones.m_lpMoves[i];
+        CMoveHandler::CMove pTempB =*m_PossibleStones.m_lpMoves[i-1];
+         printf("A");
+        if(m_PossibleStones.m_lpMoves[i]->m_FieldIndex == m_PossibleStones.m_lpMoves[i-1]->m_FieldIndex)
+        {
+
+
+            if(m_PossibleStones.m_lpMoves[i]->m_pStone->m_Color == m_PossibleStones.m_lpMoves[i-1]->m_pStone->m_Color &&
+                m_PossibleStones.m_lpMoves[i]->m_pStone->m_Shape == m_PossibleStones.m_lpMoves[i-1]->m_pStone->m_Shape)
+            {
+               // m_PossibleStones.m_lpMoves.erase(m_PossibleStones.m_lpMoves.begin() + i);
+               // continue;
+            }
+        }
+          printf("B");
+
+        ++i;
+    }
+
+    for(int i = 0; i < m_PossibleStones.m_lpMoves.size(); ++i)
+    {
+        if(m_PossibleStones.m_lpMoves[i] && m_PossibleStones.m_lpMoves[i]->m_pStone)
+        {
+            if(CanPlace(m_PossibleStones.m_lpMoves[i]->m_FieldIndex, m_PossibleStones.m_lpMoves[i]->m_pStone) == 0)
+            {
+               // delete m_PossibleStones.m_lpMoves[i];
+               // m_PossibleStones.m_lpMoves.erase(m_PossibleStones.m_lpMoves.begin() + i);
+              //  --i;
+            }
+        }
+        else
+        {
+           // m_PossibleStones.m_lpMoves.erase(m_PossibleStones.m_lpMoves.begin() + i);
+           // --i;
+        }
+    }
+
 }
