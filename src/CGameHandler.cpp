@@ -304,7 +304,7 @@ CGameState *CGameHandler::GetStateFromXML(xml_node<> *pNode)
 }
 int CGameHandler::SendMove(CMoveHandler::CMoveContainer *pMoves)
 {
-    std::vector<CMoveHandler::CMove *> *p = &pMoves->m_lpMoves;
+    array<CMoveHandler::CMove *> *p = &pMoves->m_lpMoves;
     CStringBuffer buf(pMoves->m_lpMoves.size()+1, 512);
     buf.append("<room roomId=\"");
     buf.append(m_pRoomID);

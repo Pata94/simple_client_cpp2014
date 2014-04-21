@@ -3,7 +3,7 @@ made for Software-Challenge 2013 visit http://www.informatik.uni-kiel.de/softwar
 #include "CBaseLogic.h"
 #include <stdio.h>
 #include <algorithm>
-#include <vector>
+
 #include <time.h>
 #include <stdlib.h>
 #include "CGameHandler.h"
@@ -76,14 +76,14 @@ float CBaseLogic::GetStoneProbability(CGameState *pState, CStoneHandler::CStone 
     if(pState->m_NumBagStones <= 0)
         return 0.0f;
     num = 3 - num;
-    return ((float)num/(float)pState->m_NumBagStones)-0.5f;
+    return ((float)num/(float)pState->m_NumBagStones)*0.5f;
 }
 
 float CBaseLogic::RekursiveFunktion(CFieldHandler *pField, float currentProbability, float (&aProbabilities)[NUM_COLORS*NUM_SHAPES], float step)
 {
 
     CMoveHandler::CMoveContainer *pMoveContainer = pField->GetPossibleMoves();
-
+     printf(",%i", pMoveContainer->m_lpMoves.size());
     float points = 0;
     for(int i = 0; i < pMoveContainer->m_lpMoves.size(); i++)
     {
@@ -94,25 +94,26 @@ float CBaseLogic::RekursiveFunktion(CFieldHandler *pField, float currentProbabil
              printf("Move NULL");
         if(!pMoveContainer->m_lpMoves[i]->m_pStone)
              printf("stone NULL");
-         printf("C");
+
          int a2 = pMoveContainer->m_lpMoves[i]->m_pStone->m_Color+pMoveContainer->m_lpMoves[i]->m_pStone->m_Shape*NUM_COLORS;
 
 
         float val1 = pTempField->CanPlace(pMoveContainer->m_lpMoves[i]->m_FieldIndex, pMoveContainer->m_lpMoves[i]->m_pStone)*aProbabilities[a2];
         if(val1 > 0.0f)
             {
-                 printf("D");
+
                 pTempField->PlaceStone(pMoveContainer->m_lpMoves[i]->m_FieldIndex, pMoveContainer->m_lpMoves[i]->m_pStone, true);
-                printf("E");
+
                 float val2 = RekursiveFunktion(pTempField, currentProbability*aProbabilities[a2],  aProbabilities, step);
-                    printf("F");
-                float val3 = val1+val2;
+                                   float val3 = val1+val2;
                  if( m_aValues[a2] < val3)
                         m_aValues[a2] = val3;
                 points += val3*step;
-                printf("G");
+
             }
+
         delete pTempField;
+
     }
     delete pMoveContainer;
 
@@ -138,6 +139,14 @@ int CBaseLogic::GetStoneValues(CGameState *pState)
     float step = 0.5f;
 
     RekursiveFunktion(pTemp, 1.0f, aProbabilities, step);
+
+   for(int i = 0; i < NUM_COLORS*NUM_SHAPES; ++i)
+    {
+        int color = i%NUM_COLORS;
+        int shape = (i-color)/NUM_COLORS;
+
+        printf("// C: %s, S: %s, %f, %f",CGameState::m_aColorNames[color], CGameState::m_aShapeNames[shape], m_aValues[i], aProbabilities[i] );
+    }
     delete pTemp;
 }
 
@@ -162,7 +171,7 @@ void CBaseLogic::OnRequestAction(CMoveHandler::CMoveContainer **ppMoves)
                 pMove->m_pStone = m_pGameState->m_apHandStones[m_Player*6+i]->Clone();
                 pMove->m_Mode = MOVE_EXCHANGE;
                 pMove->m_CardIndex = m_Player*6+i;
-                (*ppMoves)->m_lpMoves.push_back(pMove);
+                (*ppMoves)->m_lpMoves.add(pMove);
             }
 
              delete possibleMoves;
@@ -174,7 +183,7 @@ void CBaseLogic::OnRequestAction(CMoveHandler::CMoveContainer **ppMoves)
             for(int i = 0; i < possibleMoves->m_lpMoves.size(); ++i)
             {
                   (*ppMoves)->m_MoveType = MOVE_PLACE;
-                (*ppMoves)->m_lpMoves.push_back(possibleMoves->m_lpMoves[i]->Clone());
+                (*ppMoves)->m_lpMoves.add(possibleMoves->m_lpMoves[i]->Clone());
             }
              delete possibleMoves;
             return;
@@ -311,14 +320,14 @@ void CBaseLogic::TestFunc(CGameState *pState, CMoveHandler::CMoveContainer* pMov
              CMoveHandler::CMoveContainer *ABD = new CMoveHandler::CMoveContainer();
 
              ABD->m_MoveType = MOVE_PLACE;
-             ABD->m_lpMoves.push_back(pTemp);
+             ABD->m_lpMoves.add(pTemp);
             pTempState->DoMove(ABD);
             ABD->m_lpMoves.clear();
             delete ABD;
 
             CMoveHandler::CMoveContainer *pTempContainer = pMoveC->Clone();
 
-            pTempContainer->m_lpMoves.push_back(pTemp);
+            pTempContainer->m_lpMoves.add(pTemp);
             TestFunc(pTempState, pTempContainer);
             delete pTempState;
             delete pTempContainer;

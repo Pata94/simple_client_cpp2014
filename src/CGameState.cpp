@@ -367,7 +367,7 @@ CMoveHandler::CMoveContainer* CGameState::GetPossibleMoves(int player)
                         pMove->m_Mode = MOVE_PLACE;
                         pMove->m_FieldIndex = index++;
                         pMove->m_Player = player;
-                        pMoveContainer->m_lpMoves.push_back(pMove);
+                        pMoveContainer->m_lpMoves.add(pMove);
                 }
 
             }
@@ -397,7 +397,7 @@ CMoveHandler::CMoveContainer* CGameState::GetPossibleMoves(int player)
                         pMove->m_Mode = MOVE_PLACE;
                         pMove->m_FieldIndex = index++;
                         pMove->m_Player = player;
-                        pMoveContainer->m_lpMoves.push_back(pMove);
+                        pMoveContainer->m_lpMoves.add(pMove);
                 }
             }
         }
@@ -456,7 +456,7 @@ CMoveHandler::CMoveContainer* CGameState::GetPossibleMoves(int player)
                         int y = (i-x)/FIELD_WIDTH;
                        // printf("Move %i, index: %i x: %i, y: %i, Color: %s, shape: %s \n", pMoveContainer->m_lpMoves.size(), i,x,y, CGameState::m_aColorNames[pMove->m_pStone->m_Color], CGameState::m_aShapeNames[pMove->m_pStone->m_Shape]) ;
 
-                        pMoveContainer->m_lpMoves.push_back(pMove);
+                        pMoveContainer->m_lpMoves.add(pMove);
 
                     }
                 }

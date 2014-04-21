@@ -49,6 +49,11 @@
 		<Unit filename="include/CStarter.h" />
 		<Unit filename="include/CStoneHandler.h" />
 		<Unit filename="include/config.h" />
+		<Unit filename="include/ext/algorithm.h" />
+		<Unit filename="include/ext/allocator.h" />
+		<Unit filename="include/ext/array.h" />
+		<Unit filename="include/ext/range.h" />
+		<Unit filename="include/ext/sorted_array.h" />
 		<Unit filename="include/rapidxml.hpp" />
 		<Unit filename="include/stringbuffer.h" />
 		<Unit filename="src/CBaseLogic.cpp" />

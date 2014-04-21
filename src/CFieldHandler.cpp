@@ -1,6 +1,7 @@
 #include "CFieldHandler.h"
 #include <stdio.h>
 #include <algorithm>
+
 CFieldHandler::CFieldHandler()
 {
     //ctor
@@ -685,7 +686,7 @@ CFieldHandler* CFieldHandler::Clone()
 
 void CFieldHandler::InitPossibleMoves()
 {
-    m_PossibleStones.m_lpMoves.reserve(128);
+    m_PossibleStones.m_lpMoves.hint_size(128);
     for(int a = 0; a < FIELD_WIDTH*FIELD_HEIGHT; ++a)
     {
         for(int b = 0; b < NUM_COLORS*NUM_SHAPES; ++b)
@@ -696,11 +697,13 @@ void CFieldHandler::InitPossibleMoves()
             int points = CanPlace(a, pStone);
             if(points > 0)
             {
-                 CMoveHandler::CMove *pTemp = new CMoveHandler::CMove();
-                 pTemp->m_FieldIndex = a;
-                 pTemp->m_pStone = pStone;
-                  pTemp->m_Points = points;
-                 m_PossibleStones.m_lpMoves.push_back(pTemp);
+                CMoveHandler::CMove *pTemp = new CMoveHandler::CMove();
+                pTemp->m_FieldIndex = a;
+                pTemp->m_pStone = pStone;
+                pTemp->m_Points = points;
+
+                if(!m_PossibleStones.IsExisting(pTemp))
+                    m_PossibleStones.m_lpMoves.add(pTemp);
             }
             else
                 delete pStone;
@@ -727,56 +730,27 @@ void CFieldHandler::UpdatePossibleMoves(int Index)
                     printf("WTF");
                  pTemp->m_pStone = pStone;
                  pTemp->m_Points = points;
-                 m_PossibleStones.m_lpMoves.push_back(pTemp);
+                  if(!m_PossibleStones.IsExisting(pTemp))
+                    m_PossibleStones.m_lpMoves.add(pTemp);
+
             }
             else
                 delete pStone;
         }
 }
-void CFieldHandler::UpdatePossibleMoves()
-{
-
-  //  std::sort(m_PossibleStones.m_lpMoves.begin(), m_PossibleStones.m_lpMoves.end());
+void CFieldHandler::UpdatePossibleMoves(){
 
 
-    for(int i = 1; i < m_PossibleStones.m_lpMoves.size();)
-    {
-        printf("%d, %d", m_PossibleStones.m_lpMoves.size(), i);
-        CMoveHandler::CMove pTemp =*m_PossibleStones.m_lpMoves[i];
-        CMoveHandler::CMove pTempB =*m_PossibleStones.m_lpMoves[i-1];
-         printf("A");
-        if(m_PossibleStones.m_lpMoves[i]->m_FieldIndex == m_PossibleStones.m_lpMoves[i-1]->m_FieldIndex)
+        for(int i = 0; i < m_PossibleStones.m_lpMoves.size();)
         {
 
-
-            if(m_PossibleStones.m_lpMoves[i]->m_pStone->m_Color == m_PossibleStones.m_lpMoves[i-1]->m_pStone->m_Color &&
-                m_PossibleStones.m_lpMoves[i]->m_pStone->m_Shape == m_PossibleStones.m_lpMoves[i-1]->m_pStone->m_Shape)
-            {
-               // m_PossibleStones.m_lpMoves.erase(m_PossibleStones.m_lpMoves.begin() + i);
-               // continue;
-            }
+             if(CanPlace(m_PossibleStones.m_lpMoves[i]->m_FieldIndex, m_PossibleStones.m_lpMoves[i]->m_pStone) == 0)
+             {
+                delete m_PossibleStones.m_lpMoves[i];
+                m_PossibleStones.m_lpMoves.remove_index(i);
+                continue;
+             }
+            ++i;
         }
-          printf("B");
-
-        ++i;
-    }
-
-    for(int i = 0; i < m_PossibleStones.m_lpMoves.size(); ++i)
-    {
-        if(m_PossibleStones.m_lpMoves[i] && m_PossibleStones.m_lpMoves[i]->m_pStone)
-        {
-            if(CanPlace(m_PossibleStones.m_lpMoves[i]->m_FieldIndex, m_PossibleStones.m_lpMoves[i]->m_pStone) == 0)
-            {
-               // delete m_PossibleStones.m_lpMoves[i];
-               // m_PossibleStones.m_lpMoves.erase(m_PossibleStones.m_lpMoves.begin() + i);
-              //  --i;
-            }
-        }
-        else
-        {
-           // m_PossibleStones.m_lpMoves.erase(m_PossibleStones.m_lpMoves.begin() + i);
-           // --i;
-        }
-    }
 
 }
