@@ -4,10 +4,12 @@ made for Software-Challenge 2013 visit http://www.informatik.uni-kiel.de/softwar
 #include <stdio.h>
 #include <algorithm>
 
-#include <time.h>
+
 #include <stdlib.h>
 #include "CGameHandler.h"
 #include "CGameState.h"
+#include "ext/range.h"
+#include <time.h>
 using namespace std;
 CBaseLogic::CBaseLogic(int Player)
 {
@@ -79,12 +81,13 @@ float CBaseLogic::GetStoneProbability(CGameState *pState, CStoneHandler::CStone 
     return ((float)num/(float)pState->m_NumBagStones)*0.5f;
 }
 
-float CBaseLogic::RekursiveFunktion(CFieldHandler *pField, float currentProbability, float (&aProbabilities)[NUM_COLORS*NUM_SHAPES], float step)
+float CBaseLogic::RekursiveFunktion(CFieldHandler *pField, float currentProbability, float (&aProbabilities)[NUM_COLORS*NUM_SHAPES], float step, int var)
 {
 
     CMoveHandler::CMoveContainer *pMoveContainer = pField->GetPossibleMoves();
-     printf(",%i", pMoveContainer->m_lpMoves.size());
+//     printf(",%i", pMoveContainer->m_lpMoves.size());
     float points = 0;
+    if(var < VAR_STONE_LOOPS-1 || (var < VAR_STONE_LOOPS && GetTime() < TIME_STONE_LOOPS))
     for(int i = 0; i < pMoveContainer->m_lpMoves.size(); i++)
     {
 
@@ -104,7 +107,7 @@ float CBaseLogic::RekursiveFunktion(CFieldHandler *pField, float currentProbabil
 
                 pTempField->PlaceStone(pMoveContainer->m_lpMoves[i]->m_FieldIndex, pMoveContainer->m_lpMoves[i]->m_pStone, true);
 
-                float val2 = RekursiveFunktion(pTempField, currentProbability*aProbabilities[a2],  aProbabilities, step);
+                float val2 = RekursiveFunktion(pTempField, currentProbability*aProbabilities[a2],  aProbabilities, step, var+1);
                                    float val3 = val1+val2;
                  if( m_aValues[a2] < val3)
                         m_aValues[a2] = val3;
@@ -137,15 +140,15 @@ int CBaseLogic::GetStoneValues(CGameState *pState)
         m_aValues[i] = 0.0f;
     }
     float step = 0.5f;
-
-    RekursiveFunktion(pTemp, 1.0f, aProbabilities, step);
+    int var = 0;
+    RekursiveFunktion(pTemp, 1.0f, aProbabilities, step, var);
 
    for(int i = 0; i < NUM_COLORS*NUM_SHAPES; ++i)
     {
         int color = i%NUM_COLORS;
         int shape = (i-color)/NUM_COLORS;
 
-        printf("// C: %s, S: %s, %f, %f",CGameState::m_aColorNames[color], CGameState::m_aShapeNames[shape], m_aValues[i], aProbabilities[i] );
+        //printf("// C: %s, S: %s, %f, %f",CGameState::m_aColorNames[color], CGameState::m_aShapeNames[shape], m_aValues[i], aProbabilities[i] );
     }
     delete pTemp;
 }
@@ -154,30 +157,12 @@ void CBaseLogic::OnRequestAction(CMoveHandler::CMoveContainer **ppMoves)
 {
 
 
-
+  m_TimeStart = clock();
     printf("MoveRequest  ");
     CMoveHandler::CMoveContainer *possibleMoves=m_pGameState->GetPossibleMoves(m_Player);
 
-    if(possibleMoves->m_lpMoves.size()==0)
-        {
-            *ppMoves = new CMoveHandler::CMoveContainer();
-            printf("No possible Moves");
 
-           // pMove->m_FieldIndex = i;
-            (*ppMoves)->m_MoveType = MOVE_EXCHANGE;
-            for(int i = 0; i < 6; ++i)
-            {
-                CMoveHandler::CMove *pMove = new CMoveHandler::CMove();
-                pMove->m_pStone = m_pGameState->m_apHandStones[m_Player*6+i]->Clone();
-                pMove->m_Mode = MOVE_EXCHANGE;
-                pMove->m_CardIndex = m_Player*6+i;
-                (*ppMoves)->m_lpMoves.add(pMove);
-            }
-
-             delete possibleMoves;
-            return;
-        }
-      if(possibleMoves->m_MoveType == MOVE_PLACE_FIRST)
+if(possibleMoves->m_MoveType == MOVE_PLACE_FIRST && possibleMoves->m_lpMoves.size()>0)
         {
             *ppMoves = new CMoveHandler::CMoveContainer();
             for(int i = 0; i < possibleMoves->m_lpMoves.size(); ++i)
@@ -189,23 +174,145 @@ void CBaseLogic::OnRequestAction(CMoveHandler::CMoveContainer **ppMoves)
             return;
         }
 
+  CGameState *pTempState = m_pGameState->Clone();
+    GetStoneValues(pTempState);
+    if(possibleMoves->m_lpMoves.size()==0)
+        {
+            *ppMoves = new CMoveHandler::CMoveContainer();
+            printf("No possible Moves");
+
+           // pMove->m_FieldIndex = i;
+            (*ppMoves)->m_MoveType = MOVE_EXCHANGE;
+
+
+            //sort handstones
+
+            bool update = true;
+            while(update)
+            {
+                update = false;
+
+                for(int i = 0; i < 5; ++i)
+                {
+                    bool bswap = false;
+                    if(m_pGameState->m_apHandStones[m_Player*6+i] == 0 && m_pGameState->m_apHandStones[m_Player*6+i+1] != 0)
+                        bswap = true;
+                    else if(m_pGameState->m_apHandStones[m_Player*6+i+1] == 0)
+                        bswap = false;
+                    else
+                    {
+                        int a =   m_pGameState->m_apHandStones[m_Player*6+i]->m_Color+m_pGameState->m_apHandStones[m_Player*6+i]->m_Shape*NUM_COLORS;
+                        int b =   m_pGameState->m_apHandStones[m_Player*6+i+1]->m_Color+m_pGameState->m_apHandStones[m_Player*6+i+1]->m_Shape*NUM_COLORS;
+                        bswap = (m_aValues[a] > m_aValues[b]);
+                    }
+                    if(bswap)
+                    {
+                        CStoneHandler::CStone *p=m_pGameState->m_apHandStones[m_Player*6+i+1];
+                        m_pGameState->m_apHandStones[m_Player*6+i+1] = m_pGameState->m_apHandStones[m_Player*6+i];
+                        m_pGameState->m_apHandStones[m_Player*6+i] = p;
+                        update = true;
+                    }
+                }
+
+            }
+
+
+              for(int i = 0; i < 6; ++i)
+                {
+                    if(m_pGameState->m_apHandStones[m_Player*6+i])
+                    printf(" %i, %f", i, m_aValues[m_pGameState->m_apHandStones[m_Player*6+i]->m_Color+m_pGameState->m_apHandStones[m_Player*6+i]->m_Shape*NUM_COLORS]);
+                }
+
+                float valueA = m_aValues[m_pGameState->m_apHandStones[m_Player*6]->m_Color+m_pGameState->m_apHandStones[m_Player*6]->m_Shape*NUM_COLORS];
+                float valueB = m_pGameState->m_apOpenStones[0] ? m_aValues[m_pGameState->m_apOpenStones[0]->m_Color+m_pGameState->m_apOpenStones[0]->m_Shape*NUM_COLORS] : 0.0f;
+                int i = 1;
+
+                while(i < 6)
+                {
+                    if(m_pGameState->m_apHandStones[m_Player*6+i] && m_pGameState->m_apOpenStones[i])
+                    {
+                       valueA += m_aValues[m_pGameState->m_apHandStones[m_Player*6+i]->m_Color+m_pGameState->m_apHandStones[m_Player*6+i]->m_Shape*NUM_COLORS];
+                        valueB += m_aValues[m_pGameState->m_apOpenStones[i]->m_Color+m_pGameState->m_apOpenStones[i]->m_Shape*NUM_COLORS];
+
+                        if(valueA < valueB*0.75f)
+                            ++i;
+                        else
+                             break;
+
+
+
+                    }
+                    else
+                        break;
+                }
+            //if(i > 1)
+                --i;
+            for(; i >= 0; --i)
+            {
+                CMoveHandler::CMove *pMove = new CMoveHandler::CMove();
+                pMove->m_pStone = m_pGameState->m_apHandStones[m_Player*6+i]->Clone();
+                pMove->m_Mode = MOVE_EXCHANGE;
+                pMove->m_CardIndex = m_Player*6+i;
+                (*ppMoves)->m_lpMoves.add(pMove);
+            }
+
+             delete possibleMoves;
+             delete pTempState;
+            return;
+        }
+
+
 
     m_BestPoints = -9999999;
     num = 0;
     CMoveHandler::CMoveContainer *pTemp = new CMoveHandler::CMoveContainer();
     pTemp->m_MoveType = MOVE_PLACE;
-    CGameState *pTempState = m_pGameState->Clone();
-    GetStoneValues(pTempState);
+
+    //pTempState->m_pFieldHandler->InitPossibleMoves();
+    for(int i = 0; i < m_aTestStates.size(); ++i)
+        m_aTestStates[i].release();
+    m_aTestStates.clear();
+
+
+
     TestFunc(pTempState, pTemp);
+
+    if(m_aTestStates.size() > 25)
+    {
+        for(int i = m_aTestStates.size()-1; i > 24; --i)
+        {
+               m_aTestStates[i].release();
+                m_aTestStates.remove_index_fast(i);
+        }
+    }
+    if(pTempState->m_Turn < 39)
+    {
+        for(int i = 0; i < m_aTestStates.size() && i < 25 && GetTime() < TIME_ENEMYMOVE_LOOPS; ++i)
+        {
+            m_CurrentTestIndex = i;
+
+            m_aTestStates[i].m_pGameState->EndRound();
+            TestFunc(m_aTestStates[i].m_pGameState, m_aTestStates[i].m_pMoveContainer);
+            m_aTestStates[i].m_Points -= m_aTestStates[i].m_BestEnemyPoints*CGameHandler::VAR_ENEMYPOINTS;
+            printf("possible points: %i \n", m_aTestStates[i].m_BestEnemyPoints);
+        }
+        m_aTestStates.sort_range();
+
+    }
+     *ppMoves = m_aTestStates[0].m_pMoveContainer;
+        m_aTestStates[0].m_pMoveContainer = 0;
    /* CMoveHandler::CMove *pTemp = new CMoveHandler::CMove();
     *pTemp = *(pointMoves.front().ppMove);*/
-    *ppMoves = m_pBestMoveC;
-    m_pBestMoveC = 0;
+  //  *ppMoves = m_pBestMoveC;
+    //m_pBestMoveC = 0;
+
     delete pTemp;
     delete pTempState;
     delete possibleMoves;
+  printf ("|| %d ||\n",GetTime());
+    printf("NUM: %i,,, %i/ %i [%i, %i]",m_aTestStates[0].m_BestEnemyPoints, m_aTestStates.size(), num, CGameState::NUM_GAMESTATES, CFieldHandler::NUM_HANDLERS);
 
-    printf("NUM: %i", num);
+
   // pMoves->m_MoveType = MOVE_PLACE;
   /* pMoves->m_lpMoves.clear();
    for(int i = 0; i < m_pBestMoveC->m_lpMoves.size(); ++i)
@@ -283,58 +390,132 @@ int CBaseLogic::TestGameState(CGameState *pState, CMoveHandler::CMoveContainer* 
 {
 
 
-    int points = pMoveC->GetPoints()*7;
+    int points = pMoveC->GetPoints()*CGameHandler::VAR_OWNPOINTS;
+
    // points -= GetHandCardValues(pState, m_Player == 0 ? 1 : 0);
+
    CGameState *pTemp = pState->Clone();
+
    pTemp->EndRound();
 
     for(int i = 0; i < 6; ++i)
     {
         if(pTemp->m_apOpenStones[i] != 0)
-            points -= GetStoneValue(pTemp->m_apOpenStones[i]);
+            points -= GetStoneValue(pTemp->m_apOpenStones[i])*(1.2f-0.15f*(float)i);
     }
-    points += GetHandCardValues(pTemp, pState->m_CurrentPlayer)*0.5;
+   // points -= GetHandCardValues(pTemp, pState->m_CurrentPlayer)*0.5;
+   // points += GetHandCardValues(pTemp, pState->m_CurrentPlayer^1)*0.3;
     num++;
+    printf("points %i\n", points);
+    delete pTemp;
+
     return points;
 }
+
+
 
 void CBaseLogic::TestFunc(CGameState *pState, CMoveHandler::CMoveContainer* pMoveC)
 {
 
-      CMoveHandler::CMoveContainer *possibleMoves=pState->GetPossibleMoves(m_Player);
-        if(pMoveC->m_lpMoves.size()>0)
+      CMoveHandler::CMoveContainer *possibleMoves = pState->GetPossibleMoves(pState->m_CurrentPlayer);
+   /*   CMoveHandler::CMoveContainer *possibleMovesB=pState->GetPossibleMoves(m_Player);
+      int asd = 0;
+      for(int i = 0; i < possibleMoves->m_lpMoves.size(); ++i)
+      {
+          if(possibleMoves->m_lpMoves[i]->m_pStone != 0)
+          {
+              for(int b = (m_Player*6); b < 6+m_Player*6; b++)
+              {
+                  if(pState->m_apHandStones[b] != 0 && pState->m_apHandStones[b]->m_Color == possibleMoves->m_lpMoves[i]->m_pStone->m_Color&& pState->m_apHandStones[b]->m_Shape == possibleMoves->m_lpMoves[i]->m_pStone->m_Shape)
+                  {
+                      ++asd;
+                      //  printf("// C: %s, S: %s \n",CGameState::m_aColorNames[pState->m_apHandStones[b]->m_Color], CGameState::m_aShapeNames[pState->m_apHandStones[b]->m_Shape]);
+
+                  }
+              }
+          }
+      }*/
+
+     //  printf("-------------------");
+        for(int i = 0; i < possibleMoves->m_lpMoves.size(); ++i)
+      {
+       // printf("// C: %s, S: %s \n",CGameState::m_aColorNames[pState->m_apHandStones[b]->m_Color], CGameState::m_aShapeNames[pState->m_apHandStones[b]->m_Shape]);
+      }
+   //   if( possibleMovesB->m_lpMoves.size() != asd)
+     //  printf("ERROR! %i, %i ", possibleMovesB->m_lpMoves.size(), asd);
+
+        if( pMoveC->m_lpMoves.size()>0)
         {
-            int points = TestGameState(pState, pMoveC);
-            if(m_BestPoints < points)
+            if(pState->m_CurrentPlayer == m_Player )
             {
-                if(m_pBestMoveC)
-                    delete m_pBestMoveC;
-                m_pBestMoveC = pMoveC->Clone();
-                m_BestPoints = points;
+                //if(m_pBestMoveC)
+               //     delete m_pBestMoveC;
+                //m_pBestMoveC = pMoveC->Clone();
+               // m_BestPoints = points;
+
+                CTest temp;
+                temp.m_pGameState = pState->Clone();
+
+                temp.m_pMoveContainer = pMoveC->Clone();
+
+                temp.m_Points = TestGameState(pState, pMoveC);
+
+                temp.m_BestEnemyPoints = 0;
+                m_aTestStates.add(temp);
+
+                temp.m_pGameState = 0;
+                temp.m_pMoveContainer= 0;
+
             }
+
+                else if(pState->m_CurrentPlayer != m_Player)
+                {
+
+                    //we are testing enemy moves
+                    int points = pMoveC->GetPoints();
+                    if(m_aTestStates[m_CurrentTestIndex].m_BestEnemyPoints <points)
+                    {
+                            m_aTestStates[m_CurrentTestIndex].m_BestEnemyPoints = points;
+                    }
+                }
         }
         for(int i = 0; i < possibleMoves->m_lpMoves.size(); ++i)
         {
-            CMoveHandler::CMove* pTemp = possibleMoves->m_lpMoves[i]->Clone();
-            CGameState* pTempState = pState->Clone();
-             CMoveHandler::CMoveContainer *ABD = new CMoveHandler::CMoveContainer();
 
-             ABD->m_MoveType = MOVE_PLACE;
-             ABD->m_lpMoves.add(pTemp);
-            pTempState->DoMove(ABD);
-            ABD->m_lpMoves.clear();
-            delete ABD;
+             /*if(possibleMoves->m_lpMoves[i]->m_pStone != 0)
+          {
+              for(int b = (m_Player*6); b < 6+m_Player*6; b++)
+              {
+                  if(pState->m_apHandStones[b] != 0 && pState->m_apHandStones[b]->m_Color == possibleMoves->m_lpMoves[i]->m_pStone->m_Color&& pState->m_apHandStones[b]->m_Shape == possibleMoves->m_lpMoves[i]->m_pStone->m_Shape)
+                  {
 
-            CMoveHandler::CMoveContainer *pTempContainer = pMoveC->Clone();
+                     possibleMoves->m_lpMoves[i]->m_pStone->m_Identifier = pState->m_apHandStones[b]->m_Identifier;*/
 
-            pTempContainer->m_lpMoves.add(pTemp);
-            TestFunc(pTempState, pTempContainer);
-            delete pTempState;
-            delete pTempContainer;
+                    CMoveHandler::CMove* pTemp = possibleMoves->m_lpMoves[i]->Clone();
+                    CGameState* pTempState = pState->Clone();
+                     CMoveHandler::CMoveContainer *ABD = new CMoveHandler::CMoveContainer();
+
+                     ABD->m_MoveType = MOVE_PLACE;
+                     ABD->m_lpMoves.add(pTemp);
+                    pTempState->DoMove(ABD);
+                    ABD->m_lpMoves.clear();
+                    delete ABD;
+
+                    CMoveHandler::CMoveContainer *pTempContainer = pMoveC->Clone();
+
+                    pTempContainer->m_lpMoves.add(pTemp);
+                    TestFunc(pTempState, pTempContainer);
+                    delete pTempState;
+                    delete pTempContainer;
+                    /* break;
+                }
+              }
+          }*/
         }
 
 
     delete possibleMoves;
+   // delete possibleMovesB;
 
 }
 void CBaseLogic::OnGameStateUpdate(CGameState *pNewState)

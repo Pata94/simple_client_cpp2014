@@ -64,5 +64,14 @@
 #define FIELD_COUNTED_Y 2
 
 
+//#define VAR_ENEMYPOINTS 1
+//#define VAR_OWNPOINTS 2
+#define VAR_STONE_LOOPS 3
+//#define VAR_STONE_MULT 50
+
+#define TIME_STONE_LOOPS 700
+#define TIME_OWNMOVE_LOOPS 1400
+#define TIME_ENEMYMOVE_LOOPS 1800
+
 
 #endif

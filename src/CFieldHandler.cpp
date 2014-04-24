@@ -2,6 +2,7 @@
 #include <stdio.h>
 #include <algorithm>
 
+int CFieldHandler::NUM_HANDLERS = 0;
 CFieldHandler::CFieldHandler()
 {
     //ctor
@@ -17,6 +18,7 @@ CFieldHandler::CFieldHandler()
     m_aRestrictions[0] = -1;
     m_aRestrictions[1] = -1;
 
+    NUM_HANDLERS++;
 
 }
 
@@ -29,6 +31,7 @@ CFieldHandler::~CFieldHandler()
             delete m_aField[i].m_pStone;
 
     }
+    NUM_HANDLERS--;
 }
 
 void CFieldHandler::NewRound()
@@ -704,6 +707,8 @@ void CFieldHandler::InitPossibleMoves()
 
                 if(!m_PossibleStones.IsExisting(pTemp))
                     m_PossibleStones.m_lpMoves.add(pTemp);
+                else
+                    delete pTemp;
             }
             else
                 delete pStone;

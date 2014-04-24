@@ -8,6 +8,7 @@
 class CFieldHandler
 {
     public:
+        static int NUM_HANDLERS;
         CFieldHandler();
         virtual ~CFieldHandler();
 

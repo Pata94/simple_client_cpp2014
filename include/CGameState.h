@@ -10,6 +10,8 @@ made for Software-Challenge 2013 visit http://www.informatik.uni-kiel.de/softwar
 class CGameState
 {
     public:
+        static int NUM_GAMESTATES;
+
     static const char* m_aColorNames[6];
         static const char* m_aShapeNames[6];
 

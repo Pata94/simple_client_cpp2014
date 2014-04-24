@@ -11,7 +11,9 @@ made for Software-Challenge 2013 visit http://www.informatik.uni-kiel.de/softwar
 class CGameHandler
 {public:
 
-
+        static int VAR_OWNPOINTS;
+         static int  VAR_ENEMYPOINTS;
+         static int  VAR_WINS;
         CGameHandler(class CNetwork *pCon, const char *pReservation);
         virtual ~CGameHandler();
         int HandleGame();

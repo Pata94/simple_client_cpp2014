@@ -8,7 +8,7 @@ made for Software-Challenge 2013 visit http://www.informatik.uni-kiel.de/softwar
 #include "stringbuffer.h" //TODO delete this
 
 
-
+int CGameState::NUM_GAMESTATES = 0;
 
 const char*        CGameState::m_aColorNames[6] ={"BLUE", "GREEN", "MAGENTA", "ORANGE", "VIOLET", "YELLOW"};
 const char*  CGameState::m_aShapeNames[6] ={"ACORN", "BELL", "CLUBS", "DIAMOND", "HEART", "SPADES"};
@@ -19,6 +19,7 @@ CGameState::CGameState()
      m_RoundEnd = false;
      m_aPoints[0] = 0;
      m_aPoints[1] = 0;
+     NUM_GAMESTATES++;
 }
 int CGameState::ShapeToIndex(char *pName)
 {
@@ -54,6 +55,7 @@ CGameState::~CGameState()
             m_apOpenStones[i] = 0;
         }
     }
+    NUM_GAMESTATES--;
 
 }
 
@@ -130,7 +132,7 @@ int CGameState::DoPlaceMove(CMoveHandler::CMove *move)
         int points= m_pFieldHandler->CanPlace( move->m_FieldIndex, move->m_pStone);
         if(m_Moves < 6 && points != 0)
         {
-            m_pFieldHandler->PlaceStone(move->m_FieldIndex, move->m_pStone->Clone()); //dont use the stone from the move it should be cleared by the move de-constructor
+            m_pFieldHandler->PlaceStone(move->m_FieldIndex, move->m_pStone->Clone(), true); //dont use the stone from the move it should be cleared by the move de-constructor
             //delete this stone from the hand
             int player = move->m_Player;
             int index;
@@ -248,6 +250,7 @@ int CGameState::EndRound()
     m_CurrentPlayer = (m_CurrentPlayer == 1 ? 0: 1);
     m_CurrentPoints = 0;
     m_pFieldHandler->NewRound();
+    m_Turn++;
 }
 CMoveHandler::CMoveContainer* CGameState::GetPossibleMoves(int player)
 {
@@ -440,7 +443,7 @@ CMoveHandler::CMoveContainer* CGameState::GetPossibleMoves(int player)
         for(int a = 0; a < 6; ++a)
         {
             if(m_apHandStones[a+p] != 0)
-                for(int i = 0; i < 256; ++i)
+                for(int i = 0; i < FIELD_HEIGHT*FIELD_WIDTH; ++i)
                 {
                     int points = m_pFieldHandler->CanPlace( i, m_apHandStones[a+p]);
                     if(points > 0)

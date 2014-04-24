@@ -144,14 +144,15 @@
 	"CGameState.h"
 	"CGameHandler.h"
 
-1398088375 source:d:\windows\users\paddy\desktop\projekte\software challenge 2013\simple client\simple_client_cpp\src\cbaselogic.cpp
+1398346404 source:d:\windows\users\paddy\desktop\projekte\software challenge 2013\simple client\simple_client_cpp\src\cbaselogic.cpp
 	"CBaseLogic.h"
 	<stdio.h>
 	<algorithm>
-	<time.h>
 	<stdlib.h>
 	"CGameHandler.h"
 	"CGameState.h"
+	"ext/range.h"
+	<time.h>
 
 1387957883 /root/git/simple_client/include/CBaseLogic.h
 	"CGameState.h"
@@ -166,36 +167,39 @@
 1390642979 /root/git/simple_client/include/CStoneHandler.h
 	"CGameHandler.h"
 
-1396710123 d:\windows\users\paddy\desktop\projekte\software challenge 2013\simple client\simple_client_cpp\include\cbaselogic.h
+1398346460 d:\windows\users\paddy\desktop\projekte\software challenge 2013\simple client\simple_client_cpp\include\cbaselogic.h
 	"CGameState.h"
+	"ext/sorted_array.h"
 	"config.h"
+	<time.h>
 
-1396701867 d:\windows\users\paddy\desktop\projekte\software challenge 2013\simple client\simple_client_cpp\include\cgamestate.h
+1398294352 d:\windows\users\paddy\desktop\projekte\software challenge 2013\simple client\simple_client_cpp\include\cgamestate.h
 	<CFieldHandler.h>
 	"config.h"
 	<stdio.h>
 
-1396704393 d:\windows\users\paddy\desktop\projekte\software challenge 2013\simple client\simple_client_cpp\include\cfieldhandler.h
+1398294335 d:\windows\users\paddy\desktop\projekte\software challenge 2013\simple client\simple_client_cpp\include\cfieldhandler.h
 	"CStoneHandler.h"
 	"config.h"
 	"CMoveHandler.h"
 
 1398086199 d:\windows\users\paddy\desktop\projekte\software challenge 2013\simple client\simple_client_cpp\include\cstonehandler.h
 
-1398087328 source:d:\windows\users\paddy\desktop\projekte\software challenge 2013\simple client\simple_client_cpp\src\cfieldhandler.cpp
+1398294414 source:d:\windows\users\paddy\desktop\projekte\software challenge 2013\simple client\simple_client_cpp\src\cfieldhandler.cpp
 	"CFieldHandler.h"
 	<stdio.h>
 	<algorithm>
 
-1398083405 source:d:\windows\users\paddy\desktop\projekte\software challenge 2013\simple client\simple_client_cpp\src\cgamehandler.cpp
+1398354024 source:d:\windows\users\paddy\desktop\projekte\software challenge 2013\simple client\simple_client_cpp\src\cgamehandler.cpp
 	"CGameHandler.h"
 	"CGameState.h"
 	"rapidxml.hpp"
 	<string.h>
 	<stdio.h>
 	<vector>
+	<fstream>
 
-1396701828 d:\windows\users\paddy\desktop\projekte\software challenge 2013\simple client\simple_client_cpp\include\cgamehandler.h
+1398345134 d:\windows\users\paddy\desktop\projekte\software challenge 2013\simple client\simple_client_cpp\include\cgamehandler.h
 	"CNetwork.h"
 	"rapidxml.hpp"
 	"CBaseLogic.h"
@@ -223,7 +227,7 @@
 	<new>
 	<exception>
 
-1398083417 source:d:\windows\users\paddy\desktop\projekte\software challenge 2013\simple client\simple_client_cpp\src\cgamestate.cpp
+1398300350 source:d:\windows\users\paddy\desktop\projekte\software challenge 2013\simple client\simple_client_cpp\src\cgamestate.cpp
 	"CGameState.h"
 	<string.h>
 	<stdlib.h>
@@ -250,7 +254,7 @@
 1391803244 source:d:\windows\users\paddy\desktop\projekte\software challenge 2013\simple client\simple_client_cpp\src\cstonehandler.cpp
 	"CStoneHandler.h"
 
-1395595530 d:\windows\users\paddy\desktop\projekte\software challenge 2013\simple client\simple_client_cpp\include\config.h
+1398344756 d:\windows\users\paddy\desktop\projekte\software challenge 2013\simple client\simple_client_cpp\include\config.h
 
 1391799490 bfabec48a0d5f42c64dfca4b90d498c4f58af
 
@@ -468,4 +472,11 @@
 	<base/system.h>
 
 1365254542 d:\windows\users\paddy\desktop\projekte\software challenge 2013\simple client\simple_client_cpp\include\ext\allocator.h
+
+1398291883 d:\windows\users\paddy\desktop\projekte\software challenge 2013\simple client\simple_client_cpp\include\ext\sorted_array.h
+	"algorithm.h"
+	"array.h"
+
+1365254542 d:\windows\users\paddy\desktop\projekte\software challenge 2013\simple client\simple_client_cpp\include\ext\algorithm.h
+	"range.h"
 
