@@ -190,7 +190,7 @@
 	<stdio.h>
 	<algorithm>
 
-1398354024 source:d:\windows\users\paddy\desktop\projekte\software challenge 2013\simple client\simple_client_cpp\src\cgamehandler.cpp
+1398358966 source:d:\windows\users\paddy\desktop\projekte\software challenge 2013\simple client\simple_client_cpp\src\cgamehandler.cpp
 	"CGameHandler.h"
 	"CGameState.h"
 	"rapidxml.hpp"
@@ -198,6 +198,8 @@
 	<stdio.h>
 	<vector>
 	<fstream>
+	<sstream>
+	<string>
 
 1398345134 d:\windows\users\paddy\desktop\projekte\software challenge 2013\simple client\simple_client_cpp\include\cgamehandler.h
 	"CNetwork.h"

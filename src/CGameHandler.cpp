@@ -7,14 +7,15 @@ made for Software-Challenge 2013 visit http://www.informatik.uni-kiel.de/softwar
 #include <stdio.h>
 #include <vector>
 #include <fstream>
-
+    #include <sstream>
+#include <string>
 using namespace rapidxml;
 using namespace std;
     int CGameHandler::VAR_OWNPOINTS = 0;
           int  CGameHandler::VAR_ENEMYPOINTS = 0;
-          int  CGameHandler::VAR_WINS = 0;
+          int  CGameHandler::VAR_WINS = -1;
           // static int range = 1000;
-    static int step = 10;
+    static int step = 50;
     static int range_min = 0;
     static int range_max = 1000;
      static int num = 0;
@@ -36,57 +37,6 @@ CGameHandler::CGameHandler(class CNetwork *pCon, const char *pReservation)
     m_State = STATE_REQUESTING;
     m_pLogic = 0;
 
-
-    fstream f;
-    char cstring[512];
-    f.open("parameter.dat", ios::in);
-    bool bnew = false;
-    if(!f)
-    {
-        f.open("parameter.dat", ios::out|ios::app);
-
-            f << "";
-            f.close();
-            f.open("parameter.dat", ios::in);
-            bnew = true;
-    }
-    while (!f.eof())
-    {
-        f.getline(cstring, sizeof(cstring));
-        ++num;
-    }
-
-    printf("a: %i", num);
-    if(bnew)
-    {
-        VAR_OWNPOINTS = 1;
-        VAR_ENEMYPOINTS = 0;
-    }
-    else
-    {
-        char delimiter[] = ",";
-        char *ptr;
-
-        // initialisieren und ersten Abschnitt erstellen
-        ptr = strtok(cstring, delimiter);
-        int i = 0;
-        while(ptr != NULL) {
-            printf("Abschnitt gefunden: %s\n", ptr);
-            // naechsten Abschnitt erstellen
-
-            if(i == 0)
-                VAR_OWNPOINTS = atoi(ptr);
-            else if(i == 1)
-                VAR_ENEMYPOINTS = atoi(ptr);
-            else if(i == 2)
-                VAR_WINS = atoi(ptr);
-            else
-                break;
-            ++i;
-            ptr = strtok(NULL, delimiter);
-        }
-    }
-    f.close();
 }
 
 CGameHandler::~CGameHandler()
@@ -202,12 +152,9 @@ int CGameHandler::HandleGame()
           fstream f;
             f.open("parameter.dat", ios::out|ios::app);
 
-            char aBuf[512];
-                sprintf(aBuf, "%i, %i, %i, adwd", VAR_OWNPOINTS, VAR_ENEMYPOINTS, VAR_WINS++);
-              if(num > 0)
-                 f << endl << aBuf;
-               else
-                    f << aBuf;
+            //char aBuf[512];
+            //    sprintf(aBuf, "%i, %i, %i", VAR_OWNPOINTS, VAR_ENEMYPOINTS, VAR_WINS+1);
+                 f  << VAR_OWNPOINTS <<" " << VAR_ENEMYPOINTS <<" " << (VAR_WINS+1) << endl;
             f.close();
 
     }
@@ -225,12 +172,11 @@ int CGameHandler::HandleGame()
             if(a < range_min)
                 a = range_min;
 
+
             if(a > range_max)
             {
 
-
                 a = range_min;
-
             }
             if(a < VAR_OWNPOINTS)
             {
@@ -244,11 +190,7 @@ int CGameHandler::HandleGame()
                 }
             }
             sprintf(aBuf, "%i, %i, %i", a, b, 0);
-
-              if(num > 0)
-                 f << endl << aBuf;
-               else
-                    f << aBuf;
+            f  << a <<" " << b <<" " << 0 << endl;
             f.close();
     }
     return m_State;
@@ -272,6 +214,43 @@ int CGameHandler::OnMsg(xml_node<> *pNode)
                 }
                 else if(strcmp(pName, "sc.framework.plugins.protocol.MoveRequest")==0)
                 {
+
+
+                    if(VAR_WINS == -1)
+                    {
+                          Sleep(1000);
+                        VAR_OWNPOINTS = range_min;
+                        VAR_ENEMYPOINTS = range_min;
+
+                         fstream f;
+                        char astring[512];
+                        char cstring[512];
+                        f.open("parameter.dat", ios::in);
+                        bool bnew = false;
+                        if(!f)
+                        {
+                            f.open("parameter.dat", ios::out|ios::app);
+
+                                f << "";
+                                f.close();
+                                bnew = true;
+                        }
+                        ifstream infile("parameter.dat");
+                        string line;
+                         printf("-----");
+                        while (getline(infile, line))
+                        {
+                            printf("%s \n", line.c_str());
+                            istringstream iss(line);
+                            int a, b, c;
+                            if (!(iss >> a >> b >> c)) { break; }
+                            VAR_OWNPOINTS =a;
+                            VAR_ENEMYPOINTS = b;
+                            VAR_WINS = c;
+                        }
+                          printf("----- %i, %i, %i", VAR_OWNPOINTS, VAR_ENEMYPOINTS, VAR_WINS);
+                        infile.close();
+                    }
                     CMoveHandler::CMoveContainer *pMoves = 0;
                     m_pLogic->OnRequestAction(&pMoves);
                     SendMove(pMoves);
