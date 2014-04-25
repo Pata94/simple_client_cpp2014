@@ -7,12 +7,12 @@ made for Software-Challenge 2013 visit http://www.informatik.uni-kiel.de/softwar
 #include <stdio.h>
 #include <vector>
 #include <fstream>
-    #include <sstream>
+#include <sstream>
 #include <string>
 using namespace rapidxml;
 using namespace std;
-    int CGameHandler::VAR_OWNPOINTS = 0;
-          int  CGameHandler::VAR_ENEMYPOINTS = 0;
+    int CGameHandler::VAR_OWNPOINTS = 150;
+          int  CGameHandler::VAR_ENEMYPOINTS = 50;
           int  CGameHandler::VAR_WINS = -1;
           // static int range = 1000;
     static int step = 50;
@@ -146,7 +146,7 @@ int CGameHandler::HandleGame()
         delete[] pChr;
 
 
-    if(m_pLogic->m_pGameState->m_aPoints[m_pLogic->m_Player] > m_pLogic->m_pGameState->m_aPoints[m_pLogic->m_Player^1])
+    /*if(m_pLogic->m_pGameState->m_aPoints[m_pLogic->m_Player] > m_pLogic->m_pGameState->m_aPoints[m_pLogic->m_Player^1])
     {
         //gewonnen
           fstream f;
@@ -192,7 +192,7 @@ int CGameHandler::HandleGame()
             sprintf(aBuf, "%i, %i, %i", a, b, 0);
             f  << a <<" " << b <<" " << 0 << endl;
             f.close();
-    }
+    }*/
     return m_State;
 }
 
