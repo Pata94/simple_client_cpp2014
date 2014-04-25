@@ -10,6 +10,7 @@ made for Software-Challenge 2013 visit http://www.informatik.uni-kiel.de/softwar
 #include "CGameState.h"
 #include "ext/range.h"
 #include <time.h>
+#include <vector.h>
 using namespace std;
 CBaseLogic::CBaseLogic(int Player)
 {
@@ -184,7 +185,8 @@ vector<vector<CStoneHandler::CStone *>> NecessaryStonesForSixpack(CGameState *pS
                 {
                     for(int b = 0; int b < 6; b++)
                     {
-                        switch currentStones[b].m_Shape
+                        switch (currentStones[b].m_Shape)
+                        {
                             case SHAPE_ACORN:
                                 shapesNeeded[0] = false;
                                 break;
@@ -203,6 +205,7 @@ vector<vector<CStoneHandler::CStone *>> NecessaryStonesForSixpack(CGameState *pS
                             case SHAPE_SPADES:
                                 shapesNeeded[5] = false;
                                 break;
+                        }
                     }
                     for(int c = 0; c < 6; c++)
                     {
@@ -220,7 +223,8 @@ vector<vector<CStoneHandler::CStone *>> NecessaryStonesForSixpack(CGameState *pS
                 {
                     for(int b = 0; int b < 6; b++)
                     {
-                        switch currentStones[b].m_Color
+                        switch (currentStones[b].m_Color)
+                        {
                             case COLOR_BLUE:
                                 colorsNeeded[0] = false;
                                 break;
@@ -239,6 +243,7 @@ vector<vector<CStoneHandler::CStone *>> NecessaryStonesForSixpack(CGameState *pS
                             case COLOR_YELLOW:
                                 colorsNeeded[5] = false;
                                 break;
+                        }
                     }
                     for(int c = 0; c < 6; c++)
                     {
@@ -278,7 +283,8 @@ vector<vector<CStoneHandler::CStone *>> NecessaryStonesForSixpack(CGameState *pS
                 {
                     for(int b = 0; int b < 6; b++)
                     {
-                        switch currentStones[b].m_Shape
+                        switch (currentStones[b].m_Shape)
+                        {
                             case SHAPE_ACORN:
                                 shapesNeeded[0] = false;
                                 break;
@@ -297,6 +303,7 @@ vector<vector<CStoneHandler::CStone *>> NecessaryStonesForSixpack(CGameState *pS
                             case SHAPE_SPADES:
                                 shapesNeeded[5] = false;
                                 break;
+                        }
                     }
                     for(int c = 0; c < 6; c++)
                     {
@@ -314,7 +321,8 @@ vector<vector<CStoneHandler::CStone *>> NecessaryStonesForSixpack(CGameState *pS
                 {
                     for(int b = 0; int b < 6; b++)
                     {
-                        switch currentStones[b].m_Color
+                        switch (currentStones[b].m_Color)
+                        {
                             case COLOR_BLUE:
                                 colorsNeeded[0] = false;
                                 break;
@@ -333,6 +341,7 @@ vector<vector<CStoneHandler::CStone *>> NecessaryStonesForSixpack(CGameState *pS
                             case COLOR_YELLOW:
                                 colorsNeeded[5] = false;
                                 break;
+                        }
                     }
                     for(int c = 0; c < 6; c++)
                     {
@@ -351,6 +360,57 @@ vector<vector<CStoneHandler::CStone *>> NecessaryStonesForSixpack(CGameState *pS
 
     }
     return Stones;
+}
+
+vector<vector<CStoneHandler::CStone*>> CBaseLogic::AvaibleSixpacksNextTurn(CGameState *pState)
+{
+    vector<vector<CStoneHandler::CStone *>> Stones
+    Stones = NecessaryStonesForSixpack(pState);
+    CStoneHandler::CStone *existingStones = new CStoneHandler::CStone[11];
+    for(vector<CStoneHandler::CStone *> StonePack : Stones)
+    {
+        int StonesInHand = 0;
+        int openStones = 0;
+        for(CStoneHandler::CStone stone* : StonePack)
+        {
+            bool found = false;
+            for(int i = 0; i < 6; i++)
+            {
+                if(stone->m_Color == pState->m_apHandStones[pState->m_CurrentPlayer*6+i]->m_Color && stone->m_Shape == pState->m_apHandStones[pState->m_CurrentPlayer*6+i]->m_Shape)
+                {
+                    StonesInHand++;
+                    found = true;
+                    continue:
+                }
+            }
+            for(int i = 0; i < 6-StonesInHand; i++)
+            {
+                if(stone->m_Color == pState->m_apOpenStones[i]->m_Color && stone->m_Shape == pState->m_apOpenStones            [i]->m_Shape)
+                {
+                    openStones++;
+                    found = true;
+                    continue;
+                }
+            }
+            if(!found)
+            {
+                for(CStoneHandler::CStone stoneToDelete* : StonePack)
+                {
+                    delete stoneToDelete;
+                }
+                Stones.erase(StonePack);
+                break;
+            }
+        }
+        if(openStones == 0)
+        {
+            for(CStoneHandler::CStone stoneToDelete* : StonePack)
+                {
+                    delete stoneToDelete;
+                }
+                Stones.erase(StonePack);
+        }
+    }
 }
 
 void CBaseLogic::OnRequestAction(CMoveHandler::CMoveContainer **ppMoves)
