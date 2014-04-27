@@ -154,7 +154,7 @@ int CBaseLogic::GetStoneValues(CGameState *pState)
     delete pTemp;
 }
 
-vector<vector<CStoneHandler::CStone *>> NecessaryStonesForSixpack(CGameState *pState)
+vector<vector<CStoneHandler::CStone *>> CBaseLogic::NecessaryStonesForSixpack(CGameState *pState)
 {
     bool fieldSearchedHorizontally[FIELD_WIDTH*FIELD_HEIGHT];
     bool fieldSearchedVertically[FIELD_WIDTH*FIELD_HEIGHT];
@@ -357,30 +357,32 @@ vector<vector<CStoneHandler::CStone *>> NecessaryStonesForSixpack(CGameState *pS
                 Stones.insert(neededStones);
             }
         }
-
     }
     return Stones;
 }
 
-vector<vector<CStoneHandler::CStone*>> CBaseLogic::AvaibleSixpacksNextTurn(CGameState *pState)
+void CBaseLogic::StonesForInterestingSixpacks(CGameState *pState)
 {
     vector<vector<CStoneHandler::CStone *>> Stones
+    vector<int> StonesInHandSpace;
     Stones = NecessaryStonesForSixpack(pState);
     CStoneHandler::CStone *existingStones = new CStoneHandler::CStone[11];
+
     for(vector<CStoneHandler::CStone *> StonePack : Stones)
     {
-        int StonesInHand = 0;
         int openStones = 0;
+        int StonesInHand = 0;
         for(CStoneHandler::CStone stone* : StonePack)
         {
             bool found = false;
-            for(int i = 0; i < 6; i++)
+            for(int i = 0; i < 6; i++) //falls ein Stein in zwei Sixpacks benötigt wird, wird das im Moment noch nicht ordentlich berechnet
             {
                 if(stone->m_Color == pState->m_apHandStones[pState->m_CurrentPlayer*6+i]->m_Color && stone->m_Shape == pState->m_apHandStones[pState->m_CurrentPlayer*6+i]->m_Shape)
                 {
                     StonesInHand++;
+                    StonesInHandSpace.insert(pState->m_CurrentPlayer*6+i);
                     found = true;
-                    continue:
+                    continue
                 }
             }
             for(int i = 0; i < 6-StonesInHand; i++)
@@ -394,24 +396,22 @@ vector<vector<CStoneHandler::CStone*>> CBaseLogic::AvaibleSixpacksNextTurn(CGame
             }
             if(!found)
             {
-                for(CStoneHandler::CStone stoneToDelete* : StonePack)
-                {
-                    delete stoneToDelete;
-                }
-                Stones.erase(StonePack);
+                StonesInHandSpace.clear();
                 break;
             }
         }
-        if(openStones == 0)
+        if(openStones != 0)
         {
-            for(CStoneHandler::CStone stoneToDelete* : StonePack)
-                {
-                    delete stoneToDelete;
-                }
-                Stones.erase(StonePack);
+            for(int index : StonesInHandSpace)
+            {
+                delete pState->m_apHandStones[index];
+            }
         }
+
     }
+
 }
+
 
 void CBaseLogic::OnRequestAction(CMoveHandler::CMoveContainer **ppMoves)
 {
