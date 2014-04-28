@@ -218,7 +218,7 @@ int CGameHandler::OnMsg(xml_node<> *pNode)
 
                     if(VAR_WINS == -1)
                     {
-                        Sleep(1000);
+                        //Sleep(1000);
                         VAR_OWNPOINTS = range_min;
                         VAR_ENEMYPOINTS = range_min;
 
