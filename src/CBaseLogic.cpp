@@ -123,6 +123,8 @@ float CBaseLogic::RekursiveFunktion(CFieldHandler *pField, float currentProbabil
 
     return points;
 }
+
+
 int CBaseLogic::GetStoneValues(CGameState *pState)
 {
     CFieldHandler *pTemp = pState->m_pFieldHandler->Clone();
@@ -153,6 +155,7 @@ int CBaseLogic::GetStoneValues(CGameState *pState)
     }
     delete pTemp;
 }
+
 
 vector<vector<CStoneHandler::CStone *>> CBaseLogic::NecessaryStonesForSixpack(CGameState *pState)
 {
@@ -361,6 +364,7 @@ vector<vector<CStoneHandler::CStone *>> CBaseLogic::NecessaryStonesForSixpack(CG
     return Stones;
 }
 
+
 void CBaseLogic::StonesForInterestingSixpacks(CGameState *pState)
 {
     vector<vector<CStoneHandler::CStone *>> Stones
@@ -419,6 +423,7 @@ void CBaseLogic::OnRequestAction(CMoveHandler::CMoveContainer **ppMoves)
 
   m_TimeStart = clock();
     printf("MoveRequest  ");
+    StonesForInterestingSixpacks(m_pGameState);
     CMoveHandler::CMoveContainer *possibleMoves=m_pGameState->GetPossibleMoves(m_Player);
 
 
@@ -528,20 +533,26 @@ if(possibleMoves->m_MoveType == MOVE_PLACE_FIRST && possibleMoves->m_lpMoves.siz
     //pTempState->m_pFieldHandler->InitPossibleMoves();
     for(int i = 0; i < m_aTestStates.size(); ++i)
         m_aTestStates[i].release();
-    m_aTestStates.clear();
-
-
 
     TestFunc(pTempState, pTemp);
 
-    if(m_aTestStates.size() > 25)
+    if(m_aTestStates.size() > 24)
     {
-        for(int i = m_aTestStates.size()-1; i > 24; --i)
+        for(int i = m_aTestStates.size()-1; i > 23; --i)
         {
                m_aTestStates[i].release();
                 m_aTestStates.remove_index_fast(i);
         }
     }
+
+    CTest temp;
+    temp.m_Points = 0;
+    temp.m_pMoveContainer = new CMoveHandler::CMoveContainer();
+    temp.m_pGameState = pTempState->Clone();
+    m_aTestStates.add(temp);
+    temp.m_pMoveContainer = 0;
+    temp.m_pGameState = 0;
+
     if(pTempState->m_Turn < 39)
     {
         for(int i = 0; i < m_aTestStates.size() && i < 25 && GetTime() < TIME_ENEMYMOVE_LOOPS; ++i)
@@ -567,7 +578,7 @@ if(possibleMoves->m_MoveType == MOVE_PLACE_FIRST && possibleMoves->m_lpMoves.siz
     delete pTempState;
     delete possibleMoves;
   printf ("|| %d ||\n",GetTime());
-    printf("NUM: %i,,, %i/ %i [%i, %i]",m_aTestStates[0].m_BestEnemyPoints, m_aTestStates.size(), num, CGameState::NUM_GAMESTATES, CFieldHandler::NUM_HANDLERS);
+    printf("NU %i,,, %i/ %i [%i, %i]",m_aTestStates[0].m_BestEnemyPoints, m_aTestStates.size(), num, CGameState::NUM_GAMESTATES, CFieldHandler::NUM_HANDLERS);
 
 
   // pMoves->m_MoveType = MOVE_PLACE;
@@ -622,6 +633,7 @@ if(possibleMoves->m_MoveType == MOVE_PLACE_FIRST && possibleMoves->m_lpMoves.siz
 */
 }
 
+
 /*CMoveHandler::CMove* CBaseLogic::GetBestMove(CMoveHandler::CMoveContainer *pMoves)
 {
 
@@ -631,6 +643,8 @@ float CBaseLogic::GetStoneValue(CStoneHandler::CStone *pStone)
     int index = pStone->m_Color+  pStone->m_Shape*NUM_COLORS;
     return m_aValues[index];
 }
+
+
 float CBaseLogic::GetHandCardValues(CGameState *pState, int player)
 {
     int points = 0;
@@ -643,9 +657,10 @@ float CBaseLogic::GetHandCardValues(CGameState *pState, int player)
     }
     return points;
 }
+
+
 int CBaseLogic::TestGameState(CGameState *pState, CMoveHandler::CMoveContainer* pMoveC)
 {
-
 
     int points = pMoveC->GetPoints()*CGameHandler::VAR_OWNPOINTS;
 
@@ -694,10 +709,10 @@ void CBaseLogic::TestFunc(CGameState *pState, CMoveHandler::CMoveContainer* pMov
       }*/
 
      //  printf("-------------------");
-        for(int i = 0; i < possibleMoves->m_lpMoves.size(); ++i)
-      {
-       // printf("// C: %s, S: %s \n",CGameState::m_aColorNames[pState->m_apHandStones[b]->m_Color], CGameState::m_aShapeNames[pState->m_apHandStones[b]->m_Shape]);
-      }
+        /*for(int i = 0; i < possibleMoves->m_lpMoves.size(); ++i)
+        {
+            printf("// C: %s, S: %s \n",CGameState::m_aColorNames[pState->m_apHandStones[b]->m_Color], CGameState::m_aShapeNames[pState->m_apHandStones[b]->m_Shape]);
+        }*/
    //   if( possibleMovesB->m_lpMoves.size() != asd)
      //  printf("ERROR! %i, %i ", possibleMovesB->m_lpMoves.size(), asd);
 
