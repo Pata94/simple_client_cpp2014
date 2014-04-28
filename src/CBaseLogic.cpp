@@ -10,7 +10,6 @@ made for Software-Challenge 2013 visit http://www.informatik.uni-kiel.de/softwar
 #include "CGameState.h"
 #include "ext/range.h"
 #include <time.h>
-#include <vector.h>
 using namespace std;
 CBaseLogic::CBaseLogic(int Player)
 {
@@ -161,119 +160,21 @@ vector<vector<CStoneHandler::CStone *>> CBaseLogic::NecessaryStonesForSixpack(CG
 {
     bool fieldSearchedHorizontally[FIELD_WIDTH*FIELD_HEIGHT];
     bool fieldSearchedVertically[FIELD_WIDTH*FIELD_HEIGHT];
-    bool shapesNeeded[6];
-    bool colorsNeeded[6];
     vector<vector<CStoneHandler::CStone *>> Stones;
     int MODE;
     for(int i = 0; i < FIELD_WIDTH * FIELD_HEIGHT; i++)
     {
         if(!fieldSearchedVertically)
         {
+            bool shapesNeeded[6];
+            bool colorsNeeded[6];
             CStoneHandler::CStone currentStones[6];
             for(int a = i; a < FIELD_WIDTH * FIELD_HEIGHT; a = a + FIELD_WIDTH)
             {
-                bool fieldSearchedVertically[a] = true;
+                fieldSearchedVertically[a] = true;
                 if(pState->m_pFieldHandler->IsFree(a))
                     break;
-                currentStones[(a-i)/FIELD_WIDTH] = pState->m_pFieldHandler->m_aField[a];
-            }
-            if(if(currentStones[2].m_Color != COLOR_NONE)) //ab einer Länge von 3 Objekten fängt der untere Prozess an
-            {
-                if(currentStones[0].m_Color == currentStones[1].m_Color)
-                    MODE = MODE_COLOR;
-                else
-                    MODE = MODE_SHAPE;
-                vector<CStoneHandler::CStone *> neededStones;
-                if(MODE == MODE_COLOR)
-                {
-                    for(int b = 0; int b < 6; b++)
-                    {
-                        switch (currentStones[b].m_Shape)
-                        {
-                            case SHAPE_ACORN:
-                                shapesNeeded[0] = false;
-                                break;
-                            case SHAPE_BELL:
-                                shapesNeeded[1] = false;
-                                break;
-                            case SHAPE_CLUBS:
-                                shapesNeeded[2] = false;
-                                break;
-                            case SHAPE_DIAMOND:
-                                shapesNeeded[3] = false;
-                                break;
-                            case SHAPE_HEART:
-                                shapesNeeded[4] = false;
-                                break;
-                            case SHAPE_SPADES:
-                                shapesNeeded[5] = false;
-                                break;
-                        }
-                    }
-                    for(int c = 0; c < 6; c++)
-                    {
-                        if(shapesNeeded[c])
-                        {
-                            CStoneHandler::CStone neededStone = new CStoneHandler::CStone;
-                            neededStone->m_Color = currentStones[0].m_Color;
-                            neededStone->m_Shape = shapesNeeded[c];
-                            neededStones.insert(neededStone);
-                        }
-                    }
-                }
-
-                else
-                {
-                    for(int b = 0; int b < 6; b++)
-                    {
-                        switch (currentStones[b].m_Color)
-                        {
-                            case COLOR_BLUE:
-                                colorsNeeded[0] = false;
-                                break;
-                            case COLOR_GREEN:
-                                colorsNeeded[1] = false;
-                                break;
-                            case COLOR_MAGENTA:
-                                colorsNeeded[2] = false;
-                                break;
-                            case COLOR_ORANGE:
-                                colorsNeeded[3] = false;
-                                break;
-                            case COLOR_VIOLET:
-                                colorsNeeded[4] = false;
-                                break;
-                            case COLOR_YELLOW:
-                                colorsNeeded[5] = false;
-                                break;
-                        }
-                    }
-                    for(int c = 0; c < 6; c++)
-                    {
-                        if(colorsNeeded[c])
-                        {
-                            CStoneHandler::CStone neededStone = new CStoneHandler::CStone;
-                            neededStone->m_Color = colorsNeeded[c];
-                            neededStone->m_Shape = currentStones[0].m_Shape;
-                            neededStones.insert(neededStone);
-                        }
-                    }
-                }
-                Stones.insert(neededStones);
-            }
-        }
-
-
-
-        if(!fieldSearchedHorizontally)
-        {
-            CStoneHandler::CStone currentStones[6];
-            for(int a = i; a < (i-i%FIELD_WIDTH)+FIELD_WIDTH; a++)
-            {
-                bool fieldSearchedHorizontally[a] = true;
-                if(pState->m_pFieldHandler->IsFree(a))
-                    break;
-                currentStones[a-i] = pState->m_pFieldHandler->m_aField[a];
+                currentStones[(a-i)/FIELD_WIDTH] = *(pState->m_pFieldHandler->m_aField[a].m_pStone);
             }
             if(currentStones[2].m_Color != COLOR_NONE) //ab einer Länge von 3 Objekten fängt der untere Prozess an
             {
@@ -284,7 +185,7 @@ vector<vector<CStoneHandler::CStone *>> CBaseLogic::NecessaryStonesForSixpack(CG
                 vector<CStoneHandler::CStone *> neededStones;
                 if(MODE == MODE_COLOR)
                 {
-                    for(int b = 0; int b < 6; b++)
+                    for(int b = 0; b < 6; b++)
                     {
                         switch (currentStones[b].m_Shape)
                         {
@@ -306,23 +207,26 @@ vector<vector<CStoneHandler::CStone *>> CBaseLogic::NecessaryStonesForSixpack(CG
                             case SHAPE_SPADES:
                                 shapesNeeded[5] = false;
                                 break;
+                            default:
+                                printf("WHAT THE FUCK IS GOING ON??????");
+                                break;
                         }
                     }
                     for(int c = 0; c < 6; c++)
                     {
                         if(shapesNeeded[c])
                         {
-                            CStoneHandler::CStone neededStone = new CStoneHandler::CStone;
+                            CStoneHandler::CStone *neededStone = new CStoneHandler::CStone;
                             neededStone->m_Color = currentStones[0].m_Color;
                             neededStone->m_Shape = shapesNeeded[c];
-                            neededStones.insert(neededStone);
+                            neededStones.push_back(neededStone);
                         }
                     }
                 }
 
                 else
                 {
-                    for(int b = 0; int b < 6; b++)
+                    for(int b = 0; b < 6; b++)
                     {
                         switch (currentStones[b].m_Color)
                         {
@@ -350,14 +254,114 @@ vector<vector<CStoneHandler::CStone *>> CBaseLogic::NecessaryStonesForSixpack(CG
                     {
                         if(colorsNeeded[c])
                         {
-                            CStoneHandler::CStone neededStone = new CStoneHandler::CStone;
+                            CStoneHandler::CStone *neededStone = new CStoneHandler::CStone;
                             neededStone->m_Color = colorsNeeded[c];
                             neededStone->m_Shape = currentStones[0].m_Shape;
-                            neededStones.insert(neededStone);
+                            neededStones.push_back(neededStone);
                         }
                     }
                 }
-                Stones.insert(neededStones);
+                Stones.push_back(neededStones);
+            }
+        }
+
+
+
+        if(!fieldSearchedHorizontally)
+        {
+            CStoneHandler::CStone currentStones[6];
+            bool shapesNeeded[6];
+            bool colorsNeeded[6];
+            for(int a = i; a < (i-i%FIELD_WIDTH)+FIELD_WIDTH; a++)
+            {
+                fieldSearchedHorizontally[a] = true;
+                if(pState->m_pFieldHandler->IsFree(a))
+                    break;
+                currentStones[a-i] = *(pState->m_pFieldHandler->m_aField[a].m_pStone);
+            }
+            if(currentStones[2].m_Color != COLOR_NONE) //ab einer Länge von 3 Objekten fängt der untere Prozess an
+            {
+                if(currentStones[0].m_Color == currentStones[1].m_Color)
+                    MODE = MODE_COLOR;
+                else
+                    MODE = MODE_SHAPE;
+                vector<CStoneHandler::CStone *> neededStones;
+                if(MODE == MODE_COLOR)
+                {
+                    for(int b = 0; b < 6; b++)
+                    {
+                        switch (currentStones[b].m_Shape)
+                        {
+                            case SHAPE_ACORN:
+                                shapesNeeded[0] = false;
+                                break;
+                            case SHAPE_BELL:
+                                shapesNeeded[1] = false;
+                                break;
+                            case SHAPE_CLUBS:
+                                shapesNeeded[2] = false;
+                                break;
+                            case SHAPE_DIAMOND:
+                                shapesNeeded[3] = false;
+                                break;
+                            case SHAPE_HEART:
+                                shapesNeeded[4] = false;
+                                break;
+                            case SHAPE_SPADES:
+                                shapesNeeded[5] = false;
+                                break;
+                        }
+                    }
+                    for(int c = 0; c < 6; c++)
+                    {
+                        if(shapesNeeded[c])
+                        {
+                            CStoneHandler::CStone *neededStone = new CStoneHandler::CStone;
+                            neededStone->m_Color = currentStones[0].m_Color;
+                            neededStone->m_Shape = shapesNeeded[c];
+                            neededStones.push_back(neededStone);
+                        }
+                    }
+                }
+
+                else
+                {
+                    for(int b = 0; b < 6; b++)
+                    {
+                        switch (currentStones[b].m_Color)
+                        {
+                            case COLOR_BLUE:
+                                colorsNeeded[0] = false;
+                                break;
+                            case COLOR_GREEN:
+                                colorsNeeded[1] = false;
+                                break;
+                            case COLOR_MAGENTA:
+                                colorsNeeded[2] = false;
+                                break;
+                            case COLOR_ORANGE:
+                                colorsNeeded[3] = false;
+                                break;
+                            case COLOR_VIOLET:
+                                colorsNeeded[4] = false;
+                                break;
+                            case COLOR_YELLOW:
+                                colorsNeeded[5] = false;
+                                break;
+                        }
+                    }
+                    for(int c = 0; c < 6; c++)
+                    {
+                        if(colorsNeeded[c])
+                        {
+                            CStoneHandler::CStone *neededStone = new CStoneHandler::CStone;
+                            neededStone->m_Color = colorsNeeded[c];
+                            neededStone->m_Shape = currentStones[0].m_Shape;
+                            neededStones.push_back(neededStone);
+                        }
+                    }
+                }
+                Stones.push_back(neededStones);
             }
         }
     }
@@ -367,7 +371,7 @@ vector<vector<CStoneHandler::CStone *>> CBaseLogic::NecessaryStonesForSixpack(CG
 
 void CBaseLogic::StonesForInterestingSixpacks(CGameState *pState)
 {
-    vector<vector<CStoneHandler::CStone *>> Stones
+    vector<vector<CStoneHandler::CStone *>> Stones;
     vector<int> StonesInHandSpace;
     Stones = NecessaryStonesForSixpack(pState);
     CStoneHandler::CStone *existingStones = new CStoneHandler::CStone[11];
@@ -376,7 +380,7 @@ void CBaseLogic::StonesForInterestingSixpacks(CGameState *pState)
     {
         int openStones = 0;
         int StonesInHand = 0;
-        for(CStoneHandler::CStone stone* : StonePack)
+        for(CStoneHandler::CStone *stone : StonePack)
         {
             bool found = false;
             for(int i = 0; i < 6; i++) //falls ein Stein in zwei Sixpacks benötigt wird, wird das im Moment noch nicht ordentlich berechnet
@@ -384,9 +388,9 @@ void CBaseLogic::StonesForInterestingSixpacks(CGameState *pState)
                 if(stone->m_Color == pState->m_apHandStones[pState->m_CurrentPlayer*6+i]->m_Color && stone->m_Shape == pState->m_apHandStones[pState->m_CurrentPlayer*6+i]->m_Shape)
                 {
                     StonesInHand++;
-                    StonesInHandSpace.insert(pState->m_CurrentPlayer*6+i);
+                    StonesInHandSpace.push_back(pState->m_CurrentPlayer*6+i);
                     found = true;
-                    continue
+                    continue;
                 }
             }
             for(int i = 0; i < 6-StonesInHand; i++)
@@ -520,7 +524,7 @@ if(possibleMoves->m_MoveType == MOVE_PLACE_FIRST && possibleMoves->m_lpMoves.siz
             }
 
              delete possibleMoves;
-             delete pTempState
+             delete pTempState;
         }
 
 

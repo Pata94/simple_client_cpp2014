@@ -8,6 +8,7 @@ made for Software-Challenge 2013 visit http://www.informatik.uni-kiel.de/softwar
 #include "ext/sorted_array.h"
 #include "config.h"
 #include <time.h>
+#include <vector>
 class CBaseLogic
 {
     public:
@@ -36,6 +37,8 @@ class CBaseLogic
         float m_aValues[NUM_COLORS*NUM_SHAPES];
         float GetStoneValue(CStoneHandler::CStone *pStone);
         float RekursiveFunktion(CFieldHandler *pField, float currentProbability, float (&aProbabilities)[NUM_COLORS*NUM_SHAPES], float step, int var);
+        void StonesForInterestingSixpacks(CGameState *pState);
+        std::vector<std::vector<CStoneHandler::CStone *>> NecessaryStonesForSixpack(CGameState *pState);
          int m_Player;
          class CGameState *m_pGameState;
     protected:
